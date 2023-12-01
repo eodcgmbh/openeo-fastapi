@@ -2,8 +2,6 @@
 
 A FastAPI implementation of the OpenEO Api specification.
 
-## Use
-
 ## Contribute
 
 Included is a vscode dev container which is intended to be used as the development environment for this package. A virtual environment needs to be set up inside the dev container, this is managed by poetry.
