@@ -59,7 +59,7 @@ jobs:
         run: poetry install --with dev --all-extras
 
       - name: Pre-commit hooks
-        run: poetry run pre-commit run --all-files
+        run: poetry run pre-commit run
 
       - name: Run pytest
         run: poetry run pytest --cov=openeo_processes_dask --cov-report=xml
