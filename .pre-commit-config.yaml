@@ -33,4 +33,3 @@ repos:
     rev: 23.7.0
     hooks:
     -   id: black
-        exclude: ^specs/openeo-processes/
