@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  workspace:
+    container_name: openeo-fastapi-devcontainer
+    build:
+      context: ../
+      dockerfile: ".devcontainer/Dockerfile"
+      target: devcontainer
+    volumes:
+      - ../:/openeo-fastapi
+      - /eodc/:/eodc/
+    tty: true

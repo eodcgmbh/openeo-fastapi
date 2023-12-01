@@ -1,0 +1,28 @@
+{
+    "name": "openeo-fastapi",
+
+    "dockerComposeFile": "./docker-compose.yml",
+
+    "service": "workspace",
+
+    "workspaceFolder": "/openeo-fastapi",
+
+	"settings": {
+		"python.defaultInterpreterPath": "/openeo-fastapi/.venv",
+		"python.venvPath": "/openeo-fastapi/.venv",
+		"python.pythonPath": "/openeo-fastapi/.venv/bin/python",
+	},
+
+	"extensions": [
+		"ms-python.python",
+		"ms-toolsai.jupyter",
+		"ms-python.vscode-pylance",
+		"eamodio.gitlens",
+		"GitLab.gitlab-workflow",
+		"ms-azuretools.vscode-docker"
+	],
+
+	"remoteEnv": {
+		"GPG_TTY": "$(tty)`"
+	}
+}
