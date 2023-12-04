@@ -14,11 +14,11 @@ def test_api_core(core_api):
 def test_get_capabilities(core_api):
     """Test the OpenEOApi and OpenEOCore classes interact as intended."""
 
-    core_api.register_get_capabilities()
-
     test_app = TestClient(core_api.app)
+
+    core_api.register_get_capabilities()
 
     response = test_app.get("/")
 
     assert response.status_code == 200
-    assert response.text == '{"version": "1"}'
+    assert response.json()["title"] == "Test Api"
