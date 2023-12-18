@@ -1,11 +1,9 @@
 import abc
-import json
-from typing import Optional, Union
 
 from attrs import define, field
-from fastapi import Response
 
 from openeo_fastapi.client import models
+from openeo_fastapi.client.collections import get_collection, get_collections
 
 
 @define
@@ -37,3 +35,13 @@ class OpenEOCore:
             links=self.links,
             endpoints=self.endpoints,
         )
+
+    @abc.abstractclassmethod
+    def get_collection(self, collection_id) -> models.Collection:
+        collection = get_collection(collection_id)
+        return collection
+
+    @abc.abstractclassmethod
+    async def get_collections(self) -> models.Collections:
+        collections = await get_collections()
+        return collections

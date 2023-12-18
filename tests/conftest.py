@@ -31,7 +31,15 @@ def core_api():
             models.Endpoint(
                 path="/",
                 methods=["GET"],
-            )
+            ),
+            models.Endpoint(
+                path="/collections",
+                methods=["GET"],
+            ),
+            models.Endpoint(
+                path="/collections/{collection_id}",
+                methods=["GET"],
+            ),
         ],
     )
 
