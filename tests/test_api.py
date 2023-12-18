@@ -1,6 +1,3 @@
-import logging
-from typing import List
-
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -42,8 +39,6 @@ def test_get_collection(core_api):
     test_app = TestClient(core_api.app)
 
     response = test_app.get("/collections/viirs-15a2h-001")
-
-    logging.info(str(response))
 
     assert response.status_code == 200
     assert response.json()["id"] == "viirs-15a2h-001"
