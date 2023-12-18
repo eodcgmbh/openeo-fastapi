@@ -46,7 +46,7 @@ class OpenEOApi:
         self.router.add_api_route(
             name="collections",
             path="/collections",
-            response_model=Response,
+            response_model=models.Collections,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
@@ -62,7 +62,7 @@ class OpenEOApi:
         self.router.add_api_route(
             name="collection",
             path="/collections/{collection_id}",
-            response_model=Response,
+            response_model=models.Collection,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],

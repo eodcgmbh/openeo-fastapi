@@ -1,3 +1,6 @@
+import logging
+from typing import List
+
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -14,9 +17,7 @@ def test_api_core(core_api):
 def test_get_capabilities(core_api):
     """Test the OpenEOApi and OpenEOCore classes interact as intended."""
 
-    test_api = core_api(client=TestClient, app=FastAPI())
-    test_client = TestClient(test_api.app)
-    test_app = test_client.app
+    test_app = TestClient(core_api.app)
 
     response = test_app.get("/")
 
@@ -27,24 +28,22 @@ def test_get_capabilities(core_api):
 def test_get_collections(core_api):
     """Test the OpenEOApi and OpenEOCore classes interact as intended."""
 
-    test_api = core_api(client=TestClient, app=FastAPI())
-    test_client = TestClient(test_api.app)
-    test_app = test_client.app
+    test_app = TestClient(core_api.app)
 
     response = test_app.get("/collections")
 
     assert response.status_code == 200
-    assert response.json()["title"] == "Test Api"
+    assert isinstance(response.json()["collections"], list)
 
 
 def test_get_collection(core_api):
     """Test the OpenEOApi and OpenEOCore classes interact as intended."""
 
-    test_api = core_api(client=TestClient, app=FastAPI())
-    test_client = TestClient(test_api.app)
-    test_app = test_client.app
+    test_app = TestClient(core_api.app)
 
     response = test_app.get("/collections/viirs-15a2h-001")
 
+    logging.info(str(response))
+
     assert response.status_code == 200
-    assert response.json()["title"] == "Test Api"
+    assert response.json()["id"] == "viirs-15a2h-001"

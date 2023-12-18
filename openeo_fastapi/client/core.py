@@ -37,8 +37,8 @@ class OpenEOCore:
         )
 
     @abc.abstractclassmethod
-    def get_collection(self, collection_id) -> models.Collection:
-        collection = get_collection(collection_id)
+    async def get_collection(self, collection_id) -> models.Collection:
+        collection = await get_collection(collection_id)
         return collection
 
     @abc.abstractclassmethod
