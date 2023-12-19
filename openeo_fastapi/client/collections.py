@@ -2,6 +2,7 @@ import os
 
 import aiohttp
 from fastapi import APIRouter
+from starlette.responses import JSONResponse
 
 from openeo_fastapi.client.models import Collection, Collections
 
@@ -12,28 +13,27 @@ async def get_collections():
     """
     Basic metadata for all datasets
     """
-    try:
-        async with aiohttp.ClientSession() as client:
-            async with client.get(
-                os.getenv("STAC_API_URL") + "collections"
-            ) as response:
-                resp = await response.json()
 
-    except Exception as e:
-        raise Exception("Ran into: ", e)
-
-    return Collections(collections=resp["collections"], links=resp["links"])
+    async with aiohttp.ClientSession() as client:
+        async with client.get(os.getenv("STAC_API_URL") + "collections") as response:
+            resp = await response.json()
+            if response.status == 200 and resp.get("collections"):
+                return Collections(collections=resp["collections"], links=resp["links"])
+            else:
+                return resp
 
 
 async def get_collection(collection_id):
-    try:
-        async with aiohttp.ClientSession() as client:
-            async with client.get(
-                os.getenv("STAC_API_URL") + f"collections/{collection_id}"
-            ) as response:
-                resp = await response.json()
+    """
+    Metadata for specific datasets
+    """
 
-    except Exception as e:
-        raise Exception("Ran into: ", e)
-
-    return Collection(**resp)
+    async with aiohttp.ClientSession() as client:
+        async with client.get(
+            os.getenv("STAC_API_URL") + f"collections/{collection_id}"
+        ) as response:
+            resp = await response.json()
+            if response.status == 200 and resp.get("id"):
+                return Collection(**resp)
+            else:
+                return resp
