@@ -98,6 +98,6 @@ class OpenEOApi:
             None
         """
 
-        # Register core STAC endpoints
+        # Register core endpoints
         self.register_core()
         self.app.include_router(router=self.router)

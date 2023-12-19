@@ -16,6 +16,7 @@ current_directory = os.path.split(path_to_current_file)[0]
 
 @pytest.mark.asyncio
 async def test_get_collections():
+    # TODO: Make collections a fixture
     with open(os.path.join(current_directory, "collections.json")) as f_in:
         collections = json.load(f_in)
     with aioresponses() as m:
