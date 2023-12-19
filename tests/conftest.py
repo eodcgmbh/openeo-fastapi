@@ -3,7 +3,6 @@ from unittest import mock
 
 import pytest
 from fastapi import FastAPI
-from requests_mock.contrib import fixture
 
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.client import models
