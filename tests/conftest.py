@@ -3,16 +3,19 @@ from unittest import mock
 
 import pytest
 from fastapi import FastAPI
+from requests_mock.contrib import fixture
 
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.client import models
 from openeo_fastapi.client.core import OpenEOCore
 
+pytestmark = pytest.mark.unit
+
 
 @pytest.fixture(autouse=True)
 def mock_settings_env_vars():
     with mock.patch.dict(
-        os.environ, {"STAC_API_URL": "https://stac.terrabyte.lrz.de/public/api"}
+        os.environ, {"STAC_API_URL": "http://test-stac-api.mock.com/api/"}
     ):
         yield
 
