@@ -1,9 +1,6 @@
 import abc
-import json
-from typing import Optional, Union
 
 from attrs import define, field
-from fastapi import Response
 
 from openeo_fastapi.client import models
 
