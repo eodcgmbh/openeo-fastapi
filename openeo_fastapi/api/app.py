@@ -69,6 +69,22 @@ class OpenEOApi:
             endpoint=self.client.get_collection,
         )
 
+    def register_get_processes(self):
+        """Register Endpoint for Processes (GET /processes).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="processes",
+            path="/processes",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.get_processes,
+        )
+
     def register_core(self):
         """Register core OpenEO endpoints.
 
@@ -88,6 +104,7 @@ class OpenEOApi:
         self.register_get_capabilities()
         self.register_get_collections()
         self.register_get_collection()
+        self.register_get_processes()
 
     def __attrs_post_init__(self):
         """Post-init hook.

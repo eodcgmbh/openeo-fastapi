@@ -62,3 +62,14 @@ def test_get_capabilities(core_api):
 
     assert response.status_code == 200
     assert response.json()["title"] == "Test Api"
+
+
+def test_get_processes(core_api):
+    """Test the OpenEOApi and OpenEOCore classes interact as intended."""
+
+    test_app = TestClient(core_api.app)
+
+    response = test_app.get("/processes")
+
+    assert response.status_code == 200
+    assert "save_result" in response.json().keys()

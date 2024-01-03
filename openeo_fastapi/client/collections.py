@@ -3,6 +3,7 @@ import os
 import aiohttp
 from fastapi import APIRouter
 from starlette.responses import JSONResponse
+from yurl import URL
 
 from openeo_fastapi.client.models import Collection, Collections
 
@@ -25,7 +26,7 @@ async def get_collections():
 
 async def get_collection(collection_id):
     """
-    Metadata for specific datasets
+    Metadata for specific dataset
     """
 
     async with aiohttp.ClientSession() as client:

@@ -4,6 +4,7 @@ from attrs import define, field
 
 from openeo_fastapi.client import models
 from openeo_fastapi.client.collections import get_collection, get_collections
+from openeo_fastapi.client.processes import get_processes
 
 
 @define
@@ -45,3 +46,8 @@ class OpenEOCore:
     async def get_collections(self) -> models.Collections:
         collections = await get_collections()
         return collections
+
+    @abc.abstractclassmethod
+    async def get_processes(self) -> dict:
+        processes = await get_processes()
+        return processes
