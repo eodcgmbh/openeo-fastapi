@@ -9,6 +9,8 @@ from openeo_fastapi.client.core import OpenEOCore
 @pytest.fixture()
 def core_api():
     client = OpenEOCore(
+        api_dns="test.api.org",
+        api_tls=True,
         title="Test Api",
         description="My Test Api",
         backend_version="1",

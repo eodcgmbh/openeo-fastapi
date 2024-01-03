@@ -41,7 +41,7 @@ def test_get_conformance(core_api):
 
     test_app = TestClient(core_api.app)
 
-    core_api.register_get_conformance()
+    core_api.register_well_known()
 
     response = test_app.get("/.well-known/openeo")
 

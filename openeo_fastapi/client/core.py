@@ -47,7 +47,11 @@ class OpenEOCore:
             )
         )
 
-        return models.WellKnownOpeneoGetResponse(versions=[url])
+        return models.WellKnownOpeneoGetResponse(
+            versions=[
+                models.Version(url=url, production=False, api_version=self.api_version)
+            ]
+        )
 
     @abc.abstractmethod
     def get_capabilities(self) -> models.Capabilities:
