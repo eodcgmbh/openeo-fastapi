@@ -22,3 +22,27 @@ def test_get_capabilities(core_api):
 
     assert response.status_code == 200
     assert response.json()["title"] == "Test Api"
+
+
+def test_get_conformance(core_api):
+    """Test the OpenEOApi capabilities endpoint is activate."""
+
+    test_app = TestClient(core_api.app)
+
+    core_api.register_get_conformance()
+
+    response = test_app.get("/conformance")
+
+    assert response.status_code == 200
+
+
+def test_get_conformance(core_api):
+    """Test the OpenEOApi capabilities endpoint is activate."""
+
+    test_app = TestClient(core_api.app)
+
+    core_api.register_get_conformance()
+
+    response = test_app.get("/.well-known/openeo")
+
+    assert response.status_code == 200

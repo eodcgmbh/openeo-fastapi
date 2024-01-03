@@ -206,3 +206,24 @@ class Capabilities(BaseModel):
             },
         ],
     )
+
+
+class ConformanceGetResponse(BaseModel):
+    conformsTo: list[AnyUrl]
+
+
+class Version(BaseModel):
+    url: AnyUrl = Field(
+        ...,
+        description="*Absolute* URLs to the service.",
+        example="https://example.com/api/v1.0",
+    )
+    production: Optional[Production] = None
+    api_version: str = Field(
+        ...,
+        description="Version number of the openEO specification this back-end implements.",
+    )
+
+
+class WellKnownOpeneoGetResponse(BaseModel):
+    versions: list[Version]

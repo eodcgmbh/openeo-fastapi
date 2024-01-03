@@ -30,3 +30,35 @@ class OpenEOApi:
             methods=["GET"],
             endpoint=self.client.get_capabilities,
         )
+
+    def register_get_conformance(self):
+        """Register conformance page (GET /).
+
+        Returns:
+            None
+        """
+        self.app.add_api_route(
+            name="conformance",
+            path="/",
+            response_model=models.ConformanceGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.get_conformance,
+        )
+
+    def register_well_known(self):
+        """Register well known page (GET /).
+
+        Returns:
+            None
+        """
+        self.app.add_api_route(
+            name=".well-known",
+            path="/.well-known/openeo",
+            response_model=models.WellKnownOpeneoGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.get_well_know,
+        )
