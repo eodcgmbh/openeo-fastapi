@@ -12,7 +12,7 @@ Included is a vscode dev container which is intended to be used as the developme
 
 2. Once the development environment is ready, run the following commands.
     ```
-    # Working from /openeo-fastapi
+    # From /openeo-fastapi
 
     poetry lock
 
