@@ -1,11 +1,28 @@
+from abc import ABC, abstractmethod, abstractproperty
 from enum import Enum
-from pathlib import Path
 
 import requests
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, ValidationError, validator
+
+from openeo_fastapi.client.exceptions import (
+    InvalidIssuerConfig,
+    TokenCantBeValidated,
+    TokenInvalid,
+)
+
+OIDC_WELLKNOWN_CONFIG_PATH = "/.well-known/openid-configuration"
+OIDC_USERINFO = "userinfo_endpoint"
 
 
-# TODO Needs to be set for endpoints when registering
+class Authenticator(ABC):
+    # Authenticator validate method needs to know what decisions to make based on user info response from the issuer handler.
+    # This will be different for different backends, so just put it as ABC for now. We might be able to define this if we want
+    # to specify an auth config when initialising the backend.
+    @abstractmethod
+    def validate(self):
+        pass
+
+
 class AuthMethod(Enum):
     """Enum defining known auth methods."""
 
@@ -13,20 +30,26 @@ class AuthMethod(Enum):
     OIDC = "oidc"
 
 
-class AuthProvider(Enum):
-    """Enum defining known oidc providers."""
+# Validator for Auth token calues
+def empty_string(v):
+    if v == "":
+        raise ValidationError("Empty provider string.")
+    return v
 
-    EGI = "egi"
-    NONE = ""
 
-
+# Breaks the OpenEO token format down into it's components. This makes it possible to use the token against the issuer.
 class AuthToken(BaseModel):
     """ """
 
     bearer: bool
-    method: str
-    provider: AuthProvider
+    method: AuthMethod
+    provider: str
     token: str
+
+    _check_provider_empty = validator("provider", pre=True, allow_reuse=True)(
+        empty_string
+    )
+    _check_token_empty = validator("token", pre=True, allow_reuse=True)(empty_string)
 
     @validator("bearer", pre=True)
     def passwords_match(cls, v, values, **kwargs):
@@ -34,62 +57,70 @@ class AuthToken(BaseModel):
             return ValueError("Token not formatted correctly")
         return True
 
-
-# TODO Maybe remove the exceptions, and userinfo
-class TokenInvalid(Exception):
-    """ """
-
-    pass
-
-
-class TokenNotValidated(Exception):
-    """ """
-
-    pass
+    @classmethod
+    def from_token(cls, token: str):
+        """Takes the openeo format token, splits it into the component parts, and returns an Auth token."""
+        return cls(
+            **dict(zip(["bearer", "method", "provider", "token"], token.split("/")))
+        )
 
 
+# TODO Remove? Would be good to generate the user info model for each issuer that is provided.
 class UserInfo(BaseModel):
     """ """
 
     info: dict
 
 
-class TokenHandler(BaseModel):
+class IssuerHandler(BaseModel):
     """General token handler for querying provided tokens against issuers."""
 
     issuer_url: str
     organisation: str
+    # TODO Roles will need to be used by the Authenticator class to be checked against the user info.
     roles: list
 
-    def _validate_oidc_token(self, token: str) -> UserInfo:
-        """ """
+    @validator("issuer_url", pre=True)
+    def remove_trailing_slash(cls, v, values, **kwargs):
+        if v.endswith("/"):
+            return v.removesuffix("/")
+        return v
 
-        issuer_oidc_config = requests.get(
-            self.issuer + "/.well-known/openid-configuration"
-        )
-        userinfo_url = issuer_oidc_config.json()["userinfo_endpoint"]
-        resp = requests.get(
-            userinfo_url,
+    def _get_issuer_config(self):
+        """ """
+        return requests.get(self.issuer_url + OIDC_WELLKNOWN_CONFIG_PATH)
+
+    def _get_user_info(self, info_endpoint, token):
+        """ """
+        return requests.get(
+            info_endpoint,
             headers={
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {token}",
             },
         )
-        if resp.status_code == 200:
-            return UserInfo(info=resp.json())
-        raise TokenInvalid("Provided token not valid with relevant issuer.")
+
+    def _validate_oidc_token(self, token: str) -> UserInfo:
+        """ """
+
+        issuer_oidc_config = self._get_issuer_config()
+
+        if issuer_oidc_config.status_code != 200:
+            raise InvalidIssuerConfig()
+
+        userinfo_url = issuer_oidc_config.json()[OIDC_USERINFO]
+        resp = self._get_user_info(userinfo_url, token)
+
+        if resp.status_code != 200:
+            raise TokenInvalid()
+
+        return UserInfo(info=resp.json())
 
     def validate_token(self, token: str) -> UserInfo:
         """Try to validate the token against the give OIDC provider."""
         # TODO Handle validation exceptions
-        parsed_token = AuthToken(
-            **dict(zip(["bearer", "method", "provider", "token"], token.split("/")))
-        )
+        parsed_token = AuthToken.from_token(token)
 
-        if parsed_token.method.value == AuthMethod.OIDC:
-            # TODO Do we care about the provider ? Regardless of the provider,
-            # I will submit the token to the issuer and it will be valid, or not.
-            if parsed_token.provider.value == AuthProvider.EGI:
-                return self._validate_oidc_token(parsed_token.token)
-
-        raise TokenNotValidated("It was not possible to validate the provided token.")
+        if parsed_token.method.value == AuthMethod.OIDC.value:
+            return self._validate_oidc_token(parsed_token.token)
+        raise TokenCantBeValidated()
