@@ -30,13 +30,6 @@ class AuthMethod(Enum):
     OIDC = "oidc"
 
 
-# Validator for Auth token calues
-def empty_string(v):
-    if v == "":
-        raise ValidationError("Empty provider string.")
-    return v
-
-
 # Breaks the OpenEO token format down into it's components. This makes it possible to use the token against the issuer.
 class AuthToken(BaseModel):
     """ """
@@ -46,16 +39,23 @@ class AuthToken(BaseModel):
     provider: str
     token: str
 
-    _check_provider_empty = validator("provider", pre=True, allow_reuse=True)(
-        empty_string
-    )
-    _check_token_empty = validator("token", pre=True, allow_reuse=True)(empty_string)
-
     @validator("bearer", pre=True)
     def passwords_match(cls, v, values, **kwargs):
         if v != "Bearer ":
             return ValueError("Token not formatted correctly")
         return True
+
+    @validator("provider", pre=True)
+    def check_provider(cls, v, values, **kwargs):
+        if v == "":
+            raise ValidationError("Empty provider string.")
+        return v
+
+    @validator("provider")
+    def check_token(cls, v, values, **kwargs):
+        if v == "":
+            raise ValidationError("Empty token string.")
+        return v
 
     @classmethod
     def from_token(cls, token: str):
