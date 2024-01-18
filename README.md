@@ -8,9 +8,7 @@ Included is a vscode dev container which is intended to be used as the developme
 
 #### Setup
 
-1. In VSCode `Ctrl + shift + p` and select "Dev Containers: Rebuild Container" to open the development environment for the first time.
-
-2. Once the development environment is ready, run the following commands.
+1. Run the following commands to initialise poetry venv.
     ```
     # From /openeo-fastapi
 
