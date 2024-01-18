@@ -13,6 +13,7 @@ attrs = "^23.1.0"
 httpx = "^0.24.1"
 pip = "^23.3.2"
 ipykernel = "^6.28.0"
+requests = "^2.31.0"
 
 
 [tool.poetry.group.dev.dependencies]

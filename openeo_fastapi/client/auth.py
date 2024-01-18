@@ -51,7 +51,7 @@ class AuthToken(BaseModel):
             raise ValidationError("Empty provider string.")
         return v
 
-    @validator("provider")
+    @validator("token", pre=True)
     def check_token(cls, v, values, **kwargs):
         if v == "":
             raise ValidationError("Empty token string.")
