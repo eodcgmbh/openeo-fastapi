@@ -1,5 +1,3 @@
-import os
-
 import aiohttp
 from fastapi import APIRouter
 
@@ -7,7 +5,6 @@ from openeo_fastapi.client.models import Collection, Collections
 from openeo_fastapi.client.settings import app_settings
 
 router_collections = APIRouter()
-from urllib.parse import urljoin
 
 
 async def get_collections():

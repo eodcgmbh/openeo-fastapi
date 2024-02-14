@@ -1,5 +1,3 @@
-from typing import Type
-
 import attr
 from attrs import Factory, define, field
 from fastapi import APIRouter, FastAPI, Response

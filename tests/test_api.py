@@ -1,6 +1,5 @@
 import json
 import os
-from unittest import mock
 
 import pytest
 from aioresponses import aioresponses

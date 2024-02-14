@@ -1,7 +1,7 @@
 import sys
 from enum import Enum
 from pathlib import Path
-from typing import Any, List, Optional, Union
+from typing import Any, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, Extra, Field, confloat, constr
 

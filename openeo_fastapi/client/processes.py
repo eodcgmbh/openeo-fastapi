@@ -1,12 +1,11 @@
 import functools
-from typing import Optional, Union
+from typing import Union
 
 import openeo_pg_parser_networkx
 import openeo_processes_dask
 import openeo_processes_dask.specs
 from fastapi import APIRouter
 from openeo_pg_parser_networkx import ProcessRegistry
-from pydantic import conint
 
 import openeo_fastapi
 from openeo_fastapi.client.models import Error, Link, ProcessesGetResponse
