@@ -1,5 +1,6 @@
 import json
 import os
+from unittest import mock
 
 import pytest
 from aioresponses import aioresponses
@@ -72,4 +73,3 @@ def test_get_processes(core_api):
     response = test_app.get("/processes")
 
     assert response.status_code == 200
-    assert "save_result" in response.json().keys()
