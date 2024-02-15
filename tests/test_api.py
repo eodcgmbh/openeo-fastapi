@@ -54,7 +54,7 @@ def test_api_core(core_api):
 
 
 def test_get_capabilities(core_api):
-    """Test the OpenEOApi and OpenEOCore classes interact as intended."""
+    """Test the /get_capabilities endpoint works as intended."""
 
     test_app = TestClient(core_api.app)
 
@@ -65,10 +65,11 @@ def test_get_capabilities(core_api):
 
 
 def test_get_processes(core_api):
-    """Test the OpenEOApi and OpenEOCore classes interact as intended."""
+    """Test the /processes endpoint as intended."""
 
     test_app = TestClient(core_api.app)
 
     response = test_app.get("/processes")
 
     assert response.status_code == 200
+    assert "processes" in response.json().keys()
