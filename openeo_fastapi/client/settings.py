@@ -9,7 +9,7 @@ class AppSettings(BaseSettings):
     OPENEO_VERSION = "1.1.0"
     OPENEO_PREFIX = f"/{OPENEO_VERSION}"
     # External APIs
-    STAC_API_URL: Optional[HttpUrl]
+    STAC_API_URL: Optional[HttpUrl] = "http://test-stac-api.mock.com/api"
     STAC_COLLECTIONS_WHITELIST: list[str] = []
 
     class Config:
