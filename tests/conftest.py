@@ -1,3 +1,4 @@
+import json
 import os
 from unittest import mock
 
@@ -9,6 +10,8 @@ from openeo_fastapi.client import models
 from openeo_fastapi.client.core import OpenEOCore
 
 pytestmark = pytest.mark.unit
+path_to_current_file = os.path.realpath(__file__)
+current_directory = os.path.split(path_to_current_file)[0]
 
 
 @pytest.fixture(autouse=True)
@@ -59,3 +62,14 @@ def core_api():
     api = OpenEOApi(client=client, app=FastAPI())
 
     return api
+
+
+@pytest.fixture()
+def collections():
+    with open(os.path.join(current_directory, "collections.json")) as f_in:
+        return json.load(f_in)
+
+
+@pytest.fixture
+def s2a_collection(collections):
+    return collections[0]

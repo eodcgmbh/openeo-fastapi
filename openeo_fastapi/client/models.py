@@ -5,6 +5,8 @@ from typing import Any, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, Extra, Field, confloat, constr
 
+# Most of these models are based on previous work from EODC openeo-python-api
+
 # Avoids a Pydantic error:
 # TypeError: You should use `typing_extensions.TypedDict` instead of
 # `typing.TypedDict` with Python < 3.9.2.  Without it, there is no way to
@@ -230,10 +232,6 @@ class Capabilities(BaseModel):
 
 
 class CollectionId(str):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     collection_id: constr(regex=rb"^[\w\-\.~\/]+$") = Field(
         ...,
         description="A unique identifier for the collection, which MUST match the specified pattern.",
@@ -242,10 +240,6 @@ class CollectionId(str):
 
 
 class StacExtensions(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: list[Union[AnyUrl, str]] = Field(
         ...,
         description=(
@@ -258,10 +252,6 @@ class StacExtensions(BaseModel):
 
 
 class StacAssets(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     pass
 
     class Config:
@@ -269,10 +259,6 @@ class StacAssets(BaseModel):
 
 
 class Role(Enum):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     producer = "producer"
     licensor = "licensor"
     processor = "processor"
@@ -280,10 +266,6 @@ class Role(Enum):
 
 
 class StacProvider(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     name: str = Field(
         ...,
         description="The name of the organization or the individual.",
@@ -321,10 +303,6 @@ class StacProvider(BaseModel):
 
 
 class StacProviders(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: list[StacProvider] = Field(
         ...,
         description=(
@@ -336,10 +314,6 @@ class StacProviders(BaseModel):
 
 
 class Description(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: str = Field(
         ...,
         description="""Detailed description to explain the entity.
@@ -348,19 +322,11 @@ class Description(BaseModel):
 
 
 class Dimension(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     type: Type2 = Field(..., description="Type of the dimension.")
     description: Optional[Description] = None
 
 
 class Spatial(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     bbox: Optional[list[list[float]]] = Field(
         None,
         description=(
@@ -375,10 +341,6 @@ class Spatial(BaseModel):
 
 
 class IntervalItem(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: list[Any] = Field(
         ...,
         description=(
@@ -390,10 +352,6 @@ class IntervalItem(BaseModel):
 
 
 class Temporal(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     interval: Optional[list[IntervalItem]] = Field(
         None,
         description=(
@@ -408,10 +366,6 @@ class Temporal(BaseModel):
 
 
 class Extent(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     spatial: Spatial = Field(
         ...,
         description="The *potential* spatial extents of the features in the collection.",
@@ -425,19 +379,11 @@ class Extent(BaseModel):
 
 
 class CollectionSummaryStats(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     min: Union[str, float] = Field(alias="minimum")
     max: Union[str, float] = Field(alias="maximum")
 
 
 class StacLicense(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: str = Field(
         ...,
         description=(
@@ -454,10 +400,6 @@ class StacLicense(BaseModel):
 
 
 class Collection(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     stac_version: StacVersion
     stac_extensions: Optional[StacExtensions] = None
     type: Optional[Type1] = Field(
@@ -577,10 +519,6 @@ class Collection(BaseModel):
 
 
 class LinksPagination(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: list[Link] = Field(
         ...,
         description="""Links related to this list of resources, for example links for pagination\nor
@@ -595,11 +533,6 @@ class LinksPagination(BaseModel):
 
 
 class Collections(TypedDict, total=False):
-    """
-    All collections endpoint.
-    https://github.com/radiantearth/stac-api-spec/tree/master/collections
-    """
-
     collections: list[Collection]
     links: list[dict[str, Any]]
 

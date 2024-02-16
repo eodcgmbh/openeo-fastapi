@@ -24,10 +24,8 @@ async def get_collections():
                 if response.status == 200 and resp.get("collections"):
                     collections_list = []
                     for collection_json in resp["collections"]:
-                        # For the collections from STAC, only let them through if they're on the whitelist
-                        # This has to be before the legacy collections are added.
-                        if (
-                            len(app_settings.STAC_COLLECTIONS_WHITELIST) < 1
+                        if not (
+                            app_settings.STAC_COLLECTIONS_WHITELIST
                             or collection_json["id"]
                             in app_settings.STAC_COLLECTIONS_WHITELIST
                         ):
@@ -59,8 +57,8 @@ async def get_collection(collection_id):
             ) as response:
                 resp = await response.json()
                 if response.status == 200 and resp.get("id"):
-                    if (
-                        len(app_settings.STAC_COLLECTIONS_WHITELIST) < 1
+                    if not (
+                        app_settings.STAC_COLLECTIONS_WHITELIST
                         or resp["id"] in app_settings.STAC_COLLECTIONS_WHITELIST
                     ):
                         return Collection(**resp)
