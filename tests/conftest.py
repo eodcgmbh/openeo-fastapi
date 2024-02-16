@@ -1,13 +1,25 @@
 import json
-from unittest.mock import patch
+import os
 
 import pytest
 from fastapi import FastAPI
 from requests import Response
 
+from unittest import mock
+from unittest.mock import patch
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.client import auth, models
 from openeo_fastapi.client.core import OpenEOCore
+
+pytestmark = pytest.mark.unit
+
+
+@pytest.fixture(autouse=True)
+def mock_settings_env_vars():
+    with mock.patch.dict(
+        os.environ, {"STAC_API_URL": "http://test-stac-api.mock.com/api/"}
+    ):
+        yield
 
 
 @pytest.fixture()
@@ -15,6 +27,7 @@ def core_api():
     client = OpenEOCore(
         api_dns="test.api.org",
         api_tls=True,
+
         title="Test Api",
         description="My Test Api",
         backend_version="1",
@@ -37,7 +50,16 @@ def core_api():
             models.Endpoint(
                 path="/",
                 methods=["GET"],
-            )
+            ),
+            models.Endpoint(
+                path="/collections",
+                methods=["GET"],
+            ),
+            models.Endpoint(
+                path="/collections/{collection_id}",
+                methods=["GET"],
+            ),
+
         ],
     )
 

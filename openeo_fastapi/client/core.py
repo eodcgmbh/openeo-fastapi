@@ -1,10 +1,16 @@
 import abc
-from collections import namedtuple
-from urllib.parse import urlunparse
 
 from attrs import define, field
 
 from openeo_fastapi.client import conformance, models
+from openeo_fastapi.client.collections import get_collection, get_collections
+
+from collections import namedtuple
+from urllib.parse import urlunparse
+
+
+
+
 
 
 @define
@@ -12,6 +18,7 @@ class OpenEOCore:
     """Base client for the OpenEO Api."""
 
     # TODO. Improve. Not quite sure about setting these here.
+
     api_dns: str = field()
     backend_version: str = field()
     billing: str = field()
@@ -68,9 +75,21 @@ class OpenEOCore:
             endpoints=self.endpoints,
         )
 
+
+    @abc.abstractclassmethod
+    async def get_collection(self, collection_id) -> models.Collection:
+        collection = await get_collection(collection_id)
+        return collection
+
+    @abc.abstractclassmethod
+    async def get_collections(self) -> models.Collections:
+        collections = await get_collections()
+        return collections
+
     @abc.abstractmethod
     def get_conformance(self) -> models.ConformanceGetResponse:
         """ """
         return models.ConformanceGetResponse(
             conformsTo=conformance.BASIC_CONFORMANCE_CLASSES
         )
+
