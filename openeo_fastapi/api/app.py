@@ -1,6 +1,6 @@
 
-from typing import Type
 
+from typing import Type
 import attr
 from attrs import Factory, define, field
 from fastapi import APIRouter, FastAPI, Response
@@ -103,6 +103,22 @@ class OpenEOApi:
             endpoint=self.client.get_well_know,
         )
 
+    def register_get_processes(self):
+        """Register Endpoint for Processes (GET /processes).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="processes",
+            path="/processes",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.get_processes,
+        )
+
     def register_core(self):
         """Register core OpenEO endpoints.
 
@@ -123,7 +139,9 @@ class OpenEOApi:
         self.register_get_capabilities()
         self.register_get_collections()
         self.register_get_collection()
+        self.register_get_processes()
         self.register_well_known()
+
 
     def __attrs_post_init__(self):
         """Post-init hook.

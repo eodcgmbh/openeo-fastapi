@@ -2,9 +2,11 @@
 import sys
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
-from pydantic import AnyUrl, BaseModel, Extra, Field, constr
+from pydantic import AnyUrl, BaseModel, Extra, Field, confloat, constr
+
+# Most of these models are based on previous work from EODC openeo-python-api
 
 # Avoids a Pydantic error:
 # TypeError: You should use `typing_extensions.TypedDict` instead of
@@ -232,10 +234,6 @@ class Capabilities(BaseModel):
 
       
 class CollectionId(str):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     collection_id: constr(regex=rb"^[\w\-\.~\/]+$") = Field(
         ...,
         description="A unique identifier for the collection, which MUST match the specified pattern.",
@@ -244,10 +242,6 @@ class CollectionId(str):
 
 
 class StacExtensions(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: list[Union[AnyUrl, str]] = Field(
         ...,
         description=(
@@ -260,10 +254,6 @@ class StacExtensions(BaseModel):
 
 
 class StacAssets(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     pass
 
     class Config:
@@ -271,10 +261,6 @@ class StacAssets(BaseModel):
 
 
 class Role(Enum):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     producer = "producer"
     licensor = "licensor"
     processor = "processor"
@@ -282,10 +268,6 @@ class Role(Enum):
 
 
 class StacProvider(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     name: str = Field(
         ...,
         description="The name of the organization or the individual.",
@@ -323,10 +305,6 @@ class StacProvider(BaseModel):
 
 
 class StacProviders(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: list[StacProvider] = Field(
         ...,
         description=(
@@ -338,10 +316,6 @@ class StacProviders(BaseModel):
 
 
 class Description(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: str = Field(
         ...,
         description="""Detailed description to explain the entity.
@@ -350,19 +324,11 @@ class Description(BaseModel):
 
 
 class Dimension(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     type: Type2 = Field(..., description="Type of the dimension.")
     description: Optional[Description] = None
 
 
 class Spatial(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     bbox: Optional[list[list[float]]] = Field(
         None,
         description=(
@@ -377,10 +343,6 @@ class Spatial(BaseModel):
 
 
 class IntervalItem(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: list[Any] = Field(
         ...,
         description=(
@@ -392,10 +354,6 @@ class IntervalItem(BaseModel):
 
 
 class Temporal(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     interval: Optional[list[IntervalItem]] = Field(
         None,
         description=(
@@ -410,10 +368,6 @@ class Temporal(BaseModel):
 
 
 class Extent(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     spatial: Spatial = Field(
         ...,
         description="The *potential* spatial extents of the features in the collection.",
@@ -427,19 +381,11 @@ class Extent(BaseModel):
 
 
 class CollectionSummaryStats(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     min: Union[str, float] = Field(alias="minimum")
     max: Union[str, float] = Field(alias="maximum")
 
 
 class StacLicense(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: str = Field(
         ...,
         description=(
@@ -456,10 +402,6 @@ class StacLicense(BaseModel):
 
 
 class Collection(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     stac_version: StacVersion
     stac_extensions: Optional[StacExtensions] = None
     type: Optional[Type1] = Field(
@@ -579,10 +521,6 @@ class Collection(BaseModel):
 
 
 class LinksPagination(BaseModel):
-    """
-    Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
-    """
-
     __root__: list[Link] = Field(
         ...,
         description="""Links related to this list of resources, for example links for pagination\nor
@@ -597,14 +535,272 @@ class LinksPagination(BaseModel):
 
 
 class Collections(TypedDict, total=False):
-    """
-    All collections endpoint.
-    https://github.com/radiantearth/stac-api-spec/tree/master/collections
-    """
-
     collections: list[Collection]
     links: list[dict[str, Any]]
 
+
+class ProcessDescription(BaseModel):
+    __root__: str = Field(
+        ...,
+        description="Detailed description to explain the entity.\n\n[CommonMark 0.29](http://commonmark.org/) syntax MAY be used for rich text representation. In addition to the CommonMark syntax, clients can convert process IDs that are formatted as in the following example into links instead of code blocks: ``` ``process_id()`` ```",
+    )
+
+
+class Deprecated(BaseModel):
+    __root__: bool = Field(
+        ...,
+        description="Declares that the specified entity is deprecated with the potential\nto be removed in any of the next versions. It should be transitioned out\nof usage as soon as possible and users should refrain from using it in\nnew implementations.",
+    )
+
+
+class Experimental(BaseModel):
+    __root__: bool = Field(
+        ...,
+        description="Declares that the specified entity is experimental, which means that it is likely to change or may produce unpredictable behaviour. Users should refrain from using it in production, but still feel encouraged to try it out and give feedback.",
+    )
+
+
+class BaseParameter(BaseModel):
+    name: constr(regex=r"^\w+$") = Field(
+        ...,
+        description="A unique name for the parameter. \n\nIt is RECOMMENDED to use [snake case](https://en.wikipedia.org/wiki/Snake_case) (e.g. `window_size` or `scale_factor`).",
+    )
+    description: ProcessDescription
+    optional: Optional[bool] = Field(
+        False,
+        description="Determines whether this parameter is optional to be specified even when no default is specified.\nClients SHOULD automatically set this parameter to `true`, if a default value is specified. Back-ends SHOULD NOT fail, if a default value is specified and this flag is missing.",
+    )
+    deprecated: Optional[Deprecated] = None
+    experimental: Optional[Experimental] = None
+    default: Optional[Any] = Field(
+        None,
+        description="The default value for this parameter. Required parameters SHOULD NOT specify a default value. Optional parameters SHOULD always specify a default value.",
+    )
+
+
+class JsonSchemaType(Enum):
+    array = "array"
+    boolean = "boolean"
+    integer = "integer"
+    null = "null"
+    number = "number"
+    object = "object"
+    string = "string"
+
+
+class JsonSchema(BaseModel):
+    class Config:
+        extra = Extra.allow
+
+    type: Optional[Union[JsonSchemaType, list[JsonSchemaType]]] = Field(
+        None,
+        description="The allowed basic data type(s) for a value according to [JSON Schema draft-07](https://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.1.1).\n\nIf this property is not present, all data types are allowed.",
+    )
+    subtype: Optional[str] = Field(
+        None,
+        description="The allowed sub data type for a value. See the chapter on [subtypes](#section/Processes/Defining-Processes) for more information.",
+    )
+    pattern: Optional[str] = Field(
+        None,
+        description="The regular expression a string value must match against. See [JSON Schema draft-07](https://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.3.3).",
+    )
+    enum: Optional[list] = Field(
+        None,
+        description="An exclusive list of allowed values. See [JSON Schema draft-07](https://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.1.2).",
+    )
+    minimum: Optional[float] = Field(
+        None,
+        description="The minimum value (inclusive) allowed for a numerical value. See [JSON Schema draft-07](https://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.2.4).",
+    )
+    maximum: Optional[float] = Field(
+        None,
+        description="The maximum value (inclusive) allowed for a numerical value. See [JSON Schema draft-07](https://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.2.2).",
+    )
+    minItems: Optional[confloat(ge=0.0)] = Field(
+        None,
+        description="The minimum number of items required in an array. See [JSON Schema draft-07](https://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.4.4).",
+    )
+    maxItems: Optional[confloat(ge=0.0)] = Field(
+        None,
+        description="The maximum number of items required in an array. See [JSON Schema draft-07](https://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.4.3).",
+    )
+    items: Optional[Union[list[dict], dict]] = Field(
+        None,
+        description="Specifies schemas for the items in an array according to [JSON Schema draft-07](https://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.4.1).",
+    )
+    deprecated: Optional[Deprecated] = None
+
+
+class DataTypeSchema(BaseModel):
+    __root__: Union[JsonSchema, list[JsonSchema]] = Field(
+        ...,
+        description="Either a single data type or a list of data types.",
+        title="Data Types",
+    )
+
+
+class Parameter(BaseParameter):
+    schema_: DataTypeSchema = Field(..., alias="schema")
+
+
+class ProcessReturnValue(BaseModel):
+    description: Optional[ProcessDescription] = None
+    schema_: DataTypeSchema = Field(..., alias="schema")
+
+
+class Returns(JsonSchema):
+    description: Optional[ProcessDescription] = None
+    schema_: DataTypeSchema = Field(..., alias="schema")
+
+
+class ParameterJsonSchema(JsonSchema):
+    parameters: Optional[list[Parameter]] = Field(
+        None,
+        description="A list of parameters passed to the child process graph.\n\nThe order in the array corresponds to the parameter order to\nbe used in clients that don't support named parameters.",
+        title="Process Graph Parameters",
+    )
+    returns: Optional[Returns] = Field(
+        None,
+        description="Description of the data that is returned by the child process graph.",
+        title="Process Graph Return Value",
+    )
+
+
+class ParameterSchema(BaseModel):
+    __root__: Union[ParameterJsonSchema, list[ParameterJsonSchema]] = Field(
+        ...,
+        description="Either a single data type or a list of data types.",
+        title="Parameter Data Types",
+    )
+
+
+class Parameter(BaseParameter):
+    schema_: DataTypeSchema = Field(..., alias="schema")
+
+
+class ProcessParameter(BaseParameter):
+    schema_: ParameterSchema = Field(..., alias="schema")
+
+
+class ProcessParameters(BaseModel):
+    __root__: list[ProcessParameter] = Field(
+        ...,
+        description="A list of parameters.\n\nThe order in the array corresponds to the parameter order to\nbe used in clients that don't support named parameters.\n\n**Note:** Specifying an empty array is different from (if allowed)\n`null` or the property being absent.\nAn empty array means the process has no parameters.\n`null` / property absent means that the parameters are unknown as\nthe user has not specified them. There could still be parameters in the\nprocess graph, if one is specified.",
+    )
+
+
+class ProcessGraph(BaseModel):
+    pass
+
+    class Config:
+        extra = Extra.allow
+
+
+class ProcessGraphId(str):
+    process_graph_id: constr(regex=r"^\w+$") = Field(
+        ...,
+        description="The identifier for the process. It MUST be unique across its namespace\n(e.g. pre-defined processes or user-defined processes).\n\nClients SHOULD warn the user if a user-defined process is added with the \nsame identifier as one of the pre-defined process.",
+        example="ndvi",
+    )
+
+
+class ProcessSummary(BaseModel):
+    __root__: str = Field(..., description="A short summary of what the process does.")
+
+
+class ProcessCategories(BaseModel):
+    __root__: list[str] = Field(..., description="A list of categories.")
+
+
+class Experimental(BaseModel):
+    __root__: bool = Field(
+        ...,
+        description="Declares that the specified entity is experimental, which means that it is likely to change or may produce unpredictable behaviour. Users should refrain from using it in production, but still feel encouraged to try it out and give feedback.",
+    )
+
+
+class ProcessExceptions(BaseModel):
+    pass
+
+    class Config:
+        extra = Extra.allow
+
+
+class ProcessArguments(BaseModel):
+    pass
+
+    class Config:
+        extra = Extra.allow
+
+
+class Example(BaseModel):
+    title: Optional[str] = Field(None, description="A title for the example.")
+    description: Optional[ProcessDescription] = None
+    arguments: ProcessArguments
+    returns: Optional[Any] = None
+
+
+class Process(BaseModel):
+    id: Optional[ProcessGraphId] = None
+    summary: Optional[ProcessSummary] = None
+    description: Optional[ProcessDescription] = None
+    categories: Optional[ProcessCategories] = None
+    parameters: Optional[ProcessParameters] = None
+    returns: Optional[ProcessReturnValue] = None
+    deprecated: Optional[Deprecated] = None
+    experimental: Optional[Experimental] = None
+    exceptions: Optional[ProcessExceptions] = None
+    examples: Optional[list[Example]] = Field(
+        None, description="Examples, may be used for unit tests."
+    )
+    links: Optional[list[Link]] = Field(
+        None,
+        description="Links related to this process, e.g. additional external documentation.\nIt is RECOMMENDED to provide links with the following `rel` (relation) types:\n1. `latest-version`: If a process has been marked as deprecated, a link SHOULD point to the preferred version of the process. The relation types `predecessor-version` (link to older version) and `successor-version` (link to newer version) can also be used to show the relation between versions.\n2. `example`: Links to examples of other processes that use this process.\n3. `cite-as`: For all DOIs associated with the process, the respective DOI links SHOULD be added.\nFor additional relation types see also the lists of [common relation types in openEO](#section/API-Principles/Web-Linking).",
+    )
+    process_graph: Optional[ProcessGraph] = None
+
+
+class ProcessesGetResponse(BaseModel):
+    processes: list[Process]
+    links: LinksPagination
+
+
+class LogCode(BaseModel):
+    __root__: str = Field(
+        ...,
+        description="The code is either one of the standardized error codes or a custom code, for example specified by a user in the `debug` process.",
+        example="SampleError",
+    )
+
+
+class LogLinks(BaseModel):
+    __root__: list[Link] = Field(
+        ...,
+        description="Links related to this log entry / error, e.g. to a resource that\nprovides further explanations.\n\nFor relation types see the lists of\n[common relation types in openEO](#section/API-Principles/Web-Linking).",
+        example=[
+            {
+                "href": "https://example.openeo.org/docs/errors/SampleError",
+                "rel": "about",
+            }
+        ],
+    )
+
+
+class Error(BaseModel):
+    id: Optional[str] = Field(
+        None,
+        description="A back-end MAY add a unique identifier to the error response to be able to log and track errors with further non-disclosable details. A client could communicate this id to a back-end provider to get further information.",
+        example="550e8400-e29b-11d4-a716-446655440000",
+    )
+    code: LogCode
+    message: str = Field(
+        ...,
+        description="A message explaining what the client may need to change or what difficulties the server is facing.",
+        example="Parameter 'sample' is missing.",
+    )
+    links: Optional[LogLinks] = None
+
+      
 class ConformanceGetResponse(BaseModel):
     conformsTo: list[AnyUrl]
 
@@ -624,4 +820,3 @@ class Version(BaseModel):
 
 class WellKnownOpeneoGetResponse(BaseModel):
     versions: list[Version]
-

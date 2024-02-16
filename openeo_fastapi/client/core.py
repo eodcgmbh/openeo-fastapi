@@ -4,6 +4,7 @@ from attrs import define, field
 
 from openeo_fastapi.client import conformance, models
 from openeo_fastapi.client.collections import get_collection, get_collections
+from openeo_fastapi.client.processes import list_processes
 
 from collections import namedtuple
 from urllib.parse import urlunparse
@@ -85,6 +86,11 @@ class OpenEOCore:
     async def get_collections(self) -> models.Collections:
         collections = await get_collections()
         return collections
+
+    @abc.abstractclassmethod
+    def get_processes(self) -> dict:
+        processes = list_processes()
+        return processes
 
     @abc.abstractmethod
     def get_conformance(self) -> models.ConformanceGetResponse:
