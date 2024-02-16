@@ -72,4 +72,4 @@ def collections():
 
 @pytest.fixture
 def s2a_collection(collections):
-    return collections[0]
+    return collections["collections"][0]
