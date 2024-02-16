@@ -9,7 +9,7 @@ router_collections = APIRouter()
 
 async def get_collections():
     """
-    Basic metadata for all datasets
+    Returns Basic metadata for all datasets
     """
     stac_url = (
         app_settings.STAC_API_URL
@@ -42,7 +42,7 @@ async def get_collections():
 
 async def get_collection(collection_id):
     """
-    Metadata for specific datasets
+    Returns Metadata for specific datasetsbased on collection_id (str).
     """
     stac_url = (
         app_settings.STAC_API_URL

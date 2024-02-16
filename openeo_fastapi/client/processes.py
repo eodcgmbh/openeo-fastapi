@@ -34,7 +34,7 @@ def get_available_processes():
 
 def list_processes() -> Union[ProcessesGetResponse, Error]:
     """
-    Supported predefined processes
+    Returns Supported predefined processes defined by openeo-processes-dask
     """
     try:
         processes = get_available_processes()
