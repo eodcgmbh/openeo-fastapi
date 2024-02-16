@@ -14,6 +14,8 @@ Included is a vscode dev container which is intended to be used as the developme
     ```
     # From /openeo-fastapi
 
+    poetry config virtualenvs.path "<I tend to set this to the repo. I.e, ~/openeo-fastapi/.venv>"
+
     poetry lock
 
     poetry install --all-extras

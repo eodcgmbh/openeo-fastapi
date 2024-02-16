@@ -1,3 +1,4 @@
+
 import sys
 from enum import Enum
 from pathlib import Path
@@ -24,6 +25,7 @@ class Type2(Enum):
     temporal = "temporal"
     bands = "bands"
     other = "other"
+
 
 
 class Type5(Enum):
@@ -228,7 +230,7 @@ class Capabilities(BaseModel):
         ],
     )
 
-
+      
 class CollectionId(str):
     """
     Based on https://github.com/stac-utils/stac-fastapi/tree/main/stac_fastapi/types/stac_fastapi/types
@@ -602,3 +604,24 @@ class Collections(TypedDict, total=False):
 
     collections: list[Collection]
     links: list[dict[str, Any]]
+
+class ConformanceGetResponse(BaseModel):
+    conformsTo: list[AnyUrl]
+
+
+class Version(BaseModel):
+    url: AnyUrl = Field(
+        ...,
+        description="*Absolute* URLs to the service.",
+        example="https://example.com/api/v1.0",
+    )
+    production: Optional[Production] = None
+    api_version: str = Field(
+        ...,
+        description="Version number of the openEO specification this back-end implements.",
+    )
+
+
+class WellKnownOpeneoGetResponse(BaseModel):
+    versions: list[Version]
+
