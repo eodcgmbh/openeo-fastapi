@@ -80,7 +80,7 @@ def collections():
 def s2a_collection(collections):
     return collections["collections"][0]
 
-  
+@pytest.fixture()
 def mocked_oidc_config():
     resp_content_bytes = json.dumps(
         {"userinfo_endpoint": "http://nothere.test"}
