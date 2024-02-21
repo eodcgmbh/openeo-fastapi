@@ -1,8 +1,6 @@
-from typing import Type
-
 import attr
-from attrs import Factory, define, field
-from fastapi import APIRouter, FastAPI, Response
+from attrs import define, field
+from fastapi import APIRouter, Response
 from starlette.responses import JSONResponse
 
 from openeo_fastapi.client import models
@@ -12,8 +10,8 @@ from openeo_fastapi.client import models
 class OpenEOApi:
     """Factory for creating FastApi applications conformant to the OpenEO Api specification."""
 
-    client: field()
-    app: field(default=Factory(lambda self: FastAPI))
+    client: field
+    app: field
     router: APIRouter = attr.ib(default=attr.Factory(APIRouter))
     response_class: type[Response] = attr.ib(default=JSONResponse)
 

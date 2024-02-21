@@ -1,69 +1,70 @@
 import aiohttp
-from fastapi import APIRouter
 
 from openeo_fastapi.client.models import Collection, Collections
-from openeo_fastapi.client.settings import app_settings
-
-router_collections = APIRouter()
+from openeo_fastapi.client.settings import AppSettings
 
 
-async def get_collections():
-    """
-    Returns Basic metadata for all datasets
-    """
-    stac_url = (
-        app_settings.STAC_API_URL
-        if app_settings.STAC_API_URL.endswith("/")
-        else app_settings.STAC_API_URL + "/"
-    )
+class CollectionCore:
+    def __init__(self, settings) -> None:
+        self.settings: AppSettings = settings
+        pass
 
-    try:
-        async with aiohttp.ClientSession() as client:
-            async with client.get(stac_url + "collections") as response:
-                resp = await response.json()
-                if response.status == 200 and resp.get("collections"):
-                    collections_list = []
-                    for collection_json in resp["collections"]:
+    async def get_collections(self):
+        """
+        Returns Basic metadata for all datasets
+        """
+        stac_url = (
+            self.settings.STAC_API_URL
+            if self.settings.STAC_API_URL.endswith("/")
+            else self.settings.STAC_API_URL + "/"
+        )
+
+        try:
+            async with aiohttp.ClientSession() as client:
+                async with client.get(stac_url + "collections") as response:
+                    resp = await response.json()
+                    if response.status == 200 and resp.get("collections"):
+                        collections_list = []
+                        for collection_json in resp["collections"]:
+                            if (
+                                not self.settings.STAC_COLLECTIONS_WHITELIST
+                                or collection_json["id"]
+                                in self.settings.STAC_COLLECTIONS_WHITELIST
+                            ):
+                                collections_list.append(collection_json)
+
+                        return Collections(
+                            collections=collections_list, links=resp["links"]
+                        )
+                    else:
+                        return {"Error": "No Collections found."}
+        except Exception as e:
+            raise Exception("Ran into: ", e)
+
+    async def get_collection(self, collection_id):
+        """
+        Returns Metadata for specific datasetsbased on collection_id (str).
+        """
+        stac_url = (
+            self.settings.STAC_API_URL
+            if self.settings.STAC_API_URL.endswith("/")
+            else self.settings.STAC_API_URL + "/"
+        )
+
+        try:
+            async with aiohttp.ClientSession() as client:
+                async with client.get(
+                    stac_url + f"collections/{collection_id}"
+                ) as response:
+                    resp = await response.json()
+                    if response.status == 200 and resp.get("id"):
                         if (
-                            not app_settings.STAC_COLLECTIONS_WHITELIST
-                            or collection_json["id"]
-                            in app_settings.STAC_COLLECTIONS_WHITELIST
+                            not self.settings.STAC_COLLECTIONS_WHITELIST
+                            or resp["id"] in self.settings.STAC_COLLECTIONS_WHITELIST
                         ):
-                            collections_list.append(collection_json)
+                            return Collection(**resp)
+                    else:
+                        return {"Error": "Collection not found."}
 
-                    return Collections(
-                        collections=collections_list, links=resp["links"]
-                    )
-                else:
-                    return {"Error": "No Collections found."}
-    except Exception as e:
-        raise Exception("Ran into: ", e)
-
-
-async def get_collection(collection_id):
-    """
-    Returns Metadata for specific datasetsbased on collection_id (str).
-    """
-    stac_url = (
-        app_settings.STAC_API_URL
-        if app_settings.STAC_API_URL.endswith("/")
-        else app_settings.STAC_API_URL + "/"
-    )
-
-    try:
-        async with aiohttp.ClientSession() as client:
-            async with client.get(
-                stac_url + f"collections/{collection_id}"
-            ) as response:
-                resp = await response.json()
-                if response.status == 200 and resp.get("id"):
-                    if (
-                        not app_settings.STAC_COLLECTIONS_WHITELIST
-                        or resp["id"] in app_settings.STAC_COLLECTIONS_WHITELIST
-                    ):
-                        return Collection(**resp)
-                else:
-                    return {"Error": "Collection not found."}
-
-    except Exception as e:
-        raise Exception("Ran into: ", e)
+        except Exception as e:
+            raise Exception("Ran into: ", e)
