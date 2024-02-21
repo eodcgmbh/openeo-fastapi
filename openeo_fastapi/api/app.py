@@ -1,6 +1,5 @@
-
-
 from typing import Type
+
 import attr
 from attrs import Factory, define, field
 from fastapi import APIRouter, FastAPI, Response
@@ -17,7 +16,6 @@ class OpenEOApi:
     app: field(default=Factory(lambda self: FastAPI))
     router: APIRouter = attr.ib(default=attr.Factory(APIRouter))
     response_class: type[Response] = attr.ib(default=JSONResponse)
-
 
     def _route_filter(self):
         """ """
@@ -39,7 +37,6 @@ class OpenEOApi:
             methods=["GET"],
             endpoint=self.client.get_capabilities,
         )
-
 
     def register_get_collections(self):
         """Register collection Endpoint (GET /collections).
@@ -70,7 +67,7 @@ class OpenEOApi:
             methods=["GET"],
             endpoint=self.client.get_collection,
         )
-    
+
     def register_get_conformance(self):
         """Register conformance page (GET /).
         Returns:
@@ -78,7 +75,7 @@ class OpenEOApi:
         """
         self.router.add_api_route(
             name="conformance",
-            path="/",
+            path="/conformance",
             response_model=models.ConformanceGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -135,13 +132,12 @@ class OpenEOApi:
         Returns:
             None
         """
-
         self.register_get_capabilities()
+        self.register_get_conformance()
         self.register_get_collections()
         self.register_get_collection()
         self.register_get_processes()
         self.register_well_known()
-
 
     def __attrs_post_init__(self):
         """Post-init hook.
@@ -155,4 +151,3 @@ class OpenEOApi:
         # Register core endpoints
         self.register_core()
         self.app.include_router(router=self.router)
-

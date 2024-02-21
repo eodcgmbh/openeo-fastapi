@@ -77,6 +77,18 @@ def test_get_capabilities(core_api):
     assert response.json()["title"] == "Test Api"
 
 
+def test_get_conformance(core_api):
+    """Test the /conformance endpoint as intended."""
+    from openeo_fastapi.client.conformance import BASIC_CONFORMANCE_CLASSES
+
+    test_app = TestClient(core_api.app)
+
+    response = test_app.get("/conformance")
+
+    assert response.status_code == 200
+    assert len(BASIC_CONFORMANCE_CLASSES) == len(response.json()["conformsTo"])
+
+
 def test_get_processes(core_api):
     """Test the /processes endpoint as intended."""
 
