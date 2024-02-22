@@ -1,13 +1,30 @@
+from typing import List
+
 import aiohttp
 
-from openeo_fastapi.client.models import Collection, Collections
+from openeo_fastapi.client.models import Collection, Collections, Endpoint
+from openeo_fastapi.client.register import EndpointRegister
 from openeo_fastapi.client.settings import AppSettings
 
 
-class CollectionCore:
+class CollectionRegister(EndpointRegister):
     def __init__(self, settings) -> None:
+        super().__init__()
+        self.endpoints = self._initialize_endpoints()
         self.settings: AppSettings = settings
         pass
+
+    def _initialize_endpoints(self) -> list[Endpoint]:
+        return [
+            Endpoint(
+                path="/collections",
+                methods=["GET"],
+            ),
+            Endpoint(
+                path="/collections/{collection_id}",
+                methods=["GET"],
+            ),
+        ]
 
     async def get_collections(self):
         """

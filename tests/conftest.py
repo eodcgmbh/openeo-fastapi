@@ -9,7 +9,7 @@ from requests import Response
 
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.client import auth, models, settings
-from openeo_fastapi.client.core import CollectionCore, OpenEOCore
+from openeo_fastapi.client.core import CollectionRegister, OpenEOCore
 
 pytestmark = pytest.mark.unit
 path_to_current_file = os.path.realpath(__file__)
@@ -32,6 +32,11 @@ def mock_settings_env_vars():
 
 
 @pytest.fixture()
+def app_settings():
+    return settings.AppSettings()
+
+
+@pytest.fixture()
 def core_api():
     client = OpenEOCore(
         settings=settings.AppSettings(),
@@ -50,20 +55,6 @@ def core_api():
                 models.Plan(name="user", description="Subscription plan.", paid=True)
             ],
         ),
-        endpoints=[
-            models.Endpoint(
-                path="/",
-                methods=["GET"],
-            ),
-            models.Endpoint(
-                path="/collections",
-                methods=["GET"],
-            ),
-            models.Endpoint(
-                path="/collections/{collection_id}",
-                methods=["GET"],
-            ),
-        ],
     )
 
     api = OpenEOApi(client=client, app=FastAPI())
@@ -73,7 +64,7 @@ def core_api():
 
 @pytest.fixture()
 def collections_core():
-    return CollectionCore(settings.AppSettings())
+    return CollectionRegister(settings.AppSettings())
 
 
 @pytest.fixture()

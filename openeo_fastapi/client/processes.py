@@ -1,16 +1,34 @@
 import functools
-from typing import Union
+from typing import List, Union
 
 import openeo_pg_parser_networkx
 import openeo_processes_dask.specs
 from openeo_pg_parser_networkx import ProcessRegistry
 
-from openeo_fastapi.client.models import Error, Process, ProcessesGetResponse
+from openeo_fastapi.client.models import Endpoint, Error, Process, ProcessesGetResponse
+from openeo_fastapi.client.register import EndpointRegister
 
 
-class ProcessCore:
+class ProcessRegister(EndpointRegister):
     def __init__(self) -> None:
-        self.process_registry = ProcessRegistry()
+        super().__init__()
+        self.endpoints = self._initialize_endpoints()
+        self.process_registry = self._create_process_registry()
+        pass
+
+    def _initialize_endpoints(self) -> list[Endpoint]:
+        return [
+            Endpoint(
+                path="/processes",
+                methods=["GET"],
+            )
+        ]
+
+    def _create_process_registry(self):
+        """
+        Returns the process registry based on the predefinied specifications from the openeo_processes_dask module.
+        """
+        process_registry = ProcessRegistry()
 
         predefined_processes_specs = {
             process_id: getattr(openeo_processes_dask.specs, process_id)
@@ -18,11 +36,11 @@ class ProcessCore:
         }
 
         for process_id, spec in predefined_processes_specs.items():
-            self.process_registry[
+            process_registry[
                 ("predefined", process_id)
             ] = openeo_pg_parser_networkx.Process(spec)
 
-        pass
+        return process_registry
 
     @functools.cache
     def get_available_processes(self):

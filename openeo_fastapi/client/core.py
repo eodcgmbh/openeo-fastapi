@@ -5,8 +5,8 @@ from urllib.parse import urlunparse
 from attrs import define, field
 
 from openeo_fastapi.client import conformance, models
-from openeo_fastapi.client.collections import CollectionCore
-from openeo_fastapi.client.processes import ProcessCore
+from openeo_fastapi.client.collections import CollectionRegister
+from openeo_fastapi.client.processes import ProcessRegister
 from openeo_fastapi.client.settings import AppSettings
 
 
@@ -15,18 +15,26 @@ class OpenEOCore:
     """Base client for the OpenEO Api."""
 
     billing: str = field()
-    endpoints: list = field()
     links: list = field()
 
     settings: AppSettings = field()
 
     _id: str = field(default="OpenEOApi")
 
-    _collections = CollectionCore(settings)
-    _processes = ProcessCore()
+    _collections = CollectionRegister(settings)
+    _processes = ProcessRegister()
 
-    @abc.abstractmethod
-    def get_well_know(self) -> models.WellKnownOpeneoGetResponse:
+    def _combine_endpoints(self):
+        """For the various registers that hold endpoint functions, concat those endpoints to register in get_capabilities."""
+        registers = [self._collections, self._processes]
+
+        endpoints = []
+        for register in registers:
+            if register:
+                endpoints.extend(register.endpoints)
+        return endpoints
+
+    def get_well_known(self) -> models.WellKnownOpeneoGetResponse:
         """ """
 
         prefix = "https" if self.settings.API_TLS else "http"
@@ -56,7 +64,6 @@ class OpenEOCore:
             ]
         )
 
-    @abc.abstractmethod
     def get_capabilities(self) -> models.Capabilities:
         """ """
         return models.Capabilities(
@@ -68,7 +75,7 @@ class OpenEOCore:
             backend_version=self.settings.OPENEO_VERSION,
             billing=self.billing,
             links=self.links,
-            endpoints=self.endpoints,
+            endpoints=self._combine_endpoints(),
         )
 
     @abc.abstractclassmethod
@@ -86,7 +93,7 @@ class OpenEOCore:
         processes = self._processes.list_processes()
         return processes
 
-    @abc.abstractmethod
+    @abc.abstractclassmethod
     def get_conformance(self) -> models.ConformanceGetResponse:
         """ """
         return models.ConformanceGetResponse(

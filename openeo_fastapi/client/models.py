@@ -1,4 +1,3 @@
-
 import sys
 from enum import Enum
 from pathlib import Path
@@ -27,7 +26,6 @@ class Type2(Enum):
     temporal = "temporal"
     bands = "bands"
     other = "other"
-
 
 
 class Type5(Enum):
@@ -232,7 +230,7 @@ class Capabilities(BaseModel):
         ],
     )
 
-      
+
 class CollectionId(str):
     collection_id: constr(regex=rb"^[\w\-\.~\/]+$") = Field(
         ...,
@@ -800,7 +798,7 @@ class Error(BaseModel):
     )
     links: Optional[LogLinks] = None
 
-      
+
 class ConformanceGetResponse(BaseModel):
     conformsTo: list[AnyUrl]
 
