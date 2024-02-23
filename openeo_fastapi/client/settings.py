@@ -6,11 +6,19 @@ from pydantic import BaseSettings, HttpUrl
 class AppSettings(BaseSettings):
     """Place to store application settings."""
 
-    OPENEO_VERSION = "1.1.0"
+    API_DNS = HttpUrl
+    API_TLS: str = "True"
+
+    API_TITLE: str
+    API_DESCRIPTION: str
+
+    OPENEO_VERSION: str = "1.1.0"
     OPENEO_PREFIX = f"/{OPENEO_VERSION}"
+
     # External APIs
-    STAC_API_URL: Optional[HttpUrl] = "http://test-stac-api.mock.com/api"
-    STAC_COLLECTIONS_WHITELIST: list[str] = []
+    STAC_VERSION: str = "1.0.0"
+    STAC_API_URL: Optional[HttpUrl]
+    STAC_COLLECTIONS_WHITELIST: Optional[list[str]] = []
 
     class Config:
         @classmethod
@@ -18,6 +26,3 @@ class AppSettings(BaseSettings):
             if field_name == "STAC_COLLECTIONS_WHITELIST":
                 return [x for x in raw_val.split(",")]
             return cls.json_loads(raw_val)
-
-
-app_settings = AppSettings()

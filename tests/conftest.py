@@ -1,15 +1,15 @@
 import json
 import os
+from unittest import mock
+from unittest.mock import patch
 
 import pytest
 from fastapi import FastAPI
 from requests import Response
 
-from unittest import mock
-from unittest.mock import patch
 from openeo_fastapi.api.app import OpenEOApi
-from openeo_fastapi.client import auth, models
-from openeo_fastapi.client.core import OpenEOCore
+from openeo_fastapi.client import auth, models, settings
+from openeo_fastapi.client.core import CollectionRegister, OpenEOCore
 
 pytestmark = pytest.mark.unit
 path_to_current_file = os.path.realpath(__file__)
@@ -19,20 +19,27 @@ current_directory = os.path.split(path_to_current_file)[0]
 @pytest.fixture(autouse=True)
 def mock_settings_env_vars():
     with mock.patch.dict(
-        os.environ, {"STAC_API_URL": "http://test-stac-api.mock.com/api/"}
+        os.environ,
+        {
+            "API_DNS": "test.api.org",
+            "API_TLS": "False",
+            "API_TITLE": "Test Api",
+            "API_DESCRIPTION": "My Test Api",
+            "STAC_API_URL": "http://test-stac-api.mock.com/api/",
+        },
     ):
         yield
 
 
 @pytest.fixture()
+def app_settings():
+    return settings.AppSettings()
+
+
+@pytest.fixture()
 def core_api():
     client = OpenEOCore(
-        api_dns="test.api.org",
-        api_tls=True,
-
-        title="Test Api",
-        description="My Test Api",
-        backend_version="1",
+        settings=settings.AppSettings(),
         links=[
             models.Link(
                 href="https://eodc.eu/",
@@ -48,26 +55,16 @@ def core_api():
                 models.Plan(name="user", description="Subscription plan.", paid=True)
             ],
         ),
-        endpoints=[
-            models.Endpoint(
-                path="/",
-                methods=["GET"],
-            ),
-            models.Endpoint(
-                path="/collections",
-                methods=["GET"],
-            ),
-            models.Endpoint(
-                path="/collections/{collection_id}",
-                methods=["GET"],
-            ),
-
-        ],
     )
 
     api = OpenEOApi(client=client, app=FastAPI())
 
     return api
+
+
+@pytest.fixture()
+def collections_core():
+    return CollectionRegister(settings.AppSettings())
 
 
 @pytest.fixture()
@@ -79,6 +76,7 @@ def collections():
 @pytest.fixture
 def s2a_collection(collections):
     return collections["collections"][0]
+
 
 @pytest.fixture()
 def mocked_oidc_config():
