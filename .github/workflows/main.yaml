@@ -38,7 +38,7 @@ jobs:
 
       - name: Install Postgresql 15 for unit tests
         id: install-postgres-15
-        run: apt install -qy postgresql-15
+        run: sudo apt install -qy postgresql-15
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
