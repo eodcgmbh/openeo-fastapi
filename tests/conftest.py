@@ -6,6 +6,8 @@ from unittest.mock import patch
 import pytest
 from fastapi import FastAPI
 from requests import Response
+from sqlalchemy import create_engine
+from sqlalchemy.pool import NullPool
 
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.client import auth, models, settings
@@ -140,3 +142,22 @@ def mocked_issuer():
         organisation="mycloud",
         roles=["admin", "user"],
     )
+
+
+@pytest.fixture()
+def mock_engine(postgresql):
+    """Postgresql engine for SQLAlchemy."""
+
+    from openeo_fastapi.client.psql.engine import create_all, get_engine
+
+    # Set the env vars that alembic will use for DB connection and run alembic engine from CLI!
+    os.environ["POSTGRES_USER"] = postgresql.info.user
+    os.environ["POSTGRES_PASSWORD"] = "postgres"
+    os.environ["POSTGRESQL_HOST"] = postgresql.info.host
+    os.environ["POSTGRESQL_PORT"] = str(postgresql.info.port)
+    os.environ["POSTGRES_DB"] = postgresql.info.dbname
+
+    engine = get_engine()
+    create_all()
+
+    return engine
