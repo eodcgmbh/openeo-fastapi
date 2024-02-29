@@ -17,8 +17,3 @@ def get_engine():
         )
     )
     return engine
-
-
-def create_all():
-    """ """
-    BASE.metadata.create_all(get_engine())

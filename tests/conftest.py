@@ -1,13 +1,14 @@
+import importlib.metadata
 import json
 import os
+from pathlib import Path
 from unittest import mock
 from unittest.mock import patch
 
+import fsspec
 import pytest
 from fastapi import FastAPI
 from requests import Response
-from sqlalchemy import create_engine
-from sqlalchemy.pool import NullPool
 
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.client import auth, models, settings
@@ -16,6 +17,14 @@ from openeo_fastapi.client.core import CollectionRegister, OpenEOCore
 pytestmark = pytest.mark.unit
 path_to_current_file = os.path.realpath(__file__)
 current_directory = os.path.split(path_to_current_file)[0]
+
+# Have the version ready for using as an autorevision name
+__version__ = importlib.metadata.version("openeo_fastapi")
+
+# A user needs to have an alembic directory for the auto generated revisions to be added to.
+ALEMBIC_DIR = Path(__file__).parent.parent / "tests/alembic/"
+
+fs = fsspec.filesystem(protocol="file")
 
 
 @pytest.fixture(autouse=True)
@@ -71,7 +80,7 @@ def collections_core():
 
 @pytest.fixture()
 def collections():
-    with open(os.path.join(current_directory, "collections.json")) as f_in:
+    with open(os.path.join(current_directory, "data/collections.json")) as f_in:
         return json.load(f_in)
 
 
@@ -147,8 +156,38 @@ def mocked_issuer():
 @pytest.fixture()
 def mock_engine(postgresql):
     """Postgresql engine for SQLAlchemy."""
+    import os
+    from pathlib import Path
 
-    from openeo_fastapi.client.psql.engine import create_all, get_engine
+    from alembic import command
+    from alembic.config import Config
+
+    from openeo_fastapi.client.psql.engine import get_engine
+
+    os.chdir(Path(ALEMBIC_DIR))
+
+    # Set the env vars that alembic will use for DB connection and run alembic engine from CLI!
+    os.environ["POSTGRES_USER"] = postgresql.info.user
+    os.environ["POSTGRES_PASSWORD"] = "postgres"
+    os.environ["POSTGRESQL_HOST"] = postgresql.info.host
+    os.environ["POSTGRESQL_PORT"] = str(postgresql.info.port)
+    os.environ["POSTGRES_DB"] = postgresql.info.dbname
+
+    alembic_cfg = Config("alembic.ini")
+
+    command.revision(alembic_cfg, f"openeo-fastapi-{__version__}", autogenerate=True)
+    command.upgrade(alembic_cfg, "head")
+
+    engine = get_engine()
+
+    return engine
+
+
+@pytest.fixture()
+def mock_engine_no_revision(postgresql):
+    """Postgresql engine for SQLAlchemy."""
+
+    from openeo_fastapi.client.psql.engine import get_engine
 
     # Set the env vars that alembic will use for DB connection and run alembic engine from CLI!
     os.environ["POSTGRES_USER"] = postgresql.info.user
@@ -158,6 +197,31 @@ def mock_engine(postgresql):
     os.environ["POSTGRES_DB"] = postgresql.info.dbname
 
     engine = get_engine()
-    create_all()
 
     return engine
+
+
+@pytest.fixture(scope="function", autouse=True)
+def cleanup_out_folder():
+    # Path to test alembic versions folder
+    alembic_version_dir = str(ALEMBIC_DIR / "alembic/versions")
+    alembic_pycache = str(ALEMBIC_DIR / "__pycache__")
+    alembic_cache_dir = str(ALEMBIC_DIR / "alembic/__pycache__")
+    alembic_ver_cache_dir = str(ALEMBIC_DIR / "alembic/versions/__pycache__")
+
+    yield  # Yield to the running tests
+
+    # Teardown: Delete the output folder,
+    if fs.exists(alembic_version_dir):
+        for file in fs.ls(alembic_version_dir):
+            fs.rm(file, recursive=True)
+
+    # Remove alembic pycaches
+    if fs.exists(alembic_pycache):
+        fs.rm(alembic_pycache, recursive=True)
+
+    if fs.exists(alembic_ver_cache_dir):
+        fs.rm(alembic_ver_cache_dir, recursive=True)
+
+    if fs.exists(alembic_cache_dir):
+        fs.rm(alembic_cache_dir, recursive=True)
