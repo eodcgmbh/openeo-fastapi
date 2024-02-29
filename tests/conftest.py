@@ -191,12 +191,16 @@ def cleanup_out_folder():
     alembic_cache_dir = str(ALEMBIC_DIR / "alembic/__pycache__")
     alembic_ver_cache_dir = str(ALEMBIC_DIR / "alembic/versions/__pycache__")
 
+    if not fs.exists(alembic_version_dir):
+        fs.mkdir(alembic_version_dir)
+
     yield  # Yield to the running tests
 
     # Teardown: Delete the output folder,
     if fs.exists(alembic_version_dir):
         for file in fs.ls(alembic_version_dir):
             fs.rm(file, recursive=True)
+        fs.rmdir(alembic_version_dir)
 
     # Remove alembic pycaches
     if fs.exists(alembic_pycache):
