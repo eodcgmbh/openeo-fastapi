@@ -3,11 +3,9 @@ from sqlalchemy import BOOLEAN, Column, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-from openeo_fastapi.client.psql.engine import get_engine
 from openeo_fastapi.client.psql.models import User
 
 
-@pytest.mark.serial
 def test_db_setup(mock_engine):
     """A test to validate the basic structure of our ORMs and get_engine functions."""
     import uuid
@@ -34,13 +32,13 @@ def test_db_models_extendable(mock_engine):
 
     user_uid = uuid.uuid4()
 
-    # Extend the user class as we intend a user to do
+    # Extend the user class
     class ExtendedUser(User):
         """ORM for the user table."""
 
         new_value = Column(BOOLEAN, nullable=False)
 
-    # Try to revise the database using the extended base
+    # Try to revise the database using the extended User
     import os
     from pathlib import Path
 

@@ -183,24 +183,6 @@ def mock_engine(postgresql):
     return engine
 
 
-@pytest.fixture()
-def mock_engine_no_revision(postgresql):
-    """Postgresql engine for SQLAlchemy."""
-
-    from openeo_fastapi.client.psql.engine import get_engine
-
-    # Set the env vars that alembic will use for DB connection and run alembic engine from CLI!
-    os.environ["POSTGRES_USER"] = postgresql.info.user
-    os.environ["POSTGRES_PASSWORD"] = "postgres"
-    os.environ["POSTGRESQL_HOST"] = postgresql.info.host
-    os.environ["POSTGRESQL_PORT"] = str(postgresql.info.port)
-    os.environ["POSTGRES_DB"] = postgresql.info.dbname
-
-    engine = get_engine()
-
-    return engine
-
-
 @pytest.fixture(scope="function", autouse=True)
 def cleanup_out_folder():
     # Path to test alembic versions folder
