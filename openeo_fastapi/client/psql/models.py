@@ -5,16 +5,8 @@ from sqlalchemy import BOOLEAN, VARCHAR, Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import ENUM, JSON, UUID
 from sqlalchemy.orm import relationship
 
+from openeo_fastapi.client.models import Status
 from openeo_fastapi.client.psql.settings import BASE
-
-
-class Status(Enum):
-    created = "created"
-    queued = "queued"
-    running = "running"
-    canceled = "canceled"
-    finished = "finished"
-    error = "error"
 
 
 class User(BASE):
