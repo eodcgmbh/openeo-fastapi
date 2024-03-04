@@ -10,3 +10,5 @@ class DataBaseSettings(BaseSettings):
     POSTGRESQL_HOST: SecretStr
     POSTGRESQL_PORT: SecretStr
     POSTGRES_DB: SecretStr
+
+    ALEMBIC_DIR: str

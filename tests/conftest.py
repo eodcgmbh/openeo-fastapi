@@ -37,6 +37,7 @@ def mock_settings_env_vars():
             "API_TITLE": "Test Api",
             "API_DESCRIPTION": "My Test Api",
             "STAC_API_URL": "http://test-stac-api.mock.com/api/",
+            "ALEMBIC_DIR": ALEMBIC_DIR,
         },
     ):
         yield

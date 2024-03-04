@@ -2,6 +2,36 @@
 
 A FastAPI implementation of the OpenEO Api specification.
 
+## Install
+
+Install using pip
+```
+```
+
+### Use
+
+The openeo fastapi repo has been set up to work with alembic. When you use this package to to prepare your api, you will need to create an alembic directory. In this directory, you can optionally add a models.py file and extend and of the models from openeo_fastapi.client.models.
+
+The env.py file in the alembic directory, needs to be edited in the following way.
+```
+from openeo_fastapi.settings import BASE
+
+target_metadata = BASE.metadata
+```
+
+You can now create auto revisions for a psql database using the alembic python commands.
+
+```
+alembic_cfg = Config("alembic.ini")
+
+command.revision(alembic_cfg, f"openeo-fastapi-{__version__}", autogenerate=True)
+command.upgrade(alembic_cfg, "head")
+
+engine = get_engine()
+```
+
+Check how it is configured for the tests to see more.
+
 ## Contribute
 
 Included is a vscode dev container which is intended to be used as the development environment for this package. A virtual environment needs to be set up inside the dev container, this is managed by poetry.
