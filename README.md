@@ -1,4 +1,8 @@
 # OpenEO FastAPI
+![PyPI - Status](https://img.shields.io/pypi/status/openeo-fastapi)
+![PyPI](https://img.shields.io/pypi/v/openeo-fastapi)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/openeo-fastapi)
+
 
 A FastAPI implementation of the OpenEO Api specification.
 
@@ -6,6 +10,7 @@ A FastAPI implementation of the OpenEO Api specification.
 
 Install using pip
 ```
+pip install openeo-fastapi
 ```
 
 ### Use
