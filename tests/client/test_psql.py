@@ -3,10 +3,15 @@ from sqlalchemy import BOOLEAN, Column, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-from openeo_fastapi.client.psql.models import User
+from openeo_fastapi.client.psql.models import (
+    Job,
+    ProcessGraph,
+    User,
+    UserDefinedProcessGraph,
+)
 
 
-def test_db_setup(mock_engine):
+def test_db_setup_and_user_model(mock_engine):
     """A test to validate the basic structure of our ORMs and get_engine functions."""
     import uuid
 
@@ -25,7 +30,83 @@ def test_db_setup(mock_engine):
         assert not sesh.scalars(wrong_user).first()
 
 
-def test_db_models_extendable(mock_engine):
+def test_job_model(mock_engine):
+    """ """
+    import uuid
+
+    user_uid = uuid.uuid4()
+    job_uid = uuid.uuid4()
+
+    user = User(user_id=user_uid, oidc_sub="someone@egi.eu")
+    job = Job(
+        job_id=job_uid,
+        user_id=user_uid,
+        status="created",
+        process_graph_id=uuid.uuid4(),
+    )
+
+    session = sessionmaker(mock_engine)
+    with session.begin() as sesh:
+        sesh.add(user)
+        sesh.add(job)
+
+    with session.begin() as sesh:
+        found_job = select(Job).filter_by(job_id=job_uid)
+
+        assert sesh.scalars(found_job).first()
+
+
+def test_processgraph_model(mock_engine):
+    """ """
+    import uuid
+
+    user_uid = uuid.uuid4()
+    process_graph_uid = "SOMEPGID"
+
+    user = User(user_id=user_uid, oidc_sub="someone@egi.eu")
+    processgraph = ProcessGraph(
+        process_graph_id=process_graph_uid,
+        user_id=user_uid,
+        process_graph={"process": {"args": "one"}},
+    )
+
+    session = sessionmaker(mock_engine)
+    with session.begin() as sesh:
+        sesh.add(user)
+        sesh.add(processgraph)
+
+    with session.begin() as sesh:
+        found_pg = select(ProcessGraph).filter_by(process_graph_id=process_graph_uid)
+
+        assert sesh.scalars(found_pg).first()
+
+
+def test_userdefinedprocessgraph_model(mock_engine):
+    """ """
+    import uuid
+
+    user_uid = uuid.uuid4()
+    process_graph_uid = "SOMEPGID"
+
+    user = User(user_id=user_uid, oidc_sub="someone@egi.eu")
+    processgraph = UserDefinedProcessGraph(
+        udp_id=process_graph_uid,
+        user_id=user_uid,
+        process_graph={"process": {"args": "one"}},
+    )
+
+    session = sessionmaker(mock_engine)
+    with session.begin() as sesh:
+        sesh.add(user)
+        sesh.add(processgraph)
+
+    with session.begin() as sesh:
+        found_pg = select(UserDefinedProcessGraph).filter_by(udp_id=process_graph_uid)
+
+        assert sesh.scalars(found_pg).first()
+
+
+def test_models_extendable(mock_engine):
     """Test the existing models can be extended and used to revise the database."""
 
     import uuid
