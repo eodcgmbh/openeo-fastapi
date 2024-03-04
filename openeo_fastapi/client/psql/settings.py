@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic import BaseSettings, SecretStr
 from sqlalchemy.orm import declarative_base
 
@@ -11,4 +13,4 @@ class DataBaseSettings(BaseSettings):
     POSTGRESQL_PORT: SecretStr
     POSTGRES_DB: SecretStr
 
-    ALEMBIC_DIR: str
+    ALEMBIC_DIR: Path
