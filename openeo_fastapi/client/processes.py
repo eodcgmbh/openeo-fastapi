@@ -2,7 +2,8 @@ import functools
 from typing import Union
 
 import openeo_processes_dask.specs
-from openeo_pg_parser_networkx import Process, ProcessRegistry
+from openeo_pg_parser_networkx import Process as pgProcess
+from openeo_pg_parser_networkx import ProcessRegistry
 
 from openeo_fastapi.client.models import Endpoint, Error, Process, ProcessesGetResponse
 from openeo_fastapi.client.register import EndpointRegister
@@ -35,7 +36,7 @@ class ProcessRegister(EndpointRegister):
         }
 
         for process_id, spec in predefined_processes_specs.items():
-            process_registry[("predefined", process_id)] = Process(spec)
+            process_registry[("predefined", process_id)] = pgProcess(spec)
 
         return process_registry
 
