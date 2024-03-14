@@ -1,10 +1,7 @@
-import re
-
 import attr
 from attrs import define, field
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, HTTPException, Response
 from starlette.responses import JSONResponse
-from starlette.routing import Route
 
 from openeo_fastapi.client import models
 
@@ -137,6 +134,21 @@ class OpenEOApi:
         self.register_get_processes()
         self.register_well_known()
 
+    def http_exception_handler(self, request, exception):
+        """Register exception handler to turn python exceptions into expected OpenEO error output."""
+        exception_headers = {
+            "allow_origin": "*",
+            "allow_credentials": "true",
+            "allow_methods": "*",
+        }
+        from fastapi.encoders import jsonable_encoder
+
+        return JSONResponse(
+            headers=exception_headers,
+            status_code=exception.status_code,
+            content=jsonable_encoder(exception.detail),
+        )
+
     def __attrs_post_init__(self):
         """Post-init hook.
 
@@ -151,3 +163,4 @@ class OpenEOApi:
 
         self.register_get_capabilities()
         self.app.include_router(router=self.router)
+        self.app.add_exception_handler(HTTPException, self.http_exception_handler)

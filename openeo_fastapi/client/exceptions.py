@@ -1,3 +1,9 @@
+class NotFound(Exception):
+    """"""
+
+    pass
+
+
 class TokenInvalid(Exception):
     """ """
 

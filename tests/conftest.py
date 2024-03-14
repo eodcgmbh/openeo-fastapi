@@ -10,10 +10,6 @@ import pytest
 from fastapi import FastAPI
 from requests import Response
 
-from openeo_fastapi.api.app import OpenEOApi
-from openeo_fastapi.client import auth, models, settings
-from openeo_fastapi.client.core import CollectionRegister, OpenEOCore
-
 pytestmark = pytest.mark.unit
 path_to_current_file = os.path.realpath(__file__)
 current_directory = os.path.split(path_to_current_file)[0]
@@ -26,32 +22,44 @@ ALEMBIC_DIR = Path(__file__).parent.parent / "tests/alembic/"
 
 fs = fsspec.filesystem(protocol="file")
 
+SETTINGS_DICT = {
+    "API_DNS": "http://test.api.org",
+    "API_TLS": "False",
+    "API_TITLE": "Test Api",
+    "API_DESCRIPTION": "My Test Api",
+    "STAC_API_URL": "http://test-stac-api.mock.com/api/",
+    "ALEMBIC_DIR": str(ALEMBIC_DIR),
+}
+
+os.environ["API_DNS"] = "http://test.api.org"
+os.environ["API_TLS"] = "False"
+os.environ["API_TITLE"] = "Test Api"
+os.environ["API_DESCRIPTION"] = "My Test Api"
+os.environ["STAC_API_URL"] = "http://test-stac-api.mock.com/api/"
+os.environ["ALEMBIC_DIR"] = str(ALEMBIC_DIR)
+
+from openeo_fastapi.api.app import OpenEOApi
+from openeo_fastapi.client import auth, models, settings
+from openeo_fastapi.client.core import CollectionRegister, OpenEOCore
+
 
 @pytest.fixture(autouse=True)
 def mock_settings_env_vars():
     with mock.patch.dict(
         os.environ,
-        {
-            "API_DNS": "test.api.org",
-            "API_TLS": "False",
-            "API_TITLE": "Test Api",
-            "API_DESCRIPTION": "My Test Api",
-            "STAC_API_URL": "http://test-stac-api.mock.com/api/",
-            "ALEMBIC_DIR": str(ALEMBIC_DIR),
-        },
+        SETTINGS_DICT,
     ):
         yield
 
 
 @pytest.fixture()
 def app_settings():
-    return settings.AppSettings()
+    return settings.AppSettings(**SETTINGS_DICT)
 
 
 @pytest.fixture()
 def core_api():
     client = OpenEOCore(
-        settings=settings.AppSettings(),
         links=[
             models.Link(
                 href="https://eodc.eu/",

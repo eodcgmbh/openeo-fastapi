@@ -1,17 +1,16 @@
-from typing import List
-
 import aiohttp
+from fastapi import HTTPException
 
+from openeo_fastapi.client.exceptions import NotFound
 from openeo_fastapi.client.models import Collection, Collections, Endpoint
 from openeo_fastapi.client.register import EndpointRegister
-from openeo_fastapi.client.settings import AppSettings
 
 
 class CollectionRegister(EndpointRegister):
     def __init__(self, settings) -> None:
         super().__init__()
         self.endpoints = self._initialize_endpoints()
-        self.settings: AppSettings = settings
+        self.settings = settings
         pass
 
     def _initialize_endpoints(self) -> list[Endpoint]:
@@ -26,62 +25,60 @@ class CollectionRegister(EndpointRegister):
             ),
         ]
 
-    async def get_collections(self):
+    async def _proxy_request(self, path):
         """
-        Returns Basic metadata for all datasets
+        Proxy the request with aiohttp.
         """
-        stac_url = (
-            self.settings.STAC_API_URL
-            if self.settings.STAC_API_URL.endswith("/")
-            else self.settings.STAC_API_URL + "/"
-        )
-
-        try:
-            async with aiohttp.ClientSession() as client:
-                async with client.get(stac_url + "collections") as response:
-                    resp = await response.json()
-                    if response.status == 200 and resp.get("collections"):
-                        collections_list = []
-                        for collection_json in resp["collections"]:
-                            if (
-                                not self.settings.STAC_COLLECTIONS_WHITELIST
-                                or collection_json["id"]
-                                in self.settings.STAC_COLLECTIONS_WHITELIST
-                            ):
-                                collections_list.append(collection_json)
-
-                        return Collections(
-                            collections=collections_list, links=resp["links"]
-                        )
-                    else:
-                        return {"Error": "No Collections found."}
-        except Exception as e:
-            raise Exception("Ran into: ", e)
+        async with aiohttp.ClientSession() as client:
+            async with client.get(self.settings.STAC_API_URL + path) as response:
+                resp = await response.json()
+                if response.status == 200:
+                    return resp
 
     async def get_collection(self, collection_id):
         """
         Returns Metadata for specific datasetsbased on collection_id (str).
         """
-        stac_url = (
-            self.settings.STAC_API_URL
-            if self.settings.STAC_API_URL.endswith("/")
-            else self.settings.STAC_API_URL + "/"
+        not_found = HTTPException(
+            status_code=404,
+            detail={
+                "code": "NotFound",
+                "message": f"Collection {collection_id} not found.",
+            },
         )
 
-        try:
-            async with aiohttp.ClientSession() as client:
-                async with client.get(
-                    stac_url + f"collections/{collection_id}"
-                ) as response:
-                    resp = await response.json()
-                    if response.status == 200 and resp.get("id"):
-                        if (
-                            not self.settings.STAC_COLLECTIONS_WHITELIST
-                            or resp["id"] in self.settings.STAC_COLLECTIONS_WHITELIST
-                        ):
-                            return Collection(**resp)
-                    else:
-                        return {"Error": "Collection not found."}
+        if (
+            not self.settings.STAC_COLLECTIONS_WHITELIST
+            or collection_id in self.settings.STAC_COLLECTIONS_WHITELIST
+        ):
+            path = f"collections/{collection_id}"
+            resp = await self._proxy_request(path)
 
-        except Exception as e:
-            raise Exception("Ran into: ", e)
+            if resp:
+                return Collection(**resp)
+            raise not_found
+        raise not_found
+
+    async def get_collections(self):
+        """
+        Returns Basic metadata for all datasets
+        """
+        path = "collections"
+        resp = await self._proxy_request(path)
+
+        if resp:
+            collections_list = [
+                collection
+                for collection in resp["collections"]
+                if (
+                    not self.settings.STAC_COLLECTIONS_WHITELIST
+                    or collection["id"] in self.settings.STAC_COLLECTIONS_WHITELIST
+                )
+            ]
+
+            return Collections(collections=collections_list, links=resp["links"])
+        else:
+            raise HTTPException(
+                status_code=404,
+                detail={"code": "NotFound", "message": "No Collections found."},
+            )
