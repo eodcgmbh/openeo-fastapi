@@ -1,14 +1,12 @@
 import os
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 from aioresponses import aioresponses
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
-from httpx import Response
 
 from openeo_fastapi.api.app import OpenEOApi
-from openeo_fastapi.client.exceptions import NotFound
 from openeo_fastapi.client.models import Collection
 
 

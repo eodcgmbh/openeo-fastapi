@@ -1,5 +1,4 @@
 import abc
-from typing import List
 
 from openeo_fastapi.client.models import Endpoint
 
