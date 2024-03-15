@@ -77,6 +77,15 @@ class Method(Enum):
     OPTIONS = "OPTIONS"
 
 
+class Status(Enum):
+    created = "created"
+    queued = "queued"
+    running = "running"
+    canceled = "canceled"
+    finished = "finished"
+    error = "error"
+
+
 class Endpoint(BaseModel):
     path: str = Field(
         ...,
