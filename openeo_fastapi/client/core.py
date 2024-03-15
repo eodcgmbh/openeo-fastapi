@@ -17,7 +17,7 @@ class OpenEOCore:
     billing: str = field()
     links: list = field()
 
-    settings: AppSettings = field()
+    settings = AppSettings()
 
     _id: str = field(default="OpenEOApi")
 

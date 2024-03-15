@@ -1,13 +1,16 @@
+from pathlib import Path
 from typing import Any, Optional
 
-from pydantic import BaseSettings, HttpUrl
+from pydantic import BaseSettings, HttpUrl, validator
 
 
 class AppSettings(BaseSettings):
     """Place to store application settings."""
 
-    API_DNS = HttpUrl
-    API_TLS: str = "True"
+    API_DNS: HttpUrl
+    API_TLS: bool = True
+
+    ALEMBIC_DIR: Path
 
     API_TITLE: str
     API_DESCRIPTION: str
@@ -17,8 +20,15 @@ class AppSettings(BaseSettings):
 
     # External APIs
     STAC_VERSION: str = "1.0.0"
-    STAC_API_URL: Optional[HttpUrl]
+    STAC_API_URL: HttpUrl
     STAC_COLLECTIONS_WHITELIST: Optional[list[str]] = []
+
+    @validator("STAC_API_URL")
+    @classmethod
+    def name_must_contain_space(cls, v: str) -> str:
+        if v.endswith("/"):
+            return v
+        return v.__add__("/")
 
     class Config:
         @classmethod
