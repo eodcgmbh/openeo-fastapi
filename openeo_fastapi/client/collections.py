@@ -10,7 +10,6 @@ class CollectionRegister(EndpointRegister):
         super().__init__()
         self.endpoints = self._initialize_endpoints()
         self.settings = settings
-        pass
 
     def _initialize_endpoints(self) -> list[Endpoint]:
         return [

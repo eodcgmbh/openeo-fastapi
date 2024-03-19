@@ -14,7 +14,6 @@ class ProcessRegister(EndpointRegister):
         super().__init__()
         self.endpoints = self._initialize_endpoints()
         self.process_registry = self._create_process_registry()
-        pass
 
     def _initialize_endpoints(self) -> list[Endpoint]:
         return [

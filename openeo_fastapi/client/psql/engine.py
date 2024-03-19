@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 
-from openeo_fastapi.client.psql.settings import BASE, DataBaseSettings
+from openeo_fastapi.client.psql.settings import DataBaseSettings
 
 
 def get_engine():
