@@ -1,7 +1,7 @@
 import aiohttp
 from fastapi import HTTPException
 
-from openeo_fastapi.client.models import Collection, Collections, Endpoint
+from openeo_fastapi.client.models import Collection, Collections, Endpoint, Error
 from openeo_fastapi.client.register import EndpointRegister
 
 
@@ -39,10 +39,9 @@ class CollectionRegister(EndpointRegister):
         """
         not_found = HTTPException(
             status_code=404,
-            detail={
-                "code": "NotFound",
-                "message": f"Collection {collection_id} not found.",
-            },
+            detail=Error(
+                code="NotFound", message=f"Collection {collection_id} not found."
+            ),
         )
 
         if (
@@ -78,5 +77,5 @@ class CollectionRegister(EndpointRegister):
         else:
             raise HTTPException(
                 status_code=404,
-                detail={"code": "NotFound", "message": "No Collections found."},
+                detail=Error(code="NotFound", message="No Collections found."),
             )
