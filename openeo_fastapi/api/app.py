@@ -50,37 +50,6 @@ class OpenEOApi:
             endpoint=self.client.get_capabilities,
         )
 
-    def register_get_collections(self):
-        """Register collection Endpoint (GET /collections).
-        Returns:
-            None
-        """
-        self.router.add_api_route(
-            name="collections",
-            path=f"/{self.client.settings.OPENEO_VERSION}/collections",
-            response_model=None,
-            response_model_exclude_unset=False,
-            response_model_exclude_none=True,
-            methods=["GET"],
-            endpoint=self.client.get_collections,
-        )
-
-    def register_get_collection(self):
-        """Register Endpoint for Individual Collection (GET /collections/{collection_id}).
-        Returns:
-            None
-        """
-        self.router.add_api_route(
-            name="collection",
-            path=f"/{self.client.settings.OPENEO_VERSION}"
-            + "/collections/{collection_id}",
-            response_model=None,
-            response_model_exclude_unset=False,
-            response_model_exclude_none=True,
-            methods=["GET"],
-            endpoint=self.client.get_collection,
-        )
-
     def register_get_conformance(self):
         """Register conformance page (GET /).
         Returns:
@@ -96,6 +65,37 @@ class OpenEOApi:
             endpoint=self.client.get_conformance,
         )
 
+    def register_get_collections(self):
+        """Register collection Endpoint (GET /collections).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="collections",
+            path=f"/{self.client.settings.OPENEO_VERSION}/collections",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._collections.get_collections,
+        )
+
+    def register_get_collection(self):
+        """Register Endpoint for Individual Collection (GET /collections/{collection_id}).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="collection",
+            path=f"/{self.client.settings.OPENEO_VERSION}"
+            + "/collections/{collection_id}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._collections.get_collection,
+        )
+
     def register_get_processes(self):
         """Register Endpoint for Processes (GET /processes).
 
@@ -109,7 +109,23 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client.get_processes,
+            endpoint=self.client._processes.list_processes,
+        )
+
+    def register_post_job(self):
+        """Register Endpoint for Jobs (GET /processes).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="post_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["POST"],
+            endpoint=self.client._jobs.create_job,
         )
 
     def register_core(self):
@@ -132,6 +148,7 @@ class OpenEOApi:
         self.register_get_collections()
         self.register_get_collection()
         self.register_get_processes()
+        self.register_post_job()
         self.register_well_known()
 
     def http_exception_handler(self, request, exception):

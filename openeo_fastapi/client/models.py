@@ -1,3 +1,4 @@
+import datetime
 import sys
 import uuid
 from enum import Enum
@@ -6,7 +7,10 @@ from typing import Any, List, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, Extra, Field, confloat, constr, validator
 
+from openeo_fastapi.client.psql.models import ProcessGraphORM, Status
+
 # Most of these models are based on previous work from EODC openeo-python-api
+
 
 # Avoids a Pydantic error:
 # TypeError: You should use `typing_extensions.TypedDict` instead of
@@ -90,15 +94,6 @@ class Method(Enum):
     PUT = "PUT"
     DELETE = "DELETE"
     OPTIONS = "OPTIONS"
-
-
-class Status(Enum):
-    created = "created"
-    queued = "queued"
-    running = "running"
-    canceled = "canceled"
-    finished = "finished"
-    error = "error"
 
 
 class Endpoint(BaseModel):
@@ -970,11 +965,7 @@ class BatchJob(BaseModel):
     title: Optional[EoTitle] = None
     description: Optional[EoDescription] = None
     process: Optional[ProcessGraphWithMetadata] = None
-    status: Status = Field(
-        ...,
-        description="The current status of a batch job.\n\nThe following status changes can occur:\n* `POST /jobs`: The status is initialized as `created`.\n* `POST /jobs/{job_id}/results`: The status is set to `queued`, if\nprocessing doesn't start instantly.\n    * Once the processing starts the status is set to `running`.\n    * Once the data is available to download the status is set to `finished`.\n    * Whenever an error occurs during processing, the status MUST be set to `error`.\n* `DELETE /jobs/{job_id}/results`: The status is set to `canceled` if\nthe status was `running` beforehand and partial or preliminary results\nare available to be downloaded. Otherwise the status is set to\n`created`. ",
-        example="running",
-    )
+    status: Status
     progress: Optional[confloat(ge=0.0, le=100.0)] = Field(
         None,
         description="Indicates the process of a running batch job in percent.\nCan also be set for a job which stopped due to an error or was canceled by the user. In this case, the value indicates the progress at which the job stopped. The Property may not be available for the status codes `created` and `queued`.\nSubmitted and queued jobs only allow the value `0`, finished jobs only allow the value `100`.",

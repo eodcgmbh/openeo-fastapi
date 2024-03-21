@@ -34,7 +34,7 @@ def create(create_object: BaseModel) -> bool:
     """Add the values from a pydantic model to the database using its respective object relational mapping."""
     db = sessionmaker(get_engine())
 
-    orm = create_object._schema(**create_object.dict())
+    orm = create_object.get_orm()(**create_object.dict())
 
     with db.begin() as session:
         session.add(orm)

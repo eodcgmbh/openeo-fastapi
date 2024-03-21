@@ -1,17 +1,39 @@
+import datetime
+import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
 
 import requests
-from pydantic import BaseModel, ValidationError, validator
+from fastapi import Header
+from pydantic import BaseModel, Field, ValidationError, validator
 
 from openeo_fastapi.client.exceptions import (
     InvalidIssuerConfig,
     TokenCantBeValidated,
     TokenInvalid,
 )
+from openeo_fastapi.client.psql.engine import create
+from openeo_fastapi.client.psql.models import UserORM
+from openeo_fastapi.client.settings import AppSettings
 
 OIDC_WELLKNOWN_CONFIG_PATH = "/.well-known/openid-configuration"
 OIDC_USERINFO = "userinfo_endpoint"
+
+
+class User(BaseModel):
+    """Pydantic model manipulating users."""
+
+    user_id: uuid.UUID
+    oidc_sub: str = Field(alias="sub")
+    created_at: datetime.datetime = datetime.datetime.now(datetime.UTC)
+
+    def get_orm(self):
+        return UserORM
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+        extra = "ignore"
 
 
 class Authenticator(ABC):
@@ -19,8 +41,22 @@ class Authenticator(ABC):
     # This will be different for different backends, so just put it as ABC for now. We might be able to define this if we want
     # to specify an auth config when initialising the backend.
     @abstractmethod
-    def validate(self):
-        pass
+    def validate(authorization: str = Header()):
+        settings = AppSettings()
+
+        issuer = IssuerHandler(
+            issuer_url=settings.OIDC_URL,
+            organisation=settings.OIDC_ORGANISATION,
+            roles=settings.OIDC_ROLES,
+        )
+
+        user_info = issuer.validate_token(authorization)
+
+        user = User(user_id=uuid.uuid4(), sub=user_info.info["sub"])
+
+        create(user)
+
+        return user
 
 
 class AuthMethod(Enum):

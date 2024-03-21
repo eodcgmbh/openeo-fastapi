@@ -6,6 +6,7 @@ from attrs import define, field
 
 from openeo_fastapi.client import conformance, models
 from openeo_fastapi.client.collections import CollectionRegister
+from openeo_fastapi.client.jobs import JobsRegister
 from openeo_fastapi.client.processes import ProcessRegister
 from openeo_fastapi.client.settings import AppSettings
 
@@ -22,6 +23,7 @@ class OpenEOCore:
     _id: str = field(default="OpenEOApi")
 
     _collections = CollectionRegister(settings)
+    _jobs = JobsRegister(settings)
     _processes = ProcessRegister()
 
     def _combine_endpoints(self):
@@ -78,22 +80,6 @@ class OpenEOCore:
             endpoints=self._combine_endpoints(),
         )
 
-    @abc.abstractclassmethod
-    async def get_collection(self, collection_id) -> models.Collection:
-        collection = await self._collections.get_collection(collection_id)
-        return collection
-
-    @abc.abstractclassmethod
-    async def get_collections(self) -> models.Collections:
-        collections = await self._collections.get_collections()
-        return collections
-
-    @abc.abstractclassmethod
-    def get_processes(self) -> dict:
-        processes = self._processes.list_processes()
-        return processes
-
-    @abc.abstractclassmethod
     def get_conformance(self) -> models.ConformanceGetResponse:
         """ """
         return models.ConformanceGetResponse(

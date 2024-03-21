@@ -1,12 +1,12 @@
-import abc
 import datetime
 import uuid
 from typing import Optional
 
-from fastapi import Response
+from fastapi import Depends, Response
 from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
 
+from openeo_fastapi.client.auth import Authenticator, User
 from openeo_fastapi.client.models import (
     BatchJob,
     Endpoint,
@@ -15,12 +15,11 @@ from openeo_fastapi.client.models import (
     JobsGetResponse,
     JobsRequest,
     Link,
-    ProcessGraph,
     ProcessGraphWithMetadata,
     Status,
 )
 from openeo_fastapi.client.psql.engine import Filter, create, get, modify
-from openeo_fastapi.client.psql.models import User
+from openeo_fastapi.client.psql.models import JobORM, ProcessGraph
 from openeo_fastapi.client.register import EndpointRegister
 
 
@@ -41,6 +40,9 @@ class Job(BaseModel):
         arbitrary_types_allowed = True
         extra = "ignore"
 
+    def get_orm(self):
+        return JobORM
+
     def patch(self, patch):
         """Update pydantic model with changed fields from a new model instance."""
 
@@ -54,11 +56,10 @@ class Job(BaseModel):
         return self
 
 
-class JobsRegister(EndpointRegister):
-    def __init__(self, database, settings) -> None:
+class AbstractJobsRegister(EndpointRegister):
+    def __init__(self, settings) -> None:
         super().__init__()
         self.endpoints = self._initialize_endpoints()
-        self.database = database
         self.settings = settings
 
     def _initialize_endpoints(self) -> list[Endpoint]:
@@ -105,7 +106,6 @@ class JobsRegister(EndpointRegister):
             ),
         ]
 
-    @abc.abstractmethod
     def list_jobs(self, limit: Optional[int], user: User, links: list[Link]):
         """_summary_
 
@@ -133,8 +133,9 @@ class JobsRegister(EndpointRegister):
 
         return JobsGetResponse(jobs=jobs, links=links)
 
-    @abc.abstractmethod
-    def create_job(self, body: JobsRequest, user: User):
+    def create_job(
+        self, body: JobsRequest, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
@@ -161,7 +162,7 @@ class JobsRegister(EndpointRegister):
         job = Job(
             job_id=job_id,
             process_graph_id=body.process.process_graph_id,
-            status="created",
+            status=Status.created,
             user_id=user.user_id,
             created=datetime.datetime.now(),
         )
@@ -170,18 +171,6 @@ class JobsRegister(EndpointRegister):
         process_graph = ProcessGraph(
             user_id=user.user_id, created=datetime.datetime.now(), **body.process.dict()
         )
-
-        # Check a process graph with this id does not already exist
-        existing_process_graph = get(
-            get_model=ProcessGraph,
-            primary_key=process_graph.process_graph_id,
-        )
-
-        if existing_process_graph:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Job creation could not create new process graph, Process graph with {existing_process_graph.process_graph_id} already exists!",
-            )
 
         # Call engine create
         created = create(create_object=process_graph)
@@ -198,8 +187,16 @@ class JobsRegister(EndpointRegister):
                 status_code=500,
                 detail="Job creation could not add the job to the database.",
             )
+        return Response(
+            status_code=201,
+            headers={
+                "Location": f"{self.settings.API_DNS}{self.settings.OPENEO_PREFIX}/jobs/{job_id.__str__()}",
+                "OpenEO-Identifier": job_id.__str__(),
+                "access-control-allow-headers": "Accept-Ranges, Content-Encoding, Content-Range, Link, Location, OpenEO-Costs, OpenEO-Identifier",
+                "access-control-expose-headers": "Accept-Ranges, Content-Encoding, Content-Range, Link, Location, OpenEO-Costs, OpenEO-Identifier",
+            },
+        )
 
-    @abc.abstractmethod
     def update_job(self, job_id: JobId, body: JobsRequest, user: User):
         """_summary_
 
@@ -282,7 +279,6 @@ class JobsRegister(EndpointRegister):
             status_code=204, content="Changes to the job applied successfully."
         )
 
-    @abc.abstractmethod
     def get_job(self, job_id: str):
         """_summary_
 
@@ -314,7 +310,6 @@ class JobsRegister(EndpointRegister):
 
         return BatchJob(id=job.job_id.__str__(), process=process_graph, **job.dict())
 
-    @abc.abstractmethod
     def delete_job(self, job_id: str):
         """_summary_
 
@@ -337,7 +332,6 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="NotFound", message="No Collections found."),
         )
 
-    @abc.abstractmethod
     def estimate(self, job_id: str):
         """_summary_
 
@@ -357,7 +351,6 @@ class JobsRegister(EndpointRegister):
         """
         pass
 
-    @abc.abstractmethod
     def logs(self, job_id: str):
         """_summary_
 
@@ -377,7 +370,6 @@ class JobsRegister(EndpointRegister):
         """
         pass
 
-    @abc.abstractmethod
     def start_job(self, job_id: str):
         """_summary_
 
@@ -397,7 +389,6 @@ class JobsRegister(EndpointRegister):
         """
         pass
 
-    @abc.abstractmethod
     def cancel_job(self, job_id: str):
         """_summary_
 
@@ -417,7 +408,6 @@ class JobsRegister(EndpointRegister):
         """
         pass
 
-    @abc.abstractmethod
     def delete_job(self, job_id: str):
         """_summary_
 
@@ -436,3 +426,7 @@ class JobsRegister(EndpointRegister):
             _type_: _description_
         """
         pass
+
+
+class JobsRegister(AbstractJobsRegister):
+    pass
