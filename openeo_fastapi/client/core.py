@@ -1,5 +1,5 @@
-import abc
 from collections import namedtuple
+from typing import Optional
 from urllib.parse import urlunparse
 
 from attrs import define, field
@@ -22,13 +22,21 @@ class OpenEOCore:
 
     _id: str = field(default="OpenEOApi")
 
-    _collections = CollectionRegister(settings)
-    _jobs = JobsRegister(settings)
-    _processes = ProcessRegister()
+    _collections: Optional[CollectionRegister] = None
+    _jobs: Optional[JobsRegister] = None
+    _processes: Optional[ProcessRegister] = None
+
+    def __attrs_post_init__(self):
+        """
+        Post init hook to set the register objects for the class if none where provided by the user!
+        """
+        self._collections = self._collections or CollectionRegister(self.settings)
+        self._jobs = self._jobs or JobsRegister(self.settings, self.links)
+        self._processes = self._processes or ProcessRegister(self.links)
 
     def _combine_endpoints(self):
         """For the various registers that hold endpoint functions, concat those endpoints to register in get_capabilities."""
-        registers = [self._collections, self._processes]
+        registers = [self._collections, self._processes, self._jobs]
 
         endpoints = []
         for register in registers:

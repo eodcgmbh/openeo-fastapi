@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Optional
 
-from pydantic import BaseSettings, Field, HttpUrl, validator
+from pydantic import BaseSettings, HttpUrl, validator
 
 
 class AppSettings(BaseSettings):

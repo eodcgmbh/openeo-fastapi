@@ -1,21 +1,10 @@
 import datetime
-import uuid
-from enum import Enum
 
-from pydantic import BaseModel
-from sqlalchemy import BOOLEAN, VARCHAR, Column, DateTime, ForeignKey, String
+from sqlalchemy import BOOLEAN, VARCHAR, Column, DateTime, String
 from sqlalchemy.dialects.postgresql import ENUM, JSON, UUID
 
+from openeo_fastapi.client.models import Status
 from openeo_fastapi.client.psql.settings import BASE
-
-
-class Status(Enum):
-    created = "created"
-    queued = "queued"
-    running = "running"
-    canceled = "canceled"
-    finished = "finished"
-    error = "error"
 
 
 class UserORM(BASE):
@@ -46,21 +35,6 @@ class JobORM(BASE):
     title = Column(VARCHAR)
     description = Column(VARCHAR)
     synchronous = Column(BOOLEAN, default=False, nullable=False)  # if null assume False
-
-
-class ProcessGraph(BaseModel):
-    process_graph_id: str
-    process_graph: dict
-    user_id: uuid.UUID
-    created: datetime.datetime
-
-    def get_orm(self):
-        return ProcessGraphORM
-
-    class Config:
-        orm_mode = True
-        arbitrary_types_allowed = True
-        extra = "ignore"
 
 
 class ProcessGraphORM(BASE):

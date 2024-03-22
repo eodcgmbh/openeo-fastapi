@@ -12,7 +12,7 @@ from openeo_fastapi.client.exceptions import (
     TokenCantBeValidated,
     TokenInvalid,
 )
-from openeo_fastapi.client.psql.engine import create
+from openeo_fastapi.client.psql.engine import Filter, create, get_first_or_default
 from openeo_fastapi.client.psql.models import UserORM
 from openeo_fastapi.client.settings import AppSettings
 
@@ -24,10 +24,11 @@ class User(BaseModel):
     """Pydantic model manipulating users."""
 
     user_id: uuid.UUID
-    oidc_sub: str = Field(alias="sub")
+    oidc_sub: str
     created_at: datetime.datetime = datetime.datetime.now(datetime.UTC)
 
-    def get_orm(self):
+    @classmethod
+    def get_orm(cls):
         return UserORM
 
     class Config:
@@ -52,10 +53,15 @@ class Authenticator(ABC):
 
         user_info = issuer.validate_token(authorization)
 
-        user = User(user_id=uuid.uuid4(), sub=user_info.info["sub"])
+        found_user = get_first_or_default(
+            User, Filter(column_name="oidc_sub", value=user_info.info["sub"])
+        )
 
+        if found_user:
+            return found_user
+
+        user = User(user_id=uuid.uuid4(), oidc_sub=user_info.info["sub"])
         create(user)
-
         return user
 
 

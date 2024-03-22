@@ -1,7 +1,8 @@
 import aiohttp
 from fastapi import HTTPException
 
-from openeo_fastapi.client.models import Collection, Collections, Endpoint, Error
+from openeo_fastapi.client.collections.models import Collection, Collections
+from openeo_fastapi.client.models import Endpoint, Error
 from openeo_fastapi.client.register import EndpointRegister
 
 

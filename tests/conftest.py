@@ -1,8 +1,8 @@
 import importlib.metadata
 import json
 import os
+import uuid
 from pathlib import Path
-from unittest import mock
 from unittest.mock import patch
 
 import fsspec

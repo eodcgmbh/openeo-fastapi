@@ -5,15 +5,17 @@ import openeo_processes_dask.specs
 from openeo_pg_parser_networkx import Process as pgProcess
 from openeo_pg_parser_networkx import ProcessRegistry
 
-from openeo_fastapi.client.models import Endpoint, Error, Process, ProcessesGetResponse
+from openeo_fastapi.client.models import Endpoint, Error
+from openeo_fastapi.client.processes.models import Process, ProcessesGetResponse
 from openeo_fastapi.client.register import EndpointRegister
 
 
 class ProcessRegister(EndpointRegister):
-    def __init__(self) -> None:
+    def __init__(self, links) -> None:
         super().__init__()
         self.endpoints = self._initialize_endpoints()
         self.process_registry = self._create_process_registry()
+        self.links = links
 
     def _initialize_endpoints(self) -> list[Endpoint]:
         return [
@@ -54,7 +56,7 @@ class ProcessRegister(EndpointRegister):
             processes = self.get_available_processes()
             resp = ProcessesGetResponse(
                 processes=processes,
-                links=[],
+                links=self.links,
             )
             return resp
         except Exception as e:

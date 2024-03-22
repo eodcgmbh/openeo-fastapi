@@ -4,63 +4,30 @@ from typing import Optional
 
 from fastapi import Depends, Response
 from fastapi.exceptions import HTTPException
-from pydantic import BaseModel
 
 from openeo_fastapi.client.auth import Authenticator, User
-from openeo_fastapi.client.models import (
+from openeo_fastapi.client.jobs.models import (
     BatchJob,
-    Endpoint,
-    Error,
-    JobId,
+    Job,
     JobsGetResponse,
     JobsRequest,
-    Link,
-    ProcessGraphWithMetadata,
     Status,
 )
-from openeo_fastapi.client.psql.engine import Filter, create, get, modify
-from openeo_fastapi.client.psql.models import JobORM, ProcessGraph
+from openeo_fastapi.client.models import Endpoint, Error
+from openeo_fastapi.client.processes.models import (
+    ProcessGraph,
+    ProcessGraphWithMetadata,
+)
+from openeo_fastapi.client.psql.engine import Filter, _list, create, get, modify
 from openeo_fastapi.client.register import EndpointRegister
 
 
-class Job(BaseModel):
-    """Pydantic model manipulating jobs."""
-
-    job_id: uuid.UUID
-    process_graph_id: str
-    status: Status
-    user_id: uuid.UUID
-    created: datetime.datetime
-    title: Optional[str]
-    description: Optional[str]
-    synchronous: bool = False
-
-    class Config:
-        orm_mode = True
-        arbitrary_types_allowed = True
-        extra = "ignore"
-
-    def get_orm(self):
-        return JobORM
-
-    def patch(self, patch):
-        """Update pydantic model with changed fields from a new model instance."""
-
-        if type(patch) not in [Job, JobsRequest]:
-            raise TypeError("Job only updates from a Job or JobRequest model.")
-        for k, v in patch.dict().items():
-            if v:
-                if k in self.__fields__.keys():
-                    if not (self.dict()[k] == v):
-                        self.__setattr__(k, patch.dict()[k])
-        return self
-
-
-class AbstractJobsRegister(EndpointRegister):
-    def __init__(self, settings) -> None:
+class JobsRegister(EndpointRegister):
+    def __init__(self, settings, links) -> None:
         super().__init__()
         self.endpoints = self._initialize_endpoints()
         self.settings = settings
+        self.links = links
 
     def _initialize_endpoints(self) -> list[Endpoint]:
         return [
@@ -106,7 +73,9 @@ class AbstractJobsRegister(EndpointRegister):
             ),
         ]
 
-    def list_jobs(self, limit: Optional[int], user: User, links: list[Link]):
+    def list_jobs(
+        self, limit: Optional[int] = 10, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
@@ -126,12 +95,12 @@ class AbstractJobsRegister(EndpointRegister):
         # Invoke list function from handler
         _filter = Filter(column_name="user_id", value=user.user_id)
 
-        job_list = list(list_model=Job, filter_with=_filter)
+        job_list = _list(list_model=Job, filter_with=_filter)
 
         # TODO BatchJob and Job describe the same thing, these want to be harmonized.
         jobs = [BatchJob(**job.dict()) for job in job_list if not job.synchronous]
 
-        return JobsGetResponse(jobs=jobs, links=links)
+        return JobsGetResponse(jobs=jobs, links=[])
 
     def create_job(
         self, body: JobsRequest, user: User = Depends(Authenticator.validate)
@@ -197,7 +166,7 @@ class AbstractJobsRegister(EndpointRegister):
             },
         )
 
-    def update_job(self, job_id: JobId, body: JobsRequest, user: User):
+    def update_job(self, job_id: uuid.UUID, body: JobsRequest, user: User):
         """_summary_
 
         Args:
@@ -279,7 +248,7 @@ class AbstractJobsRegister(EndpointRegister):
             status_code=204, content="Changes to the job applied successfully."
         )
 
-    def get_job(self, job_id: str):
+    def get_job(self, job_id: uuid.UUID):
         """_summary_
 
         Args:
@@ -310,7 +279,7 @@ class AbstractJobsRegister(EndpointRegister):
 
         return BatchJob(id=job.job_id.__str__(), process=process_graph, **job.dict())
 
-    def delete_job(self, job_id: str):
+    def delete_job(self, job_id: uuid.UUID):
         """_summary_
 
         Args:
@@ -332,7 +301,7 @@ class AbstractJobsRegister(EndpointRegister):
             detail=Error(code="NotFound", message="No Collections found."),
         )
 
-    def estimate(self, job_id: str):
+    def estimate(self, job_id: uuid.UUID):
         """_summary_
 
         Args:
@@ -351,7 +320,7 @@ class AbstractJobsRegister(EndpointRegister):
         """
         pass
 
-    def logs(self, job_id: str):
+    def logs(self, job_id: uuid.UUID):
         """_summary_
 
         Args:
@@ -370,7 +339,7 @@ class AbstractJobsRegister(EndpointRegister):
         """
         pass
 
-    def start_job(self, job_id: str):
+    def start_job(self, job_id: uuid.UUID):
         """_summary_
 
         Args:
@@ -389,7 +358,7 @@ class AbstractJobsRegister(EndpointRegister):
         """
         pass
 
-    def cancel_job(self, job_id: str):
+    def cancel_job(self, job_id: uuid.UUID):
         """_summary_
 
         Args:
@@ -408,7 +377,7 @@ class AbstractJobsRegister(EndpointRegister):
         """
         pass
 
-    def delete_job(self, job_id: str):
+    def delete_job(self, job_id: uuid.UUID):
         """_summary_
 
         Args:
@@ -426,7 +395,3 @@ class AbstractJobsRegister(EndpointRegister):
             _type_: _description_
         """
         pass
-
-
-class JobsRegister(AbstractJobsRegister):
-    pass

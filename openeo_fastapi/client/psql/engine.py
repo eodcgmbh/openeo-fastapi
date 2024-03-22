@@ -47,9 +47,9 @@ def get(get_model: BaseModel, primary_key: Any) -> Union[None, BaseModel]:
 
     with db.begin() as session:
         if isinstance(primary_key, list):
-            found = session.get(get_model._schema, primary_key)
+            found = session.get(get_model.get_orm(), primary_key)
         else:
-            found = session.get(get_model._schema, str(primary_key))
+            found = session.get(get_model.get_orm(), str(primary_key))
 
         if not found:
             return None
@@ -57,28 +57,21 @@ def get(get_model: BaseModel, primary_key: Any) -> Union[None, BaseModel]:
     return obj
 
 
-def get_first_or_default(get_model: BaseModel, filter_with: Filter) -> BaseModel:
-    user_exists = list(filter_with=filter_with, list_model=get_model)
-    if user_exists:
-        return user_exists[0]
-    return None
-
-
-def list(list_model: BaseModel, filter_with: Filter) -> list[BaseModel]:
+def _list(list_model: BaseModel, filter_with: Filter) -> list[BaseModel]:
     """List all relevant entries for a given model for a given filter."""
     db = sessionmaker(get_engine())
 
     with db.begin() as session:
         # Sessions API has no list function, so prepare the statement with select and apply to scalar.
         if filter_with == None:
-            query_statement = select(list_model._schema)
+            query_statement = select(list_model.get_orm())
         else:
-            query_statement = select(list_model._schema).filter_by(
+            query_statement = select(list_model.get_orm()).filter_by(
                 **{filter_with.column_name: filter_with.value}
             )
-        job_objs = session.scalars(query_statement)
-        jobs = [list_model.from_orm(job_obj) for job_obj in job_objs]
-    return jobs
+        objs = session.scalars(query_statement)
+        found = [list_model.from_orm(obj) for obj in objs]
+    return found
 
 
 def modify(modify_object: BaseModel) -> bool:
@@ -86,5 +79,12 @@ def modify(modify_object: BaseModel) -> bool:
     db = sessionmaker(get_engine())
 
     with db.begin() as session:
-        session.merge(modify_object._schema(**modify_object.dict()))
+        session.merge(modify_object.get_orm()(**modify_object.dict()))
     return True
+
+
+def get_first_or_default(get_model: BaseModel, filter_with: Filter) -> BaseModel:
+    user_exists = _list(filter_with=filter_with, list_model=get_model)
+    if user_exists:
+        return user_exists[0]
+    return None

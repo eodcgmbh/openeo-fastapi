@@ -112,8 +112,24 @@ class OpenEOApi:
             endpoint=self.client._processes.list_processes,
         )
 
+    def register_get_jobs(self):
+        """Register Endpoint for Jobs (GET /jobs).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_jobs",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._jobs.list_jobs,
+        )
+
     def register_post_job(self):
-        """Register Endpoint for Jobs (GET /processes).
+        """Register Endpoint for Jobs (POST /jobs).
 
         Returns:
             None
@@ -126,6 +142,22 @@ class OpenEOApi:
             response_model_exclude_none=True,
             methods=["POST"],
             endpoint=self.client._jobs.create_job,
+        )
+
+    def register_get_job(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._jobs.get_job,
         )
 
     def register_core(self):
@@ -148,7 +180,9 @@ class OpenEOApi:
         self.register_get_collections()
         self.register_get_collection()
         self.register_get_processes()
+        self.register_get_jobs()
         self.register_post_job()
+        self.register_get_job()
         self.register_well_known()
 
     def http_exception_handler(self, request, exception):

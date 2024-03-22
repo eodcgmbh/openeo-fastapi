@@ -1,7 +1,43 @@
 import json
+import uuid
 
-import fsspec
 from fastapi.testclient import TestClient
+
+
+def post_request(app: TestClient, path: str, data: dict):
+    """Code to post a job to the provided client."""
+    payload = json.dumps(data)
+
+    response = app.post(
+        path,
+        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        data=payload,
+    )
+
+    return response
+
+
+def test_list_jobs(
+    mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
+):
+    """Test the /jobs GET endpoint as intended."""
+
+    test_app = TestClient(core_api.app)
+
+    for x in range(0, 3):
+        job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
+        post_request(
+            test_app, f"/{app_settings.OPENEO_VERSION}/jobs", job_post
+        ).status_code
+
+    response = test_app.get(
+        f"/{app_settings.OPENEO_VERSION}/jobs",
+        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+    )
+
+    assert response.status_code == 200
+    # assert response.content == "content"
+    assert len(response.json()["jobs"]) == 3
 
 
 def test_create_job(
@@ -9,15 +45,37 @@ def test_create_job(
 ):
     """Test the /jobs POST endpoint as intended."""
 
-    fake_job_json = json.dumps(job_post)
-
     test_app = TestClient(core_api.app)
+    job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
 
-    response = test_app.post(
-        f"/{app_settings.OPENEO_VERSION}/jobs",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
-        data=fake_job_json,
-    )
+    response = post_request(test_app, f"/{app_settings.OPENEO_VERSION}/jobs", job_post)
 
     assert response.status_code == 201
     assert "access-control-expose-headers" in response.headers.keys()
+    assert "openeo-identifier" in response.headers.keys()
+
+
+def test_update_job(mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings):
+    """Test the /jobs/{job_id} POST endpoint as intended."""
+
+    assert True
+
+
+def test_get_job(
+    mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
+):
+    """Test the /jobs/{job_id} GET endpoint as intended."""
+
+    test_app = TestClient(core_api.app)
+    job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
+
+    response = post_request(test_app, f"/{app_settings.OPENEO_VERSION}/jobs", job_post)
+
+    job_id = response.headers["openeo-identifier"]
+
+    response = test_app.get(
+        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}",
+        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+    )
+
+    assert response.status_code == 200
