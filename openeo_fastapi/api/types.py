@@ -1,7 +1,7 @@
 import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union
+from typing import Any, List, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, Extra, Field, validator
 
@@ -48,6 +48,13 @@ class Status(Enum):
     canceled = "canceled"
     finished = "finished"
     error = "error"
+
+
+class Level(Enum):
+    error = "error"
+    warning = "warning"
+    info = "info"
+    debug = "debug"
 
 
 class RFC3339Datetime(BaseModel):
@@ -173,6 +180,41 @@ class Billing(BaseModel):
     )
 
 
+class UsageMetric(BaseModel):
+    value: float
+    unit: str
+
+
+class Usage(BaseModel):
+    class Config:
+        extra = Extra.allow
+
+    cpu: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the CPU usage, usually in a unit such as `cpu-seconds`.",
+    )
+    memory: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the memory usage, usually in a unit such as `mb-seconds` or `gb-hours`.",
+    )
+    duration: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the wall time, usually in a unit such as `seconds`, `minutes` or `hours`.",
+    )
+    network: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the network transfer usage (incoming and outgoing), usually in a unit such as `b` (bytes), `kb` (kilobytes), `mb` (megabytes) or `gb` (gigabytes).",
+    )
+    disk: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the amount of input (read) and output (write) operations on the storage such as disks, usually in a unit such as `b` (bytes), `kb` (kilobytes), `mb` (megabytes) or `gb` (gigabytes).",
+    )
+    storage: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the usage of storage space, usually in a unit such as `b` (bytes), `kb` (kilobytes), `mb` (megabytes) or `gb` (gigabytes).",
+    )
+
+
 class Link(BaseModel):
     rel: str = Field(
         ...,
@@ -192,6 +234,40 @@ class Link(BaseModel):
     title: Optional[str] = Field(
         None, description="Used as a human-readable label for a link.", example="openEO"
     )
+
+
+class LogEntry(BaseModel):
+    id: str = Field(
+        ...,
+        description="An unique identifier for the log message, could simply be an incrementing number.",
+        example="1",
+    )
+    code: Optional[str]
+    level: Level = Field(
+        ...,
+        description="The severity level of the log entry.\n\nThe order of the levels is as follows (from high to low severity): `error`, `warning`, `info`, `debug`.\n\nThe level `error` usually stops processing the data.",
+        example="error",
+    )
+    message: str = Field(
+        ...,
+        description="A message explaining the log entry.",
+        example="Can't load the UDF file from the URL `https://example.com/invalid/file.txt`. Server responded with error 404.",
+    )
+    time: Optional[RFC3339Datetime] = Field(
+        None,
+        description="The date and time the event happened, in UTC. Formatted as a [RFC 3339](https://www.rfc-editor.org/rfc/RFC3339Datetime.html) date-time.",
+        title="Date and Time",
+    )
+    data: Optional[Any] = Field(
+        None,
+        description="Data of any type. It is the back-ends task to decide how to best\npresent passed data to a user.\n\nFor example, a raster-cube passed to the `debug` SHOULD return the\nmetadata similar to the collection metadata, including `cube:dimensions`.",
+    )
+    path: Optional[list[JsonSchema]] = Field(
+        None,
+        description="Describes where the log entry originates from.\n\nThe first element of the array is the process that has triggered the log entry, the second element is the parent of the process that has triggered the log entry, etc. This pattern is followed until the root of the process graph.",
+    )
+    usage: Optional[Usage]
+    links: Optional[list[Link]]
 
 
 class Process(BaseModel):

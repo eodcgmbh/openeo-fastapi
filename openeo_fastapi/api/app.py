@@ -175,6 +175,102 @@ class OpenEOApi:
             endpoint=self.client._jobs.get_job,
         )
 
+    def register_delete_job(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="delete_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["DELETE"],
+            endpoint=self.client._jobs.delete_job,
+        )
+
+    def register_get_estimate(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_estimate",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/estimate",
+            response_model=responses.JobsGetEstimateGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._jobs.estimate,
+        )
+
+    def register_get_logs(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_logs",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/logs",
+            response_model=responses.JobsGetLogsResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._jobs.logs,
+        )
+
+    def register_get_results(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_results",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
+            response_model=responses.Collection,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._jobs.get_results,
+        )
+
+    def register_start_job(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="start_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["POST"],
+            endpoint=self.client._jobs.start_job,
+        )
+
+    def register_cancel_job(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="start_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["DELETE"],
+            endpoint=self.client._jobs.cancel_job,
+        )
+
     def register_core(self):
         """Register core OpenEO endpoints.
 
@@ -199,6 +295,12 @@ class OpenEOApi:
         self.register_create_job()
         self.register_update_job()
         self.register_get_job()
+        self.register_delete_job()
+        self.register_get_estimate()
+        self.register_get_logs()
+        self.register_get_results()
+        self.register_start_job()
+        self.register_cancel_job()
         self.register_well_known()
 
     def http_exception_handler(self, request, exception):

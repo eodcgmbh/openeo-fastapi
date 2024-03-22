@@ -5,7 +5,9 @@ from fastapi.testclient import TestClient
 
 
 def post_request(app: TestClient, path: str, data: dict):
-    """Code to post a job to the provided client."""
+    """
+    Code to post a job to the provided client.
+    """
     payload = json.dumps(data)
 
     response = app.post(
@@ -18,7 +20,9 @@ def post_request(app: TestClient, path: str, data: dict):
 
 
 def patch_request(app: TestClient, path: str, data: dict):
-    """Code to post a job to the provided client."""
+    """
+    Code to post a job to the provided client.
+    """
     payload = json.dumps(data)
 
     response = app.patch(
@@ -33,7 +37,9 @@ def patch_request(app: TestClient, path: str, data: dict):
 def test_list_jobs(
     mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
 ):
-    """Test the /jobs GET endpoint as intended."""
+    """
+    Test the /jobs GET endpoint as intended.
+    """
 
     test_app = TestClient(core_api.app)
 
@@ -56,7 +62,9 @@ def test_list_jobs(
 def test_create_job(
     mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
 ):
-    """Test the /jobs POST endpoint as intended."""
+    """
+    Test the /jobs POST endpoint as intended.
+    """
 
     test_app = TestClient(core_api.app)
     job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
@@ -71,7 +79,9 @@ def test_create_job(
 def test_update_job(
     mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
 ):
-    """Test the /jobs/{job_id} POST endpoint as intended."""
+    """
+    Test the /jobs/{job_id} POST endpoint as intended.
+    """
 
     test_app = TestClient(core_api.app)
     job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
@@ -100,7 +110,9 @@ def test_update_job(
 def test_get_job(
     mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
 ):
-    """Test the /jobs/{job_id} GET endpoint as intended."""
+    """
+    Test the /jobs/{job_id} GET endpoint as intended.
+    """
 
     test_app = TestClient(core_api.app)
     job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
@@ -115,3 +127,63 @@ def test_get_job(
     )
 
     assert response.status_code == 200
+
+
+def test_not_implemented(
+    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings
+):
+    """
+    Test the following endpoints are initialised correctly, but return an error.
+
+    /jobs/{job_id} DELETE
+    /jobs/{job_id}/estimate GET
+    /jobs/{job_id}/logs GET
+    /jobs/{job_id}/results GET
+    /jobs/{job_id}/results POST
+    /jobs/{job_id}/results DELETE
+    """
+
+    def assert_not(response):
+        assert response.status_code == 501
+        assert response.json()["code"] == "FeatureUnsupported"
+
+    test_app = TestClient(core_api.app)
+
+    job_id = uuid.uuid4()
+
+    gets = [
+        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/estimate",
+        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/logs",
+        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/results",
+    ]
+
+    for get in gets:
+        assert_not(
+            test_app.get(
+                get,
+                headers={"Authorization": "Bearer /oidc/egi/not-real"},
+            )
+        )
+
+    posts = [f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/results"]
+
+    for post in posts:
+        assert_not(
+            test_app.get(
+                post,
+                headers={"Authorization": "Bearer /oidc/egi/not-real"},
+            )
+        )
+
+    deletes = [
+        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}",
+        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/results",
+    ]
+
+    for delete in deletes:
+        assert_not(
+            test_app.delete(
+                delete,
+                headers={"Authorization": "Bearer /oidc/egi/not-real"},
+            )
+        )

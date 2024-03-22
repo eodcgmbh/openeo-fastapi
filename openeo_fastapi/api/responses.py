@@ -14,6 +14,7 @@ from openeo_fastapi.api.types import (
     Type1,
     Type2,
     Type5,
+    Usage,
 )
 
 
@@ -384,41 +385,6 @@ class ProcessGraphWithMetadata(Process):
 ###########
 # Jobs
 ###########
-class UsageMetric(BaseModel):
-    value: float
-    unit: str
-
-
-class Usage(BaseModel):
-    class Config:
-        extra = Extra.allow
-
-    cpu: Optional[UsageMetric] = Field(
-        None,
-        description="Specifies the CPU usage, usually in a unit such as `cpu-seconds`.",
-    )
-    memory: Optional[UsageMetric] = Field(
-        None,
-        description="Specifies the memory usage, usually in a unit such as `mb-seconds` or `gb-hours`.",
-    )
-    duration: Optional[UsageMetric] = Field(
-        None,
-        description="Specifies the wall time, usually in a unit such as `seconds`, `minutes` or `hours`.",
-    )
-    network: Optional[UsageMetric] = Field(
-        None,
-        description="Specifies the network transfer usage (incoming and outgoing), usually in a unit such as `b` (bytes), `kb` (kilobytes), `mb` (megabytes) or `gb` (gigabytes).",
-    )
-    disk: Optional[UsageMetric] = Field(
-        None,
-        description="Specifies the amount of input (read) and output (write) operations on the storage such as disks, usually in a unit such as `b` (bytes), `kb` (kilobytes), `mb` (megabytes) or `gb` (gigabytes).",
-    )
-    storage: Optional[UsageMetric] = Field(
-        None,
-        description="Specifies the usage of storage space, usually in a unit such as `b` (bytes), `kb` (kilobytes), `mb` (megabytes) or `gb` (gigabytes).",
-    )
-
-
 class BatchJob(BaseModel):
     job_id: uuid.UUID = Field(default=None, alias="id")
     title: Optional[str] = None
@@ -456,3 +422,32 @@ class BatchJob(BaseModel):
 class JobsGetResponse(BaseModel):
     jobs: list[BatchJob]
     links: list[Link]
+
+
+class JobsGetLogsResponse(BaseModel):
+    logs: list[Any]
+    links: list[Link]
+
+
+class JobsGetEstimateGetResponse(BaseModel):
+    costs: Optional[float] = None
+    duration: Optional[str] = Field(
+        None,
+        description="Estimated duration for the operation. Duration MUST be specified as a ISO 8601 duration.",
+        example="P1Y2M10DT2H30M",
+    )
+    size: Optional[int] = Field(
+        None,
+        description="Estimated required storage capacity, i.e. the size of the generated files. Size MUST be specified in bytes.",
+        example=157286400,
+    )
+    downloads_included: Optional[int] = Field(
+        None,
+        description="Specifies how many full downloads of the processed data are included in the estimate. Set to `null` for unlimited downloads, which is also the default value.",
+        example=5,
+    )
+    expires: Optional[RFC3339Datetime] = Field(
+        None,
+        description="Time until which the estimate is valid, formatted as a [RFC 3339](https://www.rfc-editor.org/rfc/RFC3339Datetime.html) date-time.",
+        example="2020-11-01T00:00:00Z",
+    )
