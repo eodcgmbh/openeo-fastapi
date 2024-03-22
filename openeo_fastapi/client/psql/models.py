@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import BOOLEAN, VARCHAR, Column, DateTime, String
 from sqlalchemy.dialects.postgresql import ENUM, JSON, UUID
 
-from openeo_fastapi.client.models import Status
+from openeo_fastapi.api.types import Status
 from openeo_fastapi.client.psql.settings import BASE
 
 

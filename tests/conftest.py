@@ -1,7 +1,6 @@
 import importlib.metadata
 import json
 import os
-import uuid
 from pathlib import Path
 from unittest.mock import patch
 
@@ -32,6 +31,8 @@ SETTINGS_DICT = {
     "OIDC_URL": "http://test-oidc-api.mock.com/api/",
     "OIDC_ORGANISATION": "issuer",
 }
+
+
 os.environ["ALEMBIC_DIR"] = str(ALEMBIC_DIR)
 os.environ["API_DNS"] = "http://test.api.org"
 os.environ["API_TLS"] = "False"
@@ -43,7 +44,8 @@ os.environ["OIDC_ORGANISATION"] = "issuer"
 os.environ["OIDC_ROLES"] = "tester,developer"
 
 from openeo_fastapi.api.app import OpenEOApi
-from openeo_fastapi.client import auth, models, settings
+from openeo_fastapi.api.types import Billing, Link, Plan
+from openeo_fastapi.client import auth, settings
 from openeo_fastapi.client.core import CollectionRegister, OpenEOCore
 
 
@@ -56,19 +58,17 @@ def app_settings():
 def core_api():
     client = OpenEOCore(
         links=[
-            models.Link(
+            Link(
                 href="https://eodc.eu/",
                 rel="about",
                 type="text/html",
                 title="Homepage of the service provider",
             )
         ],
-        billing=models.Billing(
+        billing=Billing(
             currency="credits",
             default_plan="a-cloud",
-            plans=[
-                models.Plan(name="user", description="Subscription plan.", paid=True)
-            ],
+            plans=[Plan(name="user", description="Subscription plan.", paid=True)],
         ),
     )
 

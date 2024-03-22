@@ -1,19 +1,136 @@
+import uuid
 from enum import Enum
 from typing import Any, Optional, TypedDict, Union
 
-from pydantic import AnyUrl, BaseModel, Extra, Field
+from pydantic import AnyUrl, BaseModel, Extra, Field, validator
 
-from openeo_fastapi.client.models import Link, Type1, Type2
+from openeo_fastapi.api.types import (
+    Billing,
+    Endpoint,
+    Link,
+    Process,
+    RFC3339Datetime,
+    Status,
+    Type1,
+    Type2,
+    Type5,
+)
 
 
-class CollectionId(str):
-    collection_id = Field(
+class Capabilities(BaseModel):
+    api_version: str = Field(
         ...,
-        description="A unique identifier for the collection, which MUST match the specified pattern.",
-        example="Sentinel-2A",
+        description="Version number of the openEO specification this back-end implements.",
+    )
+    backend_version: str = Field(
+        ...,
+        description="Version number of the back-end implementation.\nEvery change on back-end side MUST cause a change of the version number.",
+        example="1.1.2",
+    )
+    stac_version: str
+    type: Optional[Type5] = Field(
+        None,
+        description="For STAC versions >= 1.0.0-rc.1 this field is required.",
+        example="Catalog",
+    )
+    id: str = Field(
+        ...,
+        description="Identifier for the service.\nThis field originates from STAC and is used as unique identifier for the STAC catalog available at `/collections`.",
+        example="cool-eo-cloud",
+    )
+    title: str = Field(
+        ..., description="The name of the service.", example="Cool EO Cloud"
+    )
+    description: str = Field(
+        ...,
+        description="A description of the service, which allows the service provider to introduce the user to its service.\n[CommonMark 0.29](http://commonmark.org/) syntax MAY be used for rich text representation.",
+        example="This service is provided to you by [Cool EO Cloud Corp.](http://cool-eo-cloud-corp.com). It implements the full openEO API and allows to process a range of 999 EO data sets, including \n\n* Sentinel 1/2/3 and 5\n* Landsat 7/8\n\nA free plan is available to test the service. For further information please contact our customer service at [support@cool-eo-cloud-corp.com](mailto:support@cool-eo-cloud-corp.com).",
+    )
+    production: Optional[bool] = None
+    endpoints: list[Endpoint] = Field(
+        ...,
+        description="Lists all supported endpoints. Supported are all endpoints, which are implemented, return a 2XX or 3XX HTTP status code and are fully compatible to the API specification. An entry for this endpoint (path `/` with method `GET`) SHOULD NOT be listed.",
+        example=[
+            {"path": "/collections", "methods": ["GET"]},
+            {"path": "/collections/{collection_id}", "methods": ["GET"]},
+            {"path": "/processes", "methods": ["GET"]},
+            {"path": "/jobs", "methods": ["GET", "POST"]},
+            {"path": "/jobs/{job_id}", "methods": ["GET", "DELETE", "PATCH"]},
+        ],
+    )
+    billing: Optional[Billing] = Field(
+        None,
+        description="Billing related data, e.g. the currency used or available plans to process jobs.\nThis property MUST be specified if the back-end uses any billing related API functionalities, e.g. budgeting or estimates.\nThe absence of this property doesn't mean the back-end is necessarily free to use for all. Providers may choose to bill users outside of the API, e.g. with a monthly fee that is not depending on individual API interactions.",
+        title="Billing",
+    )
+    links: list[Link] = Field(
+        ...,
+        description="Links related to this service, e.g. the homepage of\nthe service provider or the terms of service.\n\nIt is highly RECOMMENDED to provide links with the\nfollowing `rel` (relation) types:\n\n1. `version-history`: A link back to the Well-Known URL\n(see `/.well-known/openeo`) to allow clients to work on\nthe most recent version.\n\n2. `terms-of-service`: A link to the terms of service. If\na back-end provides a link to the terms of service, the\nclients MUST provide a way to read the terms of service\nand only connect to the back-end after the user agreed to\nthem. The user interface MUST be designed in a way that\nthe terms of service are not agreed to by default, i.e.\nthe user MUST explicitly agree to them.\n\n3. `privacy-policy`: A link to the privacy policy (GDPR).\nIf a back-end provides a link to a privacy policy, the\nclients MUST provide a way to read the privacy policy and\nonly connect to the back-end after the user agreed to\nthem. The user interface MUST be designed in a way that\nthe privacy policy is not agreed to by default, i.e. the\nuser MUST explicitly agree to them.\n\n4. `service-desc` or `service-doc`: A link to the API definition.\nUse `service-desc` for machine-readable API definition and \n`service-doc` for human-readable API definition.\nRequired if full OGC API compatibility is desired.\n\n5. `conformance`: A link to the Conformance declaration\n(see `/conformance`). \nRequired if full OGC API compatibility is desired.\n\n6. `data`: A link to the collections (see `/collections`).\nRequired if full OGC API compatibility is desired.\n\nFor additional relation types see also the lists of\n[common relation types in openEO](#section/API-Principles/Web-Linking).",
+        example=[
+            {
+                "href": "http://www.cool-cloud-corp.com",
+                "rel": "about",
+                "type": "text/html",
+                "title": "Homepage of the service provider",
+            },
+            {
+                "href": "https://www.cool-cloud-corp.com/tos",
+                "rel": "terms-of-service",
+                "type": "text/html",
+                "title": "Terms of Service",
+            },
+            {
+                "href": "https://www.cool-cloud-corp.com/privacy",
+                "rel": "privacy-policy",
+                "type": "text/html",
+                "title": "Privacy Policy",
+            },
+            {
+                "href": "http://www.cool-cloud-corp.com/.well-known/openeo",
+                "rel": "version-history",
+                "type": "application/json",
+                "title": "List of supported openEO versions",
+            },
+            {
+                "href": "http://www.cool-cloud-corp.com/api/v1.0/conformance",
+                "rel": "conformance",
+                "type": "application/json",
+                "title": "OGC Conformance Classes",
+            },
+            {
+                "href": "http://www.cool-cloud-corp.com/api/v1.0/collections",
+                "rel": "data",
+                "type": "application/json",
+                "title": "List of Datasets",
+            },
+        ],
     )
 
 
+class ConformanceGetResponse(BaseModel):
+    conformsTo: list[AnyUrl]
+
+
+class Version(BaseModel):
+    url: AnyUrl = Field(
+        ...,
+        description="*Absolute* URLs to the service.",
+        example="https://example.com/api/v1.0",
+    )
+    production: Optional[bool] = None
+    api_version: str = Field(
+        ...,
+        description="Version number of the openEO specification this back-end implements.",
+    )
+
+
+class WellKnownOpeneoGetResponse(BaseModel):
+    versions: list[Version]
+
+
+#############
+# Collections
+#############
 class Role(Enum):
     producer = "producer"
     licensor = "licensor"
@@ -69,17 +186,9 @@ class StacProviders(BaseModel):
     )
 
 
-class Description(BaseModel):
-    __root__: str = Field(
-        ...,
-        description="""Detailed description to explain the entity.
-        [CommonMark 0.29](http://commonmark.org/) syntax MAY be used for rich text representation.""",
-    )
-
-
 class Dimension(BaseModel):
     type: Type2 = Field(..., description="Type of the dimension.")
-    description: Optional[Description] = None
+    description: Optional[str] = None
 
 
 class Spatial(BaseModel):
@@ -96,19 +205,8 @@ class Spatial(BaseModel):
     )
 
 
-class IntervalItem(BaseModel):
-    __root__: list[Any] = Field(
-        ...,
-        description=(
-            "Begin and end times of the time interval. The coordinate reference system is the "
-            "Gregorian calendar.\n\nThe value `null` is supported and indicates an open time interval."
-        ),
-        example=["2011-11-11T12:22:11Z", None],
-    )
-
-
 class Temporal(BaseModel):
-    interval: Optional[list[IntervalItem]] = Field(
+    interval: Optional[list[list[Any]]] = Field(
         None,
         description=(
             "One or more time intervals that describe the temporal extent of the dataset."
@@ -137,22 +235,6 @@ class Extent(BaseModel):
 class CollectionSummaryStats(BaseModel):
     min: Union[str, float] = Field(alias="minimum")
     max: Union[str, float] = Field(alias="maximum")
-
-
-class StacLicense(BaseModel):
-    __root__: str = Field(
-        ...,
-        description=(
-            "License(s) of the data as a SPDX [License identifier](https://spdx.org/licenses/)."
-            "Alternatively, use `proprietary` if the license is not on the SPDX\nlicense list or"
-            "`various` if multiple licenses apply. In these two cases\nlinks to the license texts "
-            "SHOULD be added, see the `license` link\nrelation type.\n\nNon-SPDX licenses SHOULD "
-            "add a link to the license text with the\n`license` relation in the links section. "
-            "The license text MUST NOT be\nprovided as a value of this field. If there is no public"
-            "license URL\navailable, it is RECOMMENDED to host the license text and link to it."
-        ),
-        example="Apache-2.0",
-    )
 
 
 class Collection(BaseModel):
@@ -195,7 +277,7 @@ class Collection(BaseModel):
             "to the list of `stac_extensions`."
         ),
     )
-    license: StacLicense
+    license: str
     providers: Optional[StacProviders] = None
     extent: Extent = Field(
         ...,
@@ -277,3 +359,100 @@ class Collection(BaseModel):
 class Collections(TypedDict, total=False):
     collections: list[Collection]
     links: list[dict[str, Any]]
+
+
+###########
+# Processes
+###########
+class ProcessesGetResponse(BaseModel):
+    processes: list[Process]
+    links: list[Link]
+
+
+class ProcessGraphWithMetadata(Process):
+    process_graph_id: Any = Field(default=None, alias="id")
+    summary: Optional[Any] = None
+    description: Optional[Any] = None
+    parameters: Optional[Any] = None
+    returns: Optional[Any] = None
+    process_graph: Any = None
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+###########
+# Jobs
+###########
+class UsageMetric(BaseModel):
+    value: float
+    unit: str
+
+
+class Usage(BaseModel):
+    class Config:
+        extra = Extra.allow
+
+    cpu: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the CPU usage, usually in a unit such as `cpu-seconds`.",
+    )
+    memory: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the memory usage, usually in a unit such as `mb-seconds` or `gb-hours`.",
+    )
+    duration: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the wall time, usually in a unit such as `seconds`, `minutes` or `hours`.",
+    )
+    network: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the network transfer usage (incoming and outgoing), usually in a unit such as `b` (bytes), `kb` (kilobytes), `mb` (megabytes) or `gb` (gigabytes).",
+    )
+    disk: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the amount of input (read) and output (write) operations on the storage such as disks, usually in a unit such as `b` (bytes), `kb` (kilobytes), `mb` (megabytes) or `gb` (gigabytes).",
+    )
+    storage: Optional[UsageMetric] = Field(
+        None,
+        description="Specifies the usage of storage space, usually in a unit such as `b` (bytes), `kb` (kilobytes), `mb` (megabytes) or `gb` (gigabytes).",
+    )
+
+
+class BatchJob(BaseModel):
+    job_id: uuid.UUID = Field(default=None, alias="id")
+    title: Optional[str] = None
+    description: Optional[str] = None
+    process: Optional[ProcessGraphWithMetadata] = None
+    status: Status
+    progress: Optional[float] = Field(
+        None,
+        description="Indicates the process of a running batch job in percent.\nCan also be set for a job which stopped due to an error or was canceled by the user. In this case, the value indicates the progress at which the job stopped. The Property may not be available for the status codes `created` and `queued`.\nSubmitted and queued jobs only allow the value `0`, finished jobs only allow the value `100`.",
+        example=75.5,
+    )
+    created: RFC3339Datetime
+    updated: Optional[RFC3339Datetime] = None
+    plan: Optional[str] = None
+    costs: Optional[float] = None
+    budget: Optional[float] = None
+    usage: Optional[Usage] = Field(
+        None,
+        description="Metrics about the resource usage of the batch job.\n\nBack-ends are not expected to update the metrics while processing data,\nso the metrics can only be available after the job has been finished\nor has errored.\nFor usage metrics during processing, metrics can better be added to the\nlogs (e.g. `GET /jobs/{job_id}/logs`) with the same schema.",
+    )
+
+    @validator("job_id", pre=True, always=True)
+    def as_str(cls, v):
+        if isinstance(v, str):
+            return v
+        elif isinstance(v, uuid.UUID):
+            return v.__str__()
+        else:
+            raise ValueError(f"Job id can only be of type UUID or str.")
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+class JobsGetResponse(BaseModel):
+    jobs: list[BatchJob]
+    links: list[Link]

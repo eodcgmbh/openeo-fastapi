@@ -1,13 +1,33 @@
+import datetime
 import functools
+import uuid
 from typing import Union
 
 import openeo_processes_dask.specs
 from openeo_pg_parser_networkx import Process as pgProcess
 from openeo_pg_parser_networkx import ProcessRegistry
+from pydantic import BaseModel, Extra
 
-from openeo_fastapi.client.models import Endpoint, Error
-from openeo_fastapi.client.processes.models import Process, ProcessesGetResponse
+from openeo_fastapi.api.responses import ProcessesGetResponse
+from openeo_fastapi.api.types import Endpoint, Error, Process
+from openeo_fastapi.client.psql.models import ProcessGraphORM
 from openeo_fastapi.client.register import EndpointRegister
+
+
+class ProcessGraph(BaseModel):
+    process_graph_id: str
+    process_graph: dict
+    user_id: uuid.UUID
+    created: datetime.datetime
+
+    @classmethod
+    def get_orm(cls):
+        return ProcessGraphORM
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+        extra = Extra.ignore
 
 
 class ProcessRegister(EndpointRegister):

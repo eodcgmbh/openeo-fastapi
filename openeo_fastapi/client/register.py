@@ -1,4 +1,4 @@
-from openeo_fastapi.client.models import Endpoint
+from openeo_fastapi.api.responses import Endpoint
 
 
 class EndpointRegister:

@@ -4,7 +4,8 @@ from urllib.parse import urlunparse
 
 from attrs import define, field
 
-from openeo_fastapi.client import conformance, models
+from openeo_fastapi.api import responses
+from openeo_fastapi.client import conformance
 from openeo_fastapi.client.collections import CollectionRegister
 from openeo_fastapi.client.jobs import JobsRegister
 from openeo_fastapi.client.processes import ProcessRegister
@@ -44,7 +45,7 @@ class OpenEOCore:
                 endpoints.extend(register.endpoints)
         return endpoints
 
-    def get_well_known(self) -> models.WellKnownOpeneoGetResponse:
+    def get_well_known(self) -> responses.WellKnownOpeneoGetResponse:
         """ """
 
         prefix = "https" if self.settings.API_TLS else "http"
@@ -66,17 +67,17 @@ class OpenEOCore:
             )
         )
 
-        return models.WellKnownOpeneoGetResponse(
+        return responses.WellKnownOpeneoGetResponse(
             versions=[
-                models.Version(
+                responses.Version(
                     url=url, production=False, api_version=self.settings.OPENEO_VERSION
                 )
             ]
         )
 
-    def get_capabilities(self) -> models.Capabilities:
+    def get_capabilities(self) -> responses.Capabilities:
         """ """
-        return models.Capabilities(
+        return responses.Capabilities(
             id=self._id,
             title=self.settings.API_TITLE,
             stac_version=self.settings.STAC_VERSION,
@@ -88,8 +89,8 @@ class OpenEOCore:
             endpoints=self._combine_endpoints(),
         )
 
-    def get_conformance(self) -> models.ConformanceGetResponse:
+    def get_conformance(self) -> responses.ConformanceGetResponse:
         """ """
-        return models.ConformanceGetResponse(
+        return responses.ConformanceGetResponse(
             conformsTo=conformance.BASIC_CONFORMANCE_CLASSES
         )

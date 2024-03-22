@@ -3,7 +3,7 @@ from attrs import define, field
 from fastapi import APIRouter, HTTPException, Response
 from starlette.responses import JSONResponse
 
-from openeo_fastapi.client import models
+from openeo_fastapi.api import responses
 
 HIDDEN_PATHS = ["/openapi.json", "/docs", "/docs/oauth2-redirect", "/redoc"]
 
@@ -27,7 +27,7 @@ class OpenEOApi:
         self.router.add_api_route(
             name=".well-known",
             path="/.well-known/openeo",
-            response_model=models.WellKnownOpeneoGetResponse,
+            response_model=responses.WellKnownOpeneoGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
@@ -43,7 +43,7 @@ class OpenEOApi:
         self.router.add_api_route(
             name="capabilities",
             path=f"/{self.client.settings.OPENEO_VERSION}" + "/",
-            response_model=models.Capabilities,
+            response_model=responses.Capabilities,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
@@ -58,7 +58,7 @@ class OpenEOApi:
         self.router.add_api_route(
             name="conformance",
             path=f"/{self.client.settings.OPENEO_VERSION}/conformance",
-            response_model=models.ConformanceGetResponse,
+            response_model=responses.ConformanceGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
@@ -73,7 +73,7 @@ class OpenEOApi:
         self.router.add_api_route(
             name="collections",
             path=f"/{self.client.settings.OPENEO_VERSION}/collections",
-            response_model=None,
+            response_model=responses.Collections,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
@@ -89,7 +89,7 @@ class OpenEOApi:
             name="collection",
             path=f"/{self.client.settings.OPENEO_VERSION}"
             + "/collections/{collection_id}",
-            response_model=None,
+            response_model=responses.Collection,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
@@ -105,7 +105,7 @@ class OpenEOApi:
         self.router.add_api_route(
             name="processes",
             path=f"/{self.client.settings.OPENEO_VERSION}/processes",
-            response_model=None,
+            response_model=responses.ProcessesGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
@@ -121,7 +121,7 @@ class OpenEOApi:
         self.router.add_api_route(
             name="get_jobs",
             path=f"/{self.client.settings.OPENEO_VERSION}/jobs",
-            response_model=None,
+            response_model=responses.JobsGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
@@ -153,7 +153,7 @@ class OpenEOApi:
         self.router.add_api_route(
             name="get_job",
             path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}",
-            response_model=None,
+            response_model=responses.BatchJob,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],

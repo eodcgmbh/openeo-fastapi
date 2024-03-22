@@ -4,22 +4,54 @@ from typing import Optional
 
 from fastapi import Depends, Response
 from fastapi.exceptions import HTTPException
+from pydantic import BaseModel, Extra
 
-from openeo_fastapi.client.auth import Authenticator, User
-from openeo_fastapi.client.jobs.models import (
+from openeo_fastapi.api.requests import JobsRequest
+from openeo_fastapi.api.responses import (
     BatchJob,
-    Job,
     JobsGetResponse,
-    JobsRequest,
-    Status,
-)
-from openeo_fastapi.client.models import Endpoint, Error
-from openeo_fastapi.client.processes.models import (
-    ProcessGraph,
     ProcessGraphWithMetadata,
 )
+from openeo_fastapi.api.types import Endpoint, Error, Status
+from openeo_fastapi.client.auth import Authenticator, User
+from openeo_fastapi.client.processes import ProcessGraph
 from openeo_fastapi.client.psql.engine import Filter, _list, create, get, modify
+from openeo_fastapi.client.psql.models import JobORM
 from openeo_fastapi.client.register import EndpointRegister
+
+
+class Job(BaseModel):
+    """Pydantic model manipulating jobs."""
+
+    job_id: uuid.UUID
+    process_graph_id: str
+    status: Status
+    user_id: uuid.UUID
+    created: datetime.datetime
+    title: Optional[str]
+    description: Optional[str]
+    synchronous: bool = False
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+        extra = Extra.ignore
+
+    @classmethod
+    def get_orm(cls):
+        return JobORM
+
+    def patch(self, patch):
+        """Update pydantic model with changed fields from a new model instance."""
+
+        if type(patch) not in [Job, JobsRequest]:
+            raise TypeError("Job only updates from a Job or JobRequest model.")
+        for k, v in patch.dict().items():
+            if v:
+                if k in self.__fields__.keys():
+                    if not (self.dict()[k] == v):
+                        self.__setattr__(k, patch.dict()[k])
+        return self
 
 
 class JobsRegister(EndpointRegister):
