@@ -17,6 +17,19 @@ def post_request(app: TestClient, path: str, data: dict):
     return response
 
 
+def patch_request(app: TestClient, path: str, data: dict):
+    """Code to post a job to the provided client."""
+    payload = json.dumps(data)
+
+    response = app.patch(
+        path,
+        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        data=payload,
+    )
+
+    return response
+
+
 def test_list_jobs(
     mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
 ):
@@ -55,10 +68,33 @@ def test_create_job(
     assert "openeo-identifier" in response.headers.keys()
 
 
-def test_update_job(mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings):
+def test_update_job(
+    mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
+):
     """Test the /jobs/{job_id} POST endpoint as intended."""
 
-    assert True
+    test_app = TestClient(core_api.app)
+    job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
+
+    response = post_request(test_app, f"/{app_settings.OPENEO_VERSION}/jobs", job_post)
+
+    job_id = response.headers["openeo-identifier"]
+
+    new_pg_id = uuid.uuid4().hex[:16].upper()
+    updated_pg = {"process": {"id": new_pg_id, "process_graph": {"func": "new-arg"}}}
+
+    response = patch_request(
+        test_app, f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}", updated_pg
+    )
+
+    assert response.status_code == 204
+
+    response = test_app.get(
+        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}",
+        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+    )
+
+    assert response.json()["process"]["id"] == new_pg_id
 
 
 def test_get_job(

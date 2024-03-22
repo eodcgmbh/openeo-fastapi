@@ -1,5 +1,4 @@
 import attr
-from attrs import define, field
 from fastapi import APIRouter, HTTPException, Response
 from starlette.responses import JSONResponse
 
@@ -8,12 +7,12 @@ from openeo_fastapi.api import responses
 HIDDEN_PATHS = ["/openapi.json", "/docs", "/docs/oauth2-redirect", "/redoc"]
 
 
-@define
+@attr.define
 class OpenEOApi:
     """Factory for creating FastApi applications conformant to the OpenEO Api specification."""
 
-    client: field
-    app: field
+    client: attr.field
+    app: attr.field
     router: APIRouter = attr.ib(default=attr.Factory(APIRouter))
     response_class: type[Response] = attr.ib(default=JSONResponse)
 
@@ -128,7 +127,7 @@ class OpenEOApi:
             endpoint=self.client._jobs.list_jobs,
         )
 
-    def register_post_job(self):
+    def register_create_job(self):
         """Register Endpoint for Jobs (POST /jobs).
 
         Returns:
@@ -142,6 +141,22 @@ class OpenEOApi:
             response_model_exclude_none=True,
             methods=["POST"],
             endpoint=self.client._jobs.create_job,
+        )
+
+    def register_update_job(self):
+        """Register Endpoint for Jobs (POST /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="post_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["PATCH"],
+            endpoint=self.client._jobs.update_job,
         )
 
     def register_get_job(self):
@@ -181,7 +196,8 @@ class OpenEOApi:
         self.register_get_collection()
         self.register_get_processes()
         self.register_get_jobs()
-        self.register_post_job()
+        self.register_create_job()
+        self.register_update_job()
         self.register_get_job()
         self.register_well_known()
 

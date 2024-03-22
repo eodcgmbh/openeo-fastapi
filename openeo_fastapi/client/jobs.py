@@ -198,7 +198,12 @@ class JobsRegister(EndpointRegister):
             },
         )
 
-    def update_job(self, job_id: uuid.UUID, body: JobsRequest, user: User):
+    def update_job(
+        self,
+        job_id: uuid.UUID,
+        body: JobsRequest,
+        user: User = Depends(Authenticator.validate),
+    ):
         """_summary_
 
         Args:
@@ -329,8 +334,8 @@ class JobsRegister(EndpointRegister):
             _type_: _description_
         """
         raise HTTPException(
-            status_code=404,
-            detail=Error(code="NotFound", message="No Collections found."),
+            status_code=501,
+            detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
     def estimate(self, job_id: uuid.UUID):
@@ -350,7 +355,10 @@ class JobsRegister(EndpointRegister):
         Returns:
             _type_: _description_
         """
-        pass
+        raise HTTPException(
+            status_code=501,
+            detail=Error(code="FeatureUnsupported", message="Feature not supported."),
+        )
 
     def logs(self, job_id: uuid.UUID):
         """_summary_
@@ -369,7 +377,10 @@ class JobsRegister(EndpointRegister):
         Returns:
             _type_: _description_
         """
-        pass
+        raise HTTPException(
+            status_code=501,
+            detail=Error(code="FeatureUnsupported", message="Feature not supported."),
+        )
 
     def start_job(self, job_id: uuid.UUID):
         """_summary_
@@ -388,7 +399,10 @@ class JobsRegister(EndpointRegister):
         Returns:
             _type_: _description_
         """
-        pass
+        raise HTTPException(
+            status_code=501,
+            detail=Error(code="FeatureUnsupported", message="Feature not supported."),
+        )
 
     def cancel_job(self, job_id: uuid.UUID):
         """_summary_
@@ -407,7 +421,10 @@ class JobsRegister(EndpointRegister):
         Returns:
             _type_: _description_
         """
-        pass
+        raise HTTPException(
+            status_code=501,
+            detail=Error(code="FeatureUnsupported", message="Feature not supported."),
+        )
 
     def delete_job(self, job_id: uuid.UUID):
         """_summary_
@@ -426,4 +443,7 @@ class JobsRegister(EndpointRegister):
         Returns:
             _type_: _description_
         """
-        pass
+        raise HTTPException(
+            status_code=501,
+            detail=Error(code="FeatureUnsupported", message="Feature not supported."),
+        )
