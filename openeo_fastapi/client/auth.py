@@ -25,7 +25,7 @@ class User(BaseModel):
 
     user_id: uuid.UUID
     oidc_sub: str
-    created_at: datetime.datetime = datetime.datetime.now(datetime.UTC)
+    created_at: datetime.datetime = datetime.datetime.utcnow()
 
     @classmethod
     def get_orm(cls):

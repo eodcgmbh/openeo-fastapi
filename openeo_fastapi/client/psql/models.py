@@ -15,9 +15,7 @@ class UserORM(BASE):
 
     user_id = Column(UUID(as_uuid=True), primary_key=True, unique=True)
     oidc_sub = Column(VARCHAR, unique=True)
-    created_at = Column(
-        DateTime, default=datetime.datetime.now(datetime.UTC), nullable=False
-    )
+    created_at = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
 
 
 class JobORM(BASE):
@@ -29,9 +27,7 @@ class JobORM(BASE):
     process_graph_id = Column(VARCHAR, nullable=False)
     status = Column(ENUM(Status), nullable=False)
     user_id = Column(UUID(as_uuid=True), nullable=False)
-    created = Column(
-        DateTime, default=datetime.datetime.now(datetime.UTC), nullable=False
-    )
+    created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
     title = Column(VARCHAR)
     description = Column(VARCHAR)
     synchronous = Column(BOOLEAN, default=False, nullable=False)  # if null assume False
@@ -48,9 +44,7 @@ class ProcessGraphORM(BASE):
         UUID(as_uuid=True),
         nullable=False,
     )
-    created = Column(
-        DateTime, default=datetime.datetime.now(datetime.UTC), nullable=False
-    )
+    created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
 
 
 class UdpORM(BASE):
@@ -61,9 +55,7 @@ class UdpORM(BASE):
     udp_id = Column(String, primary_key=True, nullable=False)
     user_id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
     process_graph = Column(JSON, nullable=False)
-    created = Column(
-        DateTime, default=datetime.datetime.now(datetime.UTC), nullable=False
-    )
+    created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
     parameters = Column("parameters", JSON)
     returns = Column("returns", JSON)
     summary = Column("summary", String)
