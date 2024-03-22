@@ -1,15 +1,13 @@
 import datetime
-from enum import Enum
 
-from sqlalchemy import BOOLEAN, VARCHAR, Column, DateTime, ForeignKey, String
+from sqlalchemy import BOOLEAN, VARCHAR, Column, DateTime, String
 from sqlalchemy.dialects.postgresql import ENUM, JSON, UUID
-from sqlalchemy.orm import relationship
 
-from openeo_fastapi.client.models import Status
+from openeo_fastapi.api.types import Status
 from openeo_fastapi.client.psql.settings import BASE
 
 
-class User(BASE):
+class UserORM(BASE):
     """ORM for the user table."""
 
     __tablename__ = "users"
@@ -20,7 +18,7 @@ class User(BASE):
     created_at = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
 
 
-class Job(BASE):
+class JobORM(BASE):
     """ORM for the job table."""
 
     __tablename__ = "jobs"
@@ -28,20 +26,14 @@ class Job(BASE):
     job_id = Column(UUID(as_uuid=True), primary_key=True)
     process_graph_id = Column(VARCHAR, nullable=False)
     status = Column(ENUM(Status), nullable=False)
-    user_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("users.user_id", ondelete="CASCADE"),
-        nullable=False,
-    )
+    user_id = Column(UUID(as_uuid=True), nullable=False)
     created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
     title = Column(VARCHAR)
     description = Column(VARCHAR)
     synchronous = Column(BOOLEAN, default=False, nullable=False)  # if null assume False
 
-    children = relationship("User")
 
-
-class ProcessGraph(BASE):
+class ProcessGraphORM(BASE):
     """ORM for the process graph table."""
 
     __tablename__ = "process_graph"
@@ -50,30 +42,21 @@ class ProcessGraph(BASE):
     process_graph = Column(JSON, nullable=False)
     user_id = Column(
         UUID(as_uuid=True),
-        ForeignKey("users.user_id", ondelete="CASCADE"),
         nullable=False,
     )
     created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
-    children = relationship("User")
 
 
-class UserDefinedProcessGraph(BASE):
+class UdpORM(BASE):
     """ORM for the UDPS table."""
 
     __tablename__ = "udps"
 
     udp_id = Column(String, primary_key=True, nullable=False)
-    user_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("users.user_id"),
-        primary_key=True,
-        nullable=False,
-    )
+    user_id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
     process_graph = Column(JSON, nullable=False)
     created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
     parameters = Column("parameters", JSON)
     returns = Column("returns", JSON)
     summary = Column("summary", String)
     description = Column("description", String)
-
-    children = relationship("User")

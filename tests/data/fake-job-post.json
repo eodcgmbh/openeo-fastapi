@@ -1,0 +1,20 @@
+{
+    "title":"test",
+    "description":null,
+    "plan":"eodc-cloud",
+    "budget":null,
+    "process":{
+        "deprecated":false,
+        "exceptions":{},
+        "experimental":false,
+        "id":"",
+        "process_graph":{
+            "loadcollection1":{
+                "process_id": "load_collection",
+                "arguments":{
+                    "bands":["VV","HH"],
+                    "id":"sentinel1-grd"}
+            }
+        }
+    }
+}

@@ -1,20 +1,41 @@
+import datetime
 import functools
+import uuid
 from typing import Union
 
 import openeo_processes_dask.specs
 from openeo_pg_parser_networkx import Process as pgProcess
 from openeo_pg_parser_networkx import ProcessRegistry
+from pydantic import BaseModel, Extra
 
-from openeo_fastapi.client.models import Endpoint, Error, Process, ProcessesGetResponse
+from openeo_fastapi.api.responses import ProcessesGetResponse
+from openeo_fastapi.api.types import Endpoint, Error, Process
+from openeo_fastapi.client.psql.models import ProcessGraphORM
 from openeo_fastapi.client.register import EndpointRegister
 
 
+class ProcessGraph(BaseModel):
+    process_graph_id: str
+    process_graph: dict
+    user_id: uuid.UUID
+    created: datetime.datetime
+
+    @classmethod
+    def get_orm(cls):
+        return ProcessGraphORM
+
+    class Config:
+        orm_mode = True
+        arbitrary_types_allowed = True
+        extra = Extra.ignore
+
+
 class ProcessRegister(EndpointRegister):
-    def __init__(self) -> None:
+    def __init__(self, links) -> None:
         super().__init__()
         self.endpoints = self._initialize_endpoints()
         self.process_registry = self._create_process_registry()
-        pass
+        self.links = links
 
     def _initialize_endpoints(self) -> list[Endpoint]:
         return [
@@ -55,7 +76,7 @@ class ProcessRegister(EndpointRegister):
             processes = self.get_available_processes()
             resp = ProcessesGetResponse(
                 processes=processes,
-                links=[],
+                links=self.links,
             )
             return resp
         except Exception as e:

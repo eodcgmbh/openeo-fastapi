@@ -2,7 +2,6 @@ import importlib.metadata
 import json
 import os
 from pathlib import Path
-from unittest import mock
 from unittest.mock import patch
 
 import fsspec
@@ -29,27 +28,25 @@ SETTINGS_DICT = {
     "API_DESCRIPTION": "My Test Api",
     "STAC_API_URL": "http://test-stac-api.mock.com/api/",
     "ALEMBIC_DIR": str(ALEMBIC_DIR),
+    "OIDC_URL": "http://test-oidc-api.mock.com/api/",
+    "OIDC_ORGANISATION": "issuer",
 }
 
+
+os.environ["ALEMBIC_DIR"] = str(ALEMBIC_DIR)
 os.environ["API_DNS"] = "http://test.api.org"
 os.environ["API_TLS"] = "False"
 os.environ["API_TITLE"] = "Test Api"
 os.environ["API_DESCRIPTION"] = "My Test Api"
 os.environ["STAC_API_URL"] = "http://test-stac-api.mock.com/api/"
-os.environ["ALEMBIC_DIR"] = str(ALEMBIC_DIR)
+os.environ["OIDC_URL"] = "http://test-oidc-api.mock.com/api/"
+os.environ["OIDC_ORGANISATION"] = "issuer"
+os.environ["OIDC_ROLES"] = "tester,developer"
 
 from openeo_fastapi.api.app import OpenEOApi
-from openeo_fastapi.client import auth, models, settings
+from openeo_fastapi.api.types import Billing, Link, Plan
+from openeo_fastapi.client import auth, settings
 from openeo_fastapi.client.core import CollectionRegister, OpenEOCore
-
-
-@pytest.fixture(autouse=True)
-def mock_settings_env_vars():
-    with mock.patch.dict(
-        os.environ,
-        SETTINGS_DICT,
-    ):
-        yield
 
 
 @pytest.fixture()
@@ -61,19 +58,17 @@ def app_settings():
 def core_api():
     client = OpenEOCore(
         links=[
-            models.Link(
+            Link(
                 href="https://eodc.eu/",
                 rel="about",
                 type="text/html",
                 title="Homepage of the service provider",
             )
         ],
-        billing=models.Billing(
+        billing=Billing(
             currency="credits",
             default_plan="a-cloud",
-            plans=[
-                models.Plan(name="user", description="Subscription plan.", paid=True)
-            ],
+            plans=[Plan(name="user", description="Subscription plan.", paid=True)],
         ),
     )
 
@@ -85,6 +80,12 @@ def core_api():
 @pytest.fixture()
 def collections_core():
     return CollectionRegister(settings.AppSettings())
+
+
+@pytest.fixture()
+def job_post():
+    with open(os.path.join(current_directory, "data/fake-job-post.json")) as f_in:
+        return json.load(f_in)
 
 
 @pytest.fixture()
@@ -162,7 +163,7 @@ def mocked_issuer():
     )
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def mock_engine(postgresql):
     """Postgresql engine for SQLAlchemy."""
     import os

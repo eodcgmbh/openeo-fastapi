@@ -1,19 +1,18 @@
 import attr
-from attrs import define, field
 from fastapi import APIRouter, HTTPException, Response
 from starlette.responses import JSONResponse
 
-from openeo_fastapi.client import models
+from openeo_fastapi.api import responses
 
 HIDDEN_PATHS = ["/openapi.json", "/docs", "/docs/oauth2-redirect", "/redoc"]
 
 
-@define
+@attr.define
 class OpenEOApi:
     """Factory for creating FastApi applications conformant to the OpenEO Api specification."""
 
-    client: field
-    app: field
+    client: attr.field
+    app: attr.field
     router: APIRouter = attr.ib(default=attr.Factory(APIRouter))
     response_class: type[Response] = attr.ib(default=JSONResponse)
 
@@ -27,7 +26,7 @@ class OpenEOApi:
         self.router.add_api_route(
             name=".well-known",
             path="/.well-known/openeo",
-            response_model=models.WellKnownOpeneoGetResponse,
+            response_model=responses.WellKnownOpeneoGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
@@ -43,11 +42,26 @@ class OpenEOApi:
         self.router.add_api_route(
             name="capabilities",
             path=f"/{self.client.settings.OPENEO_VERSION}" + "/",
-            response_model=models.Capabilities,
+            response_model=responses.Capabilities,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
             endpoint=self.client.get_capabilities,
+        )
+
+    def register_get_conformance(self):
+        """Register conformance page (GET /).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="conformance",
+            path=f"/{self.client.settings.OPENEO_VERSION}/conformance",
+            response_model=responses.ConformanceGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.get_conformance,
         )
 
     def register_get_collections(self):
@@ -58,11 +72,11 @@ class OpenEOApi:
         self.router.add_api_route(
             name="collections",
             path=f"/{self.client.settings.OPENEO_VERSION}/collections",
-            response_model=None,
+            response_model=responses.Collections,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client.get_collections,
+            endpoint=self.client._collections.get_collections,
         )
 
     def register_get_collection(self):
@@ -74,26 +88,11 @@ class OpenEOApi:
             name="collection",
             path=f"/{self.client.settings.OPENEO_VERSION}"
             + "/collections/{collection_id}",
-            response_model=None,
+            response_model=responses.Collection,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client.get_collection,
-        )
-
-    def register_get_conformance(self):
-        """Register conformance page (GET /).
-        Returns:
-            None
-        """
-        self.router.add_api_route(
-            name="conformance",
-            path=f"/{self.client.settings.OPENEO_VERSION}/conformance",
-            response_model=models.ConformanceGetResponse,
-            response_model_exclude_unset=False,
-            response_model_exclude_none=True,
-            methods=["GET"],
-            endpoint=self.client.get_conformance,
+            endpoint=self.client._collections.get_collection,
         )
 
     def register_get_processes(self):
@@ -105,11 +104,171 @@ class OpenEOApi:
         self.router.add_api_route(
             name="processes",
             path=f"/{self.client.settings.OPENEO_VERSION}/processes",
-            response_model=None,
+            response_model=responses.ProcessesGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client.get_processes,
+            endpoint=self.client._processes.list_processes,
+        )
+
+    def register_get_jobs(self):
+        """Register Endpoint for Jobs (GET /jobs).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_jobs",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs",
+            response_model=responses.JobsGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._jobs.list_jobs,
+        )
+
+    def register_create_job(self):
+        """Register Endpoint for Jobs (POST /jobs).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="post_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["POST"],
+            endpoint=self.client._jobs.create_job,
+        )
+
+    def register_update_job(self):
+        """Register Endpoint for Jobs (POST /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="post_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["PATCH"],
+            endpoint=self.client._jobs.update_job,
+        )
+
+    def register_get_job(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}",
+            response_model=responses.BatchJob,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._jobs.get_job,
+        )
+
+    def register_delete_job(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="delete_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["DELETE"],
+            endpoint=self.client._jobs.delete_job,
+        )
+
+    def register_get_estimate(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_estimate",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/estimate",
+            response_model=responses.JobsGetEstimateGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._jobs.estimate,
+        )
+
+    def register_get_logs(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_logs",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/logs",
+            response_model=responses.JobsGetLogsResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._jobs.logs,
+        )
+
+    def register_get_results(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_results",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
+            response_model=responses.Collection,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._jobs.get_results,
+        )
+
+    def register_start_job(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="start_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["POST"],
+            endpoint=self.client._jobs.start_job,
+        )
+
+    def register_cancel_job(self):
+        """Register Endpoint for Jobs (GET /jobs/{job_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="start_job",
+            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["DELETE"],
+            endpoint=self.client._jobs.cancel_job,
         )
 
     def register_core(self):
@@ -132,6 +291,16 @@ class OpenEOApi:
         self.register_get_collections()
         self.register_get_collection()
         self.register_get_processes()
+        self.register_get_jobs()
+        self.register_create_job()
+        self.register_update_job()
+        self.register_get_job()
+        self.register_delete_job()
+        self.register_get_estimate()
+        self.register_get_logs()
+        self.register_get_results()
+        self.register_start_job()
+        self.register_cancel_job()
         self.register_well_known()
 
     def http_exception_handler(self, request, exception):

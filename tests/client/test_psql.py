@@ -3,28 +3,23 @@ from sqlalchemy import BOOLEAN, Column, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-from openeo_fastapi.client.psql.models import (
-    Job,
-    ProcessGraph,
-    User,
-    UserDefinedProcessGraph,
-)
+from openeo_fastapi.client.psql.models import JobORM, ProcessGraphORM, UdpORM, UserORM
 
 
-def test_db_setup_and_user_model(mock_engine):
+def test_db_setup_and_userorm_model(mock_engine):
     """A test to validate the basic structure of our ORMs and get_engine functions."""
     import uuid
 
-    user_uid = uuid.uuid4()
-    user = User(user_id=user_uid, oidc_sub="someone@egi.eu")
+    _uid = uuid.uuid4()
+    user = UserORM(user_id=_uid, oidc_sub="someone@egi.eu")
 
     session = sessionmaker(mock_engine)
     with session.begin() as sesh:
         sesh.add(user)
 
     with session.begin() as sesh:
-        right_user = select(User).filter_by(user_id=user_uid)
-        wrong_user = select(User).filter_by(user_id=uuid.uuid4())
+        right_user = select(UserORM).filter_by(user_id=_uid)
+        wrong_user = select(UserORM).filter_by(user_id=uuid.uuid4())
 
         assert sesh.scalars(right_user).first()
         assert not sesh.scalars(wrong_user).first()
@@ -37,8 +32,8 @@ def test_job_model(mock_engine):
     user_uid = uuid.uuid4()
     job_uid = uuid.uuid4()
 
-    user = User(user_id=user_uid, oidc_sub="someone@egi.eu")
-    job = Job(
+    user = UserORM(user_id=user_uid, oidc_sub="someone@egi.eu")
+    job = JobORM(
         job_id=job_uid,
         user_id=user_uid,
         status="created",
@@ -51,7 +46,7 @@ def test_job_model(mock_engine):
         sesh.add(job)
 
     with session.begin() as sesh:
-        found_job = select(Job).filter_by(job_id=job_uid)
+        found_job = select(JobORM).filter_by(job_id=job_uid)
 
         assert sesh.scalars(found_job).first()
 
@@ -63,8 +58,8 @@ def test_processgraph_model(mock_engine):
     user_uid = uuid.uuid4()
     process_graph_uid = "SOMEPGID"
 
-    user = User(user_id=user_uid, oidc_sub="someone@egi.eu")
-    processgraph = ProcessGraph(
+    user = UserORM(user_id=user_uid, oidc_sub="someone@egi.eu")
+    processgraph = ProcessGraphORM(
         process_graph_id=process_graph_uid,
         user_id=user_uid,
         process_graph={"process": {"args": "one"}},
@@ -76,22 +71,22 @@ def test_processgraph_model(mock_engine):
         sesh.add(processgraph)
 
     with session.begin() as sesh:
-        found_pg = select(ProcessGraph).filter_by(process_graph_id=process_graph_uid)
+        found_pg = select(ProcessGraphORM).filter_by(process_graph_id=process_graph_uid)
 
         assert sesh.scalars(found_pg).first()
 
 
-def test_userdefinedprocessgraph_model(mock_engine):
+def test_udpor_model(mock_engine):
     """ """
     import uuid
 
-    user_uid = uuid.uuid4()
+    _uid = uuid.uuid4()
     process_graph_uid = "SOMEPGID"
 
-    user = User(user_id=user_uid, oidc_sub="someone@egi.eu")
-    processgraph = UserDefinedProcessGraph(
+    user = UserORM(user_id=_uid, oidc_sub="someone@egi.eu")
+    processgraph = UdpORM(
         udp_id=process_graph_uid,
-        user_id=user_uid,
+        user_id=_uid,
         process_graph={"process": {"args": "one"}},
     )
 
@@ -101,7 +96,7 @@ def test_userdefinedprocessgraph_model(mock_engine):
         sesh.add(processgraph)
 
     with session.begin() as sesh:
-        found_pg = select(UserDefinedProcessGraph).filter_by(udp_id=process_graph_uid)
+        found_pg = select(UdpORM).filter_by(udp_id=process_graph_uid)
 
         assert sesh.scalars(found_pg).first()
 
@@ -111,15 +106,15 @@ def test_models_extendable(mock_engine):
 
     import uuid
 
-    user_uid = uuid.uuid4()
+    _uid = uuid.uuid4()
 
-    # Extend the user class
-    class ExtendedUser(User):
-        """ORM for the user table."""
+    # Extend the UserORM class
+    class ExtendedUserORM(UserORM):
+        """ORM for the UserORM table."""
 
         new_value = Column(BOOLEAN, nullable=False)
 
-    # Try to revise the database using the extended User
+    # Try to revise the database using the extended UserORM
     import os
     from pathlib import Path
 
@@ -135,19 +130,19 @@ def test_models_extendable(mock_engine):
     command.upgrade(alembic_cfg, "head")
 
     # See if the revision has been extended
-    a_user = ExtendedUser(user_id=user_uid, oidc_sub="someone@egi.eu", new_value=True)
+    a_user = ExtendedUserORM(user_id=_uid, oidc_sub="someone@egi.eu", new_value=True)
 
     session = sessionmaker(mock_engine)
     with session.begin() as sesh:
         sesh.add(a_user)
 
     with session.begin() as sesh:
-        extended_user = select(ExtendedUser).filter_by(user_id=user_uid)
+        extended_UserORM = select(ExtendedUserORM).filter_by(user_id=_uid)
 
-        assert sesh.scalars(extended_user).first().new_value == True
+        assert sesh.scalars(extended_UserORM).first().new_value == True
 
     # Using the non-extended model should now raise an error
-    old_user = User(user_id=uuid.uuid4(), oidc_sub="someone@egi.eu")
+    old_user = UserORM(user_id=uuid.uuid4(), oidc_sub="someone@egi.eu")
 
     with pytest.raises(IntegrityError):
         with session.begin() as sesh:
