@@ -6,6 +6,25 @@ from openeo_fastapi.api.types import Endpoint, Error
 from openeo_fastapi.client.auth import Authenticator, User
 from openeo_fastapi.client.register import EndpointRegister
 
+FILE_ENDPOINTS = [
+    Endpoint(
+        path="/files",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/files/{path}",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/files/{path}",
+        methods=["PUT"],
+    ),
+    Endpoint(
+        path="/files/{path}",
+        methods=["DELETE"],
+    ),
+]
+
 
 class FilesRegister(EndpointRegister):
     def __init__(self, settings, links) -> None:
@@ -15,24 +34,7 @@ class FilesRegister(EndpointRegister):
         self.links = links
 
     def _initialize_endpoints(self) -> list[Endpoint]:
-        return [
-            Endpoint(
-                path="/files",
-                methods=["GET"],
-            ),
-            Endpoint(
-                path="/files/{path}",
-                methods=["GET"],
-            ),
-            Endpoint(
-                path="/files/{path}",
-                methods=["PUT"],
-            ),
-            Endpoint(
-                path="/files/{path}",
-                methods=["DELETE"],
-            ),
-        ]
+        return FILE_ENDPOINTS
 
     def list_files(
         self, limit: Optional[int] = 10, user: User = Depends(Authenticator.validate)
