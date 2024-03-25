@@ -262,13 +262,77 @@ class OpenEOApi:
             None
         """
         self.router.add_api_route(
-            name="start_job",
+            name="cancel_job",
             path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["DELETE"],
             endpoint=self.client._jobs.cancel_job,
+        )
+
+    def register_list_files(self):
+        """Register Endpoint for Files (GET /files).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="list_files",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._files.list_files,
+        )
+
+    def register_download_file(self):
+        """Register Endpoint for Files (GET /files/{path}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="download_file",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client._files.download_file,
+        )
+
+    def register_upload_file(self):
+        """Register Endpoint for Files (PUT /files/{path}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="upload_file",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["PUT"],
+            endpoint=self.client._files.upload_file,
+        )
+
+    def register_delete_file(self):
+        """Register Endpoint for Files (DELETE /files/{path}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="delete_file",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["DELETE"],
+            endpoint=self.client._files.delete_file,
         )
 
     def register_core(self):
@@ -301,6 +365,10 @@ class OpenEOApi:
         self.register_get_results()
         self.register_start_job()
         self.register_cancel_job()
+        self.register_list_files()
+        self.register_download_file()
+        self.register_upload_file()
+        self.register_delete_file()
         self.register_well_known()
 
     def http_exception_handler(self, request, exception):

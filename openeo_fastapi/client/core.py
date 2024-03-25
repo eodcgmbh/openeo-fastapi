@@ -7,6 +7,7 @@ from attrs import define, field
 from openeo_fastapi.api import responses
 from openeo_fastapi.client import conformance
 from openeo_fastapi.client.collections import CollectionRegister
+from openeo_fastapi.client.files import FilesRegister
 from openeo_fastapi.client.jobs import JobsRegister
 from openeo_fastapi.client.processes import ProcessRegister
 from openeo_fastapi.client.settings import AppSettings
@@ -24,6 +25,7 @@ class OpenEOCore:
     _id: str = field(default="OpenEOApi")
 
     _collections: Optional[CollectionRegister] = None
+    _files: Optional[FilesRegister] = None
     _jobs: Optional[JobsRegister] = None
     _processes: Optional[ProcessRegister] = None
 
@@ -32,6 +34,7 @@ class OpenEOCore:
         Post init hook to set the register objects for the class if none where provided by the user!
         """
         self._collections = self._collections or CollectionRegister(self.settings)
+        self._files = self._files or FilesRegister(self.settings, self.links)
         self._jobs = self._jobs or JobsRegister(self.settings, self.links)
         self._processes = self._processes or ProcessRegister(self.links)
 

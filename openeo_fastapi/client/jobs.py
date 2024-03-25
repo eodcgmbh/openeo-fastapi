@@ -285,7 +285,7 @@ class JobsRegister(EndpointRegister):
             status_code=204, content="Changes to the job applied successfully."
         )
 
-    def get_job(self, job_id: uuid.UUID):
+    def get_job(self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)):
         """_summary_
 
         Args:
@@ -316,7 +316,9 @@ class JobsRegister(EndpointRegister):
 
         return BatchJob(id=job.job_id.__str__(), process=process_graph, **job.dict())
 
-    def delete_job(self, job_id: uuid.UUID):
+    def delete_job(
+        self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
@@ -338,7 +340,7 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def estimate(self, job_id: uuid.UUID):
+    def estimate(self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)):
         """_summary_
 
         Args:
@@ -360,7 +362,7 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def logs(self, job_id: uuid.UUID):
+    def logs(self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)):
         """_summary_
 
         Args:
@@ -382,7 +384,9 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def get_results(self, job_id: uuid.UUID):
+    def get_results(
+        self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
@@ -404,7 +408,9 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def start_job(self, job_id: uuid.UUID):
+    def start_job(
+        self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
@@ -426,7 +432,9 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def cancel_job(self, job_id: uuid.UUID):
+    def cancel_job(
+        self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
@@ -448,7 +456,9 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def delete_job(self, job_id: uuid.UUID):
+    def delete_job(
+        self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
