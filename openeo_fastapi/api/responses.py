@@ -1,6 +1,6 @@
 import uuid
 from enum import Enum
-from typing import Any, Optional, TypedDict, Union
+from typing import Any, Dict, List, Optional, TypedDict, Union
 
 from pydantic import AnyUrl, BaseModel, Extra, Field, validator
 
@@ -8,6 +8,7 @@ from openeo_fastapi.api.types import (
     Billing,
     Endpoint,
     File,
+    FileFormat,
     Link,
     Process,
     RFC3339Datetime,
@@ -457,3 +458,16 @@ class JobsGetEstimateGetResponse(BaseModel):
 class FilesGetResponse(BaseModel):
     files: list[File]
     links: list[Link]
+
+
+class FileFormatsGetResponse(BaseModel):
+    input: dict[str, FileFormat] = Field(
+        ...,
+        description="Map of supported input file formats, i.e. file formats a back-end can **read** from. The property keys are the file format names that are used by clients and users, for example in process graphs.",
+        title="Input File Formats",
+    )
+    output: dict[str, FileFormat] = Field(
+        ...,
+        description="Map of supported output file formats, i.e. file formats a back-end can **write** to. The property keys are the file format names that are used by clients and users, for example in process graphs.",
+        title="Output File Formats",
+    )

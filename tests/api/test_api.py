@@ -5,7 +5,15 @@ from fastapi.testclient import TestClient
 
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.api.responses import FilesGetResponse
-from openeo_fastapi.api.types import Billing, Endpoint, File, Link, Plan
+from openeo_fastapi.api.types import (
+    Billing,
+    Endpoint,
+    File,
+    FileFormat,
+    GisDataType,
+    Link,
+    Plan,
+)
 from openeo_fastapi.client.auth import Authenticator, User
 from openeo_fastapi.client.core import OpenEOCore
 from openeo_fastapi.client.files import FILE_ENDPOINTS, FilesRegister
@@ -40,6 +48,18 @@ def test_get_conformance(core_api, app_settings):
 
     assert response.status_code == 200
     assert len(BASIC_CONFORMANCE_CLASSES) == len(response.json()["conformsTo"])
+
+
+def test_get_file_formats(core_api, app_settings):
+    """Test the /conformance endpoint as intended."""
+
+    from openeo_fastapi.client.conformance import BASIC_CONFORMANCE_CLASSES
+
+    test_app = TestClient(core_api.app)
+
+    response = test_app.get(f"/{app_settings.OPENEO_VERSION}/file_formats")
+
+    assert response.status_code == 200
 
 
 def test_exception_handler(core_api):
@@ -98,7 +118,17 @@ def test_overwriting_register(mocked_oidc_config, mocked_oidc_userinfo, app_sett
 
     extended_register = ExtendedFileRegister(app_settings, test_links)
 
+    formats = [
+        FileFormat(
+            title="json",
+            gis_data_types=[GisDataType("vector")],
+            parameters={},
+        )
+    ]
+
     client = OpenEOCore(
+        input_formats=formats,
+        output_formats=formats,
         links=[
             Link(
                 href="https://eodc.eu/",
@@ -171,7 +201,17 @@ def test_extending_register(mocked_oidc_config, mocked_oidc_userinfo, app_settin
     assert len(extended_register.endpoints) == 5
     assert new_endpoint in extended_register.endpoints
 
+    formats = [
+        FileFormat(
+            title="json",
+            gis_data_types=[GisDataType("vector")],
+            parameters={},
+        )
+    ]
+
     client = OpenEOCore(
+        input_formats=formats,
+        output_formats=formats,
         links=[
             Link(
                 href="https://eodc.eu/",

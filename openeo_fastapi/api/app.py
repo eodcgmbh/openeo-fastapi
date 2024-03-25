@@ -64,6 +64,21 @@ class OpenEOApi:
             endpoint=self.client.get_conformance,
         )
 
+    def register_get_file_formats(self):
+        """Register conformance page (GET /file_formats).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="conformance",
+            path=f"/{self.client.settings.OPENEO_VERSION}/file_formats",
+            response_model=responses.FileFormatsGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.get_file_formats,
+        )
+
     def register_get_collections(self):
         """Register collection Endpoint (GET /collections).
         Returns:
@@ -352,6 +367,7 @@ class OpenEOApi:
             None
         """
         self.register_get_conformance()
+        self.register_get_file_formats()
         self.register_get_collections()
         self.register_get_collection()
         self.register_get_processes()

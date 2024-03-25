@@ -1,7 +1,7 @@
 import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, Extra, Field, validator
 
@@ -55,6 +55,13 @@ class Level(Enum):
     warning = "warning"
     info = "info"
     debug = "debug"
+
+
+class GisDataType(Enum):
+    raster = "raster"
+    vector = "vector"
+    table = "table"
+    other = "other"
 
 
 class RFC3339Datetime(BaseModel):
@@ -317,3 +324,23 @@ class Error(BaseModel):
         example="Parameter 'sample' is missing.",
     )
     links: Optional[list[Link]] = None
+
+
+class FileFormat(BaseModel):
+    title: str
+    description: Optional[str] = None
+    gis_data_types: list[GisDataType] = Field(
+        ...,
+        description="Specifies the supported GIS spatial data types for this format.\nIt is RECOMMENDED to specify at least one of the data types, which will likely become a requirement in a future API version.",
+    )
+    deprecated: Optional[bool] = None
+    experimental: Optional[bool] = None
+    parameters: dict[str, Any] = Field(
+        ...,
+        description="Specifies the supported parameters for this file format.",
+        title="File Format Parameters",
+    )
+    links: Optional[list[Link]] = Field(
+        None,
+        description="Links related to this file format, e.g. external documentation.\n\nFor relation types see the lists of\n[common relation types in openEO](#section/API-Principles/Web-Linking).",
+    )

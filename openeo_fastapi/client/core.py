@@ -18,6 +18,8 @@ class OpenEOCore:
     """Base client for the OpenEO Api."""
 
     billing: str = field()
+    input_formats: list = field()
+    output_formats: list = field()
     links: list = field()
 
     settings = AppSettings()
@@ -96,4 +98,11 @@ class OpenEOCore:
         """ """
         return responses.ConformanceGetResponse(
             conformsTo=conformance.BASIC_CONFORMANCE_CLASSES
+        )
+
+    def get_file_formats(self) -> responses.FileFormatsGetResponse:
+        """ """
+        return responses.FileFormatsGetResponse(
+            input={_format.title: _format for _format in self.input_formats},
+            output={_format.title: _format for _format in self.output_formats},
         )
