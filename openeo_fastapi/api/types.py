@@ -180,6 +180,20 @@ class Billing(BaseModel):
     )
 
 
+class File(BaseModel):
+    path: str = Field(
+        ...,
+        description="Path of the file, relative to the root directory of the user's server-side workspace.\nMUST NOT start with a slash `/` and MUST NOT be url-encoded.\n\nThe Windows-style path name component separator `\\` is not supported,\nalways use `/` instead.\n\nNote: The pattern only specifies a minimal subset of invalid characters.\nThe back-ends MAY enforce additional restrictions depending on their OS/environment.",
+        example="folder/file.txt",
+    )
+    size: Optional[int] = Field(None, description="File size in bytes.", example=1024)
+    modified: Optional[RFC3339Datetime] = Field(
+        None,
+        description="Date and time the file has lastly been modified, formatted as a [RFC 3339](https://www.rfc-editor.org/rfc/RFC3339Datetime.html) date-time.",
+        example="2018-01-03T10:55:29Z",
+    )
+
+
 class UsageMetric(BaseModel):
     value: float
     unit: str

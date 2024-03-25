@@ -7,6 +7,7 @@ from pydantic import AnyUrl, BaseModel, Extra, Field, validator
 from openeo_fastapi.api.types import (
     Billing,
     Endpoint,
+    File,
     Link,
     Process,
     RFC3339Datetime,
@@ -451,3 +452,8 @@ class JobsGetEstimateGetResponse(BaseModel):
         description="Time until which the estimate is valid, formatted as a [RFC 3339](https://www.rfc-editor.org/rfc/RFC3339Datetime.html) date-time.",
         example="2020-11-01T00:00:00Z",
     )
+
+
+class FilesGetResponse(BaseModel):
+    files: list[File]
+    links: list[Link]
