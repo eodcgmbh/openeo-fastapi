@@ -19,6 +19,49 @@ from openeo_fastapi.client.psql.engine import Filter, _list, create, get, modify
 from openeo_fastapi.client.psql.models import JobORM
 from openeo_fastapi.client.register import EndpointRegister
 
+JOBS_ENDPOINTS = [
+    Endpoint(
+        path="/jobs",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/jobs",
+        methods=["POST"],
+    ),
+    Endpoint(
+        path="/jobs/{job_id}",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/jobs/{job_id}",
+        methods=["POST"],
+    ),
+    Endpoint(
+        path="/jobs/{job_id}",
+        methods=["DELETE"],
+    ),
+    Endpoint(
+        path="/jobs/{job_id}/estimate",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/jobs/{job_id}/logs",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/jobs/{job_id}/results",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/jobs/{job_id}/results",
+        methods=["POST"],
+    ),
+    Endpoint(
+        path="/jobs/{job_id}/results",
+        methods=["DELETE"],
+    ),
+]
+
 
 class Job(BaseModel):
     """Pydantic model manipulating jobs."""
@@ -62,48 +105,7 @@ class JobsRegister(EndpointRegister):
         self.links = links
 
     def _initialize_endpoints(self) -> list[Endpoint]:
-        return [
-            Endpoint(
-                path="/jobs",
-                methods=["GET"],
-            ),
-            Endpoint(
-                path="/jobs",
-                methods=["POST"],
-            ),
-            Endpoint(
-                path="/jobs/{job_id}",
-                methods=["GET"],
-            ),
-            Endpoint(
-                path="/jobs/{job_id}",
-                methods=["POST"],
-            ),
-            Endpoint(
-                path="/jobs/{job_id}",
-                methods=["DELETE"],
-            ),
-            Endpoint(
-                path="/jobs/{job_id}/estimate",
-                methods=["GET"],
-            ),
-            Endpoint(
-                path="/jobs/{job_id}/logs",
-                methods=["GET"],
-            ),
-            Endpoint(
-                path="/jobs/{job_id}/results",
-                methods=["GET"],
-            ),
-            Endpoint(
-                path="/jobs/{job_id}/results",
-                methods=["POST"],
-            ),
-            Endpoint(
-                path="/jobs/{job_id}/results",
-                methods=["DELETE"],
-            ),
-        ]
+        return JOBS_ENDPOINTS
 
     def list_jobs(
         self, limit: Optional[int] = 10, user: User = Depends(Authenticator.validate)
@@ -285,7 +287,7 @@ class JobsRegister(EndpointRegister):
             status_code=204, content="Changes to the job applied successfully."
         )
 
-    def get_job(self, job_id: uuid.UUID):
+    def get_job(self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)):
         """_summary_
 
         Args:
@@ -316,7 +318,9 @@ class JobsRegister(EndpointRegister):
 
         return BatchJob(id=job.job_id.__str__(), process=process_graph, **job.dict())
 
-    def delete_job(self, job_id: uuid.UUID):
+    def delete_job(
+        self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
@@ -338,7 +342,7 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def estimate(self, job_id: uuid.UUID):
+    def estimate(self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)):
         """_summary_
 
         Args:
@@ -360,7 +364,7 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def logs(self, job_id: uuid.UUID):
+    def logs(self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)):
         """_summary_
 
         Args:
@@ -382,7 +386,9 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def get_results(self, job_id: uuid.UUID):
+    def get_results(
+        self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
@@ -404,7 +410,9 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def start_job(self, job_id: uuid.UUID):
+    def start_job(
+        self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
@@ -426,7 +434,9 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def cancel_job(self, job_id: uuid.UUID):
+    def cancel_job(
+        self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:
@@ -448,7 +458,9 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def delete_job(self, job_id: uuid.UUID):
+    def delete_job(
+        self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)
+    ):
         """_summary_
 
         Args:

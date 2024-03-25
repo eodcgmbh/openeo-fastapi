@@ -7,6 +7,7 @@ from attrs import define, field
 from openeo_fastapi.api import responses
 from openeo_fastapi.client import conformance
 from openeo_fastapi.client.collections import CollectionRegister
+from openeo_fastapi.client.files import FilesRegister
 from openeo_fastapi.client.jobs import JobsRegister
 from openeo_fastapi.client.processes import ProcessRegister
 from openeo_fastapi.client.settings import AppSettings
@@ -17,27 +18,31 @@ class OpenEOCore:
     """Base client for the OpenEO Api."""
 
     billing: str = field()
+    input_formats: list = field()
+    output_formats: list = field()
     links: list = field()
 
     settings = AppSettings()
 
     _id: str = field(default="OpenEOApi")
 
-    _collections: Optional[CollectionRegister] = None
-    _jobs: Optional[JobsRegister] = None
-    _processes: Optional[ProcessRegister] = None
+    collections: Optional[CollectionRegister] = None
+    files: Optional[FilesRegister] = None
+    jobs: Optional[JobsRegister] = None
+    processes: Optional[ProcessRegister] = None
 
     def __attrs_post_init__(self):
         """
         Post init hook to set the register objects for the class if none where provided by the user!
         """
-        self._collections = self._collections or CollectionRegister(self.settings)
-        self._jobs = self._jobs or JobsRegister(self.settings, self.links)
-        self._processes = self._processes or ProcessRegister(self.links)
+        self.collections = self.collections or CollectionRegister(self.settings)
+        self.files = self.files or FilesRegister(self.settings, self.links)
+        self.jobs = self.jobs or JobsRegister(self.settings, self.links)
+        self.processes = self.processes or ProcessRegister(self.links)
 
     def _combine_endpoints(self):
         """For the various registers that hold endpoint functions, concat those endpoints to register in get_capabilities."""
-        registers = [self._collections, self._processes, self._jobs]
+        registers = [self.collections, self.files, self.jobs, self.processes]
 
         endpoints = []
         for register in registers:
@@ -93,4 +98,11 @@ class OpenEOCore:
         """ """
         return responses.ConformanceGetResponse(
             conformsTo=conformance.BASIC_CONFORMANCE_CLASSES
+        )
+
+    def get_file_formats(self) -> responses.FileFormatsGetResponse:
+        """ """
+        return responses.FileFormatsGetResponse(
+            input={_format.title: _format for _format in self.input_formats},
+            output={_format.title: _format for _format in self.output_formats},
         )

@@ -5,6 +5,17 @@ from openeo_fastapi.api.responses import Collection, Collections
 from openeo_fastapi.api.types import Endpoint, Error
 from openeo_fastapi.client.register import EndpointRegister
 
+COLLECTIONS_ENDPOINTS = [
+    Endpoint(
+        path="/collections",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/collections/{collection_id}",
+        methods=["GET"],
+    ),
+]
+
 
 class CollectionRegister(EndpointRegister):
     def __init__(self, settings) -> None:
@@ -13,16 +24,7 @@ class CollectionRegister(EndpointRegister):
         self.settings = settings
 
     def _initialize_endpoints(self) -> list[Endpoint]:
-        return [
-            Endpoint(
-                path="/collections",
-                methods=["GET"],
-            ),
-            Endpoint(
-                path="/collections/{collection_id}",
-                methods=["GET"],
-            ),
-        ]
+        return COLLECTIONS_ENDPOINTS
 
     async def _proxy_request(self, path):
         """

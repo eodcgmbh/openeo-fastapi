@@ -64,6 +64,21 @@ class OpenEOApi:
             endpoint=self.client.get_conformance,
         )
 
+    def register_get_file_formats(self):
+        """Register conformance page (GET /file_formats).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="conformance",
+            path=f"/{self.client.settings.OPENEO_VERSION}/file_formats",
+            response_model=responses.FileFormatsGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.get_file_formats,
+        )
+
     def register_get_collections(self):
         """Register collection Endpoint (GET /collections).
         Returns:
@@ -76,7 +91,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client._collections.get_collections,
+            endpoint=self.client.collections.get_collections,
         )
 
     def register_get_collection(self):
@@ -92,7 +107,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client._collections.get_collection,
+            endpoint=self.client.collections.get_collection,
         )
 
     def register_get_processes(self):
@@ -108,7 +123,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client._processes.list_processes,
+            endpoint=self.client.processes.list_processes,
         )
 
     def register_get_jobs(self):
@@ -124,7 +139,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client._jobs.list_jobs,
+            endpoint=self.client.jobs.list_jobs,
         )
 
     def register_create_job(self):
@@ -140,7 +155,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["POST"],
-            endpoint=self.client._jobs.create_job,
+            endpoint=self.client.jobs.create_job,
         )
 
     def register_update_job(self):
@@ -156,7 +171,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["PATCH"],
-            endpoint=self.client._jobs.update_job,
+            endpoint=self.client.jobs.update_job,
         )
 
     def register_get_job(self):
@@ -172,7 +187,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client._jobs.get_job,
+            endpoint=self.client.jobs.get_job,
         )
 
     def register_delete_job(self):
@@ -188,7 +203,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["DELETE"],
-            endpoint=self.client._jobs.delete_job,
+            endpoint=self.client.jobs.delete_job,
         )
 
     def register_get_estimate(self):
@@ -204,7 +219,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client._jobs.estimate,
+            endpoint=self.client.jobs.estimate,
         )
 
     def register_get_logs(self):
@@ -220,7 +235,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client._jobs.logs,
+            endpoint=self.client.jobs.logs,
         )
 
     def register_get_results(self):
@@ -236,7 +251,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
-            endpoint=self.client._jobs.get_results,
+            endpoint=self.client.jobs.get_results,
         )
 
     def register_start_job(self):
@@ -252,7 +267,7 @@ class OpenEOApi:
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["POST"],
-            endpoint=self.client._jobs.start_job,
+            endpoint=self.client.jobs.start_job,
         )
 
     def register_cancel_job(self):
@@ -262,13 +277,77 @@ class OpenEOApi:
             None
         """
         self.router.add_api_route(
-            name="start_job",
+            name="cancel_job",
             path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["DELETE"],
-            endpoint=self.client._jobs.cancel_job,
+            endpoint=self.client.jobs.cancel_job,
+        )
+
+    def register_list_files(self):
+        """Register Endpoint for Files (GET /files).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="list_files",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.files.list_files,
+        )
+
+    def register_download_file(self):
+        """Register Endpoint for Files (GET /files/{path}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="download_file",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.files.download_file,
+        )
+
+    def register_upload_file(self):
+        """Register Endpoint for Files (PUT /files/{path}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="upload_file",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["PUT"],
+            endpoint=self.client.files.upload_file,
+        )
+
+    def register_delete_file(self):
+        """Register Endpoint for Files (DELETE /files/{path}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="delete_file",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["DELETE"],
+            endpoint=self.client.files.delete_file,
         )
 
     def register_core(self):
@@ -288,6 +367,7 @@ class OpenEOApi:
             None
         """
         self.register_get_conformance()
+        self.register_get_file_formats()
         self.register_get_collections()
         self.register_get_collection()
         self.register_get_processes()
@@ -301,6 +381,10 @@ class OpenEOApi:
         self.register_get_results()
         self.register_start_job()
         self.register_cancel_job()
+        self.register_list_files()
+        self.register_download_file()
+        self.register_upload_file()
+        self.register_delete_file()
         self.register_well_known()
 
     def http_exception_handler(self, request, exception):

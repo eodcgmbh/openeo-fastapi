@@ -44,7 +44,7 @@ os.environ["OIDC_ORGANISATION"] = "issuer"
 os.environ["OIDC_ROLES"] = "tester,developer"
 
 from openeo_fastapi.api.app import OpenEOApi
-from openeo_fastapi.api.types import Billing, Link, Plan
+from openeo_fastapi.api.types import Billing, FileFormat, GisDataType, Link, Plan
 from openeo_fastapi.client import auth, settings
 from openeo_fastapi.client.core import CollectionRegister, OpenEOCore
 
@@ -56,7 +56,16 @@ def app_settings():
 
 @pytest.fixture()
 def core_api():
+    formats = [
+        FileFormat(
+            title="json",
+            gis_data_types=[GisDataType("vector")],
+            parameters={},
+        )
+    ]
     client = OpenEOCore(
+        input_formats=formats,
+        output_formats=formats,
         links=[
             Link(
                 href="https://eodc.eu/",

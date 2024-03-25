@@ -1,7 +1,7 @@
 import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import AnyUrl, BaseModel, Extra, Field, validator
 
@@ -55,6 +55,13 @@ class Level(Enum):
     warning = "warning"
     info = "info"
     debug = "debug"
+
+
+class GisDataType(Enum):
+    raster = "raster"
+    vector = "vector"
+    table = "table"
+    other = "other"
 
 
 class RFC3339Datetime(BaseModel):
@@ -177,6 +184,20 @@ class Billing(BaseModel):
                 "paid": True,
             },
         ],
+    )
+
+
+class File(BaseModel):
+    path: str = Field(
+        ...,
+        description="Path of the file, relative to the root directory of the user's server-side workspace.\nMUST NOT start with a slash `/` and MUST NOT be url-encoded.\n\nThe Windows-style path name component separator `\\` is not supported,\nalways use `/` instead.\n\nNote: The pattern only specifies a minimal subset of invalid characters.\nThe back-ends MAY enforce additional restrictions depending on their OS/environment.",
+        example="folder/file.txt",
+    )
+    size: Optional[int] = Field(None, description="File size in bytes.", example=1024)
+    modified: Optional[RFC3339Datetime] = Field(
+        None,
+        description="Date and time the file has lastly been modified, formatted as a [RFC 3339](https://www.rfc-editor.org/rfc/RFC3339Datetime.html) date-time.",
+        example="2018-01-03T10:55:29Z",
     )
 
 
@@ -303,3 +324,23 @@ class Error(BaseModel):
         example="Parameter 'sample' is missing.",
     )
     links: Optional[list[Link]] = None
+
+
+class FileFormat(BaseModel):
+    title: str
+    description: Optional[str] = None
+    gis_data_types: list[GisDataType] = Field(
+        ...,
+        description="Specifies the supported GIS spatial data types for this format.\nIt is RECOMMENDED to specify at least one of the data types, which will likely become a requirement in a future API version.",
+    )
+    deprecated: Optional[bool] = None
+    experimental: Optional[bool] = None
+    parameters: dict[str, Any] = Field(
+        ...,
+        description="Specifies the supported parameters for this file format.",
+        title="File Format Parameters",
+    )
+    links: Optional[list[Link]] = Field(
+        None,
+        description="Links related to this file format, e.g. external documentation.\n\nFor relation types see the lists of\n[common relation types in openEO](#section/API-Principles/Web-Linking).",
+    )

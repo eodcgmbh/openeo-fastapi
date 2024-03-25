@@ -169,7 +169,7 @@ def test_not_implemented(
 
     for post in posts:
         assert_not(
-            test_app.get(
+            test_app.post(
                 post,
                 headers={"Authorization": "Bearer /oidc/egi/not-real"},
             )

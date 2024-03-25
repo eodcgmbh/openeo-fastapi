@@ -13,6 +13,13 @@ from openeo_fastapi.api.types import Endpoint, Error, Process
 from openeo_fastapi.client.psql.models import ProcessGraphORM
 from openeo_fastapi.client.register import EndpointRegister
 
+PROCESSES_ENDPOINTS = [
+    Endpoint(
+        path="/processes",
+        methods=["GET"],
+    )
+]
+
 
 class ProcessGraph(BaseModel):
     process_graph_id: str
@@ -38,12 +45,7 @@ class ProcessRegister(EndpointRegister):
         self.links = links
 
     def _initialize_endpoints(self) -> list[Endpoint]:
-        return [
-            Endpoint(
-                path="/processes",
-                methods=["GET"],
-            )
-        ]
+        return PROCESSES_ENDPOINTS
 
     def _create_process_registry(self):
         """
