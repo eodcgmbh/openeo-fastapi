@@ -83,6 +83,17 @@ def modify(modify_object: BaseModel) -> bool:
     return True
 
 
+def delete(delete_model: BaseModel, primary_key: Any) -> bool:
+    """Delete the values from a pydantic model in the database using its respective object relational mapping."""
+    db = sessionmaker(get_engine())
+
+    with db.begin() as session:
+        delete_obj = session.get(delete_model.get_orm(), str(primary_key))
+
+        session.delete(delete_obj)
+    return True
+
+
 def get_first_or_default(get_model: BaseModel, filter_with: Filter) -> BaseModel:
     user_exists = _list(filter_with=filter_with, list_model=get_model)
     if user_exists:

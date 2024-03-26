@@ -1,28 +1,73 @@
 import datetime
 import functools
 import uuid
-from typing import Union
+from typing import Optional, Union
 
 import openeo_processes_dask.specs
+from fastapi import Depends, HTTPException, Response
 from openeo_pg_parser_networkx import Process as pgProcess
 from openeo_pg_parser_networkx import ProcessRegistry
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field
 
-from openeo_fastapi.api.responses import ProcessesGetResponse
+from openeo_fastapi.api.responses import (
+    ProcessesGetResponse,
+    ProcessGraphsGetResponse,
+    ProcessGraphWithMetadata,
+)
 from openeo_fastapi.api.types import Endpoint, Error, Process
-from openeo_fastapi.client.psql.models import ProcessGraphORM
+from openeo_fastapi.client.auth import Authenticator, User
+from openeo_fastapi.client.psql.engine import Filter, _list, create, delete, get
+from openeo_fastapi.client.psql.models import ProcessGraphORM, UdpORM
 from openeo_fastapi.client.register import EndpointRegister
 
 PROCESSES_ENDPOINTS = [
     Endpoint(
         path="/processes",
         methods=["GET"],
-    )
+    ),
+    Endpoint(
+        path="/process_graphs",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/process_graphs/{process_graph_id}",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/process_graphs/{process_graph_id}",
+        methods=["PUT"],
+    ),
+    Endpoint(
+        path="/process_graphs/{process_graph_id}",
+        methods=["DELETE"],
+    ),
 ]
 
 
+class UserDefinedProcessGraph(BaseModel):
+    """Model for some incoming requests to the api."""
+
+    id: str
+    user_id: uuid.UUID
+    process_graph: dict = None
+    created: datetime.datetime
+    summary: Optional[str] = None
+    description: Optional[str] = None
+    parameters: Optional[list] = None
+    returns: Optional[dict] = None
+
+    @classmethod
+    def get_orm(cls):
+        return UdpORM
+
+    class Config:
+        orm_mode = True
+        allow_population_by_field_name = True
+        extra = "ignore"
+
+
 class ProcessGraph(BaseModel):
-    process_graph_id: str
+    id: str
     process_graph: dict
     user_id: uuid.UUID
     created: datetime.datetime
@@ -70,16 +115,90 @@ class ProcessRegister(EndpointRegister):
             for process in self.process_registry["predefined", None].values()
         ]
 
-    def list_processes(self) -> Union[ProcessesGetResponse, Error]:
+    def list_processes(self) -> Union[ProcessesGetResponse, None]:
         """
         Returns Supported predefined processes defined by openeo-processes-dask
         """
-        try:
-            processes = self.get_available_processes()
-            resp = ProcessesGetResponse(
-                processes=processes,
-                links=self.links,
+        processes = self.get_available_processes()
+        resp = ProcessesGetResponse(
+            processes=processes,
+            links=self.links,
+        )
+        return resp
+
+    def list_user_process_graphs(
+        self, limit: Optional[int] = 10, user: User = Depends(Authenticator.validate)
+    ) -> Union[ProcessGraphsGetResponse, None]:
+        """
+        Lists all user-defined processes (process graphs) of the authenticated user that are stored at the back-end.
+        """
+        # Invoke list function from handler
+        _filter = Filter(column_name="user_id", value=user.user_id)
+
+        udp_list = _list(list_model=UserDefinedProcessGraph, filter_with=_filter)
+
+        udps = [ProcessGraphWithMetadata(**graph.dict()) for graph in udp_list]
+
+        return ProcessGraphsGetResponse(processes=udps, links=self.links)
+
+    def get_user_process_graph(
+        self, process_graph_id: str, user: User = Depends(Authenticator.validate)
+    ) -> Union[ProcessGraphWithMetadata, None]:
+        """
+        Lists all information about a user-defined process, including its process graph.
+        """
+        graph = get(get_model=UserDefinedProcessGraph, primary_key=process_graph_id)
+
+        if not graph:
+            raise HTTPException(
+                status_code=404,
+                detail=f"No user defined process graph found with id: {process_graph_id}",
             )
-            return resp
-        except Exception as e:
-            raise Exception(f"Error while getting available Processes: {e}")
+
+        return ProcessGraphWithMetadata(**graph.dict())
+
+    def put_user_process_graph(
+        self,
+        process_graph_id: str,
+        body: ProcessGraphWithMetadata,
+        user: User = Depends(Authenticator.validate),
+    ):
+        """
+        Stores a provided user-defined process with process graph that can be reused in other processes.
+        """
+        udp = UserDefinedProcessGraph(
+            id=process_graph_id,
+            user_id=user.user_id,
+            process_graph=body.process_graph,
+            created=datetime.datetime.now(),
+            description=body.description,
+            parameters=body.parameters,
+            returns=body.returns,
+        )
+
+        create(create_object=udp)
+
+        return Response(
+            status_code=201,
+            content="The user-defined process has been stored successfully. ",
+        )
+
+    def delete_user_process_graph(
+        self, process_graph_id: str, user: User = Depends(Authenticator.validate)
+    ):
+        """
+        Deletes the data related to this user-defined process, including its process graph.
+        """
+        if get(get_model=UserDefinedProcessGraph, primary_key=process_graph_id):
+            delete(delete_model=UserDefinedProcessGraph, primary_key=process_graph_id)
+            return Response(
+                status_code=204,
+                content="The user-defined process has been successfully deleted.",
+            )
+        raise HTTPException(
+            status_code=404,
+            detail=Error(
+                code="NotFound",
+                message=f"The requested resource {process_graph_id} was not found.",
+            ),
+        )

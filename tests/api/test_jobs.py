@@ -3,35 +3,7 @@ import uuid
 
 from fastapi.testclient import TestClient
 
-
-def post_request(app: TestClient, path: str, data: dict):
-    """
-    Code to post a job to the provided client.
-    """
-    payload = json.dumps(data)
-
-    response = app.post(
-        path,
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
-        data=payload,
-    )
-
-    return response
-
-
-def patch_request(app: TestClient, path: str, data: dict):
-    """
-    Code to post a job to the provided client.
-    """
-    payload = json.dumps(data)
-
-    response = app.patch(
-        path,
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
-        data=payload,
-    )
-
-    return response
+from tests.utils import patch_request, post_request
 
 
 def test_list_jobs(
@@ -45,9 +17,7 @@ def test_list_jobs(
 
     for x in range(0, 3):
         job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
-        post_request(
-            test_app, f"/{app_settings.OPENEO_VERSION}/jobs", job_post
-        ).status_code
+        post_request(test_app, f"/{app_settings.OPENEO_VERSION}/jobs", job_post)
 
     response = test_app.get(
         f"/{app_settings.OPENEO_VERSION}/jobs",
@@ -55,7 +25,6 @@ def test_list_jobs(
     )
 
     assert response.status_code == 200
-    # assert response.content == "content"
     assert len(response.json()["jobs"]) == 3
 
 
