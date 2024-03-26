@@ -98,6 +98,12 @@ def job_post():
 
 
 @pytest.fixture()
+def process_graph():
+    with open(os.path.join(current_directory, "data/process-graph.json")) as f_in:
+        return json.load(f_in)
+
+
+@pytest.fixture()
 def collections():
     with open(os.path.join(current_directory, "data/collections.json")) as f_in:
         return json.load(f_in)

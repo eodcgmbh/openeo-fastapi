@@ -1,0 +1,55 @@
+{
+    "deprecated": false,
+    "exceptions": {},
+    "experimental": false,
+    "id": "0eoBMjx6ng1BvD7C",
+    "process_graph": {
+        "loadcollection": {
+            "arguments": {
+                "bands": [
+                "VV",
+                "HH"
+                ],
+                "id": "sentinel1-grd",
+                "spatial_extent": {
+                    "crs": "EPSG:4326",
+                    "east": 11.616325378417969,
+                    "north": 46.53713734839792,
+                    "south": 46.44258864468262,
+                    "west": 11.08348846435547
+                },
+                "temporal_extent": [
+                "2021-01-01",
+                "2021-01-15"
+                ]
+            },
+            "process_id": "load_collection"
+        },
+        "sarbackscatter": {
+        "arguments": {
+            "coefficient": "gamma0-terrain",
+            "contributing_area": false,
+            "data": {
+            "from_node": "loadcollection1"
+            },
+            "elevation_model": null,
+            "ellipsoid_incidence_angle": false,
+            "local_incidence_angle": false,
+            "mask": false,
+            "noise_removal": true
+        },
+        "process_id": "sar_backscatter"
+        },
+        "saveresult": {
+        "arguments": {
+            "data": {
+            "from_node": "sarbackscatter"
+            },
+            "format": "netcdf",
+            "options": {}
+        },
+        "process_id": "save_result",
+        "result": true
+        }
+    }
+}

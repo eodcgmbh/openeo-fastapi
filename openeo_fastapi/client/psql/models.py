@@ -38,7 +38,7 @@ class ProcessGraphORM(BASE):
 
     __tablename__ = "process_graph"
 
-    process_graph_id = Column(VARCHAR, primary_key=True)
+    id = Column(VARCHAR, primary_key=True)
     process_graph = Column(JSON, nullable=False)
     user_id = Column(
         UUID(as_uuid=True),
@@ -52,8 +52,8 @@ class UdpORM(BASE):
 
     __tablename__ = "udps"
 
-    udp_id = Column(String, primary_key=True, nullable=False)
-    user_id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
+    id = Column(String, primary_key=True, nullable=False)
+    user_id = Column(UUID(as_uuid=True), nullable=False)
     process_graph = Column(JSON, nullable=False)
     created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
     parameters = Column("parameters", JSON)

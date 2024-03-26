@@ -126,6 +126,73 @@ class OpenEOApi:
             endpoint=self.client.processes.list_processes,
         )
 
+    def register_list_user_process_graphs(self):
+        """Register Endpoint for User Processes Graphs (GET /processes_graphs).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="list_user_process_graphs",
+            path=f"/{self.client.settings.OPENEO_VERSION}/process_graphs",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.processes.list_user_process_graphs,
+        )
+
+    def register_get_user_process_graph(self):
+        """Register Endpoint for User Processes Graphs (GET /processes_graphs/{process_graph_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="get_user_process_graphs",
+            path=f"/{self.client.settings.OPENEO_VERSION}/process_graphs"
+            + "/{process_graph_id}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.processes.get_user_process_graph,
+        )
+
+    def register_put_user_process_graph(self):
+        """Register Endpoint for User Processes Graphs (PUT /processes_graphs/{process_graph_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="put_user_process_graphs",
+            path=f"/{self.client.settings.OPENEO_VERSION}/process_graphs"
+            + "/{process_graph_id}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["PUT"],
+            endpoint=self.client.processes.put_user_process_graph,
+        )
+
+    def register_delete_user_process_graph(self):
+        """Register Endpoint for User Processes Graphs (DELETE /processes_graphs/{process_graph_id}).
+
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="delete_user_process_graphs",
+            path=f"/{self.client.settings.OPENEO_VERSION}/process_graphs"
+            + "/{process_graph_id}",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["DELETE"],
+            endpoint=self.client.processes.delete_user_process_graph,
+        )
+
     def register_get_jobs(self):
         """Register Endpoint for Jobs (GET /jobs).
 
@@ -371,6 +438,10 @@ class OpenEOApi:
         self.register_get_collections()
         self.register_get_collection()
         self.register_get_processes()
+        self.register_list_user_process_graphs()
+        self.register_get_user_process_graph()
+        self.register_put_user_process_graph()
+        self.register_delete_user_process_graph()
         self.register_get_jobs()
         self.register_create_job()
         self.register_update_job()

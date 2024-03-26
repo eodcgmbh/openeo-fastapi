@@ -60,7 +60,7 @@ def test_processgraph_model(mock_engine):
 
     user = UserORM(user_id=user_uid, oidc_sub="someone@egi.eu")
     processgraph = ProcessGraphORM(
-        process_graph_id=process_graph_uid,
+        id=process_graph_uid,
         user_id=user_uid,
         process_graph={"process": {"args": "one"}},
     )
@@ -71,7 +71,7 @@ def test_processgraph_model(mock_engine):
         sesh.add(processgraph)
 
     with session.begin() as sesh:
-        found_pg = select(ProcessGraphORM).filter_by(process_graph_id=process_graph_uid)
+        found_pg = select(ProcessGraphORM).filter_by(id=process_graph_uid)
 
         assert sesh.scalars(found_pg).first()
 
@@ -85,7 +85,7 @@ def test_udpor_model(mock_engine):
 
     user = UserORM(user_id=_uid, oidc_sub="someone@egi.eu")
     processgraph = UdpORM(
-        udp_id=process_graph_uid,
+        id=process_graph_uid,
         user_id=_uid,
         process_graph={"process": {"args": "one"}},
     )
@@ -96,7 +96,7 @@ def test_udpor_model(mock_engine):
         sesh.add(processgraph)
 
     with session.begin() as sesh:
-        found_pg = select(UdpORM).filter_by(udp_id=process_graph_uid)
+        found_pg = select(UdpORM).filter_by(id=process_graph_uid)
 
         assert sesh.scalars(found_pg).first()
 

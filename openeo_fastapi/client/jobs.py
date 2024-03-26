@@ -235,7 +235,7 @@ class JobsRegister(EndpointRegister):
         )
         # If there is a new process graph in the request body, and it already exists try to update the one in memory. Else create a new one!
         if body.process:
-            if process_graph.process_graph_id == body.process.id:
+            if process_graph.id == body.process.id:
                 patched_process_graph = process_graph.patch(body.process)
                 # if it's changed call engine to modify
                 if process_graph != patched_process_graph:
@@ -256,7 +256,7 @@ class JobsRegister(EndpointRegister):
                 # Check a process graph with this id does not already exist
                 existing_process_graph = get(
                     get_model=ProcessGraph,
-                    primary_key=new_process_graph.process_graph_id,
+                    primary_key=new_process_graph.id,
                 )
                 if existing_process_graph:
                     raise HTTPException(
@@ -273,7 +273,7 @@ class JobsRegister(EndpointRegister):
                     )
 
                 # Update job id with new process_graph_id
-                patched_job.process_graph_id = new_process_graph.process_graph_id
+                patched_job.process_graph_id = new_process_graph.id
 
         # Call engine modify with a new model!
         modified = modify(modify_object=patched_job)

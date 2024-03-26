@@ -373,7 +373,7 @@ class ProcessesGetResponse(BaseModel):
 
 
 class ProcessGraphWithMetadata(Process):
-    process_graph_id: Any = Field(default=None, alias="id")
+    id: str = Field(default=None, alias="id")
     summary: Optional[Any] = None
     description: Optional[Any] = None
     parameters: Optional[Any] = None
@@ -382,6 +382,13 @@ class ProcessGraphWithMetadata(Process):
 
     class Config:
         allow_population_by_field_name = True
+
+
+class ProcessGraphsGetResponse(BaseModel):
+    processes: list[ProcessGraphWithMetadata] = Field(
+        ..., description="Array of user-defined processes"
+    )
+    links: list[Link]
 
 
 ###########
