@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 from sqlalchemy import BOOLEAN, Column, select
 from sqlalchemy.exc import IntegrityError
@@ -8,7 +10,6 @@ from openeo_fastapi.client.psql.models import JobORM, ProcessGraphORM, UdpORM, U
 
 def test_db_setup_and_userorm_model(mock_engine):
     """A test to validate the basic structure of our ORMs and get_engine functions."""
-    import uuid
 
     _uid = uuid.uuid4()
     user = UserORM(user_id=_uid, oidc_sub="someone@egi.eu")
@@ -27,7 +28,6 @@ def test_db_setup_and_userorm_model(mock_engine):
 
 def test_job_model(mock_engine):
     """ """
-    import uuid
 
     user_uid = uuid.uuid4()
     job_uid = uuid.uuid4()
@@ -53,7 +53,6 @@ def test_job_model(mock_engine):
 
 def test_processgraph_model(mock_engine):
     """ """
-    import uuid
 
     user_uid = uuid.uuid4()
     process_graph_uid = "SOMEPGID"
@@ -78,7 +77,6 @@ def test_processgraph_model(mock_engine):
 
 def test_udpor_model(mock_engine):
     """ """
-    import uuid
 
     _uid = uuid.uuid4()
     process_graph_uid = "SOMEPGID"
@@ -103,8 +101,6 @@ def test_udpor_model(mock_engine):
 
 def test_models_extendable(mock_engine):
     """Test the existing models can be extended and used to revise the database."""
-
-    import uuid
 
     _uid = uuid.uuid4()
 
