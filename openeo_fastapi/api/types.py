@@ -344,3 +344,16 @@ class FileFormat(BaseModel):
         None,
         description="Links related to this file format, e.g. external documentation.\n\nFor relation types see the lists of\n[common relation types in openEO](#section/API-Principles/Web-Linking).",
     )
+
+
+class Storage1(BaseModel):
+    free: int = Field(
+        ...,
+        description="Free storage space in bytes, which is still available to the user. Effectively, this is the disk quota minus the used space by the user, e.g. user-uploaded files and job results.",
+        example=536870912,
+    )
+    quota: int = Field(
+        ...,
+        description="Maximum storage space (disk quota) in bytes available to the user.",
+        example=1073741824,
+    )

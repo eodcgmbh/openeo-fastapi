@@ -88,7 +88,10 @@ def delete(delete_model: BaseModel, primary_key: Any) -> bool:
     db = sessionmaker(get_engine())
 
     with db.begin() as session:
-        delete_obj = session.get(delete_model.get_orm(), str(primary_key))
+        if isinstance(primary_key, list):
+            delete_obj = session.get(delete_model.get_orm(), primary_key)
+        else:
+            delete_obj = session.get(delete_model.get_orm(), str(primary_key))
 
         session.delete(delete_obj)
     return True

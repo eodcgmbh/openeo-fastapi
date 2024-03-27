@@ -7,12 +7,14 @@ from pydantic import AnyUrl, BaseModel, Extra, Field, validator
 from openeo_fastapi.api.types import (
     Billing,
     Endpoint,
+    Error,
     File,
     FileFormat,
     Link,
     Process,
     RFC3339Datetime,
     Status,
+    Storage1,
     Type1,
     Type2,
     Type5,
@@ -391,6 +393,10 @@ class ProcessGraphsGetResponse(BaseModel):
     links: list[Link]
 
 
+class ValidationPostResponse(BaseModel):
+    errors: list[Error] = Field(..., description="A list of validation errors.")
+
+
 ###########
 # Jobs
 ###########
@@ -478,3 +484,49 @@ class FileFormatsGetResponse(BaseModel):
         description="Map of supported output file formats, i.e. file formats a back-end can **write** to. The property keys are the file format names that are used by clients and users, for example in process graphs.",
         title="Output File Formats",
     )
+
+
+class MeGetResponse(BaseModel):
+    user_id: uuid.UUID
+    name: Optional[str] = Field(
+        None,
+        description="The user name, a human-friendly displayable name. Could be the user's real name or a nickname.",
+    )
+    default_plan: Optional[str] = Field(
+        None,
+        description="Name of the plan the user has subscribed to.\n\nOverrides the default plan of the back-end, but back-ends\nMAY also allow overriding this plan for each individual\nprocessing request (e.g. job or service) with the\ncorresponding `plan` property.",
+        example="free",
+    )
+    storage: Optional[Storage1] = Field(
+        None,
+        description="Information about the storage space available to the user.",
+        title="User Storage",
+    )
+    budget: Optional[float] = None
+    links: Optional[list[Link]] = Field(
+        None,
+        description="Links related to the user profile, e.g. where payments\nare handled or the user profile could be edited.\n\nIt is RECOMMENDED to provide links with the following `rel` (relation) types:\n\n1. `payment`: A page where users can recharge their user account with money or credits.\n\n2. `edit-form`: Points to a page where the user can edit his user profile.\n\nFor additional relation types see also the lists of\n[common relation types in openEO](#section/API-Principles/Web-Linking).",
+        example=[
+            {"href": "https://example.openeo.org/john_doe/payment/", "rel": "payment"},
+            {"href": "https://example.openeo.org/john_doe/edit/", "rel": "edit-form"},
+            {
+                "href": "https://example.openeo.org/john_doe/",
+                "rel": "alternate",
+                "type": "text/html",
+                "title": "User profile",
+            },
+            {
+                "href": "https://example.openeo.org/john_doe.vcf",
+                "rel": "alternate",
+                "type": "text/vcard",
+                "title": "vCard of John Doe",
+            },
+        ],
+    )
+
+
+class UdfRuntimesGetResponse(BaseModel):
+    pass
+
+    class Config:
+        extra = Extra.allow

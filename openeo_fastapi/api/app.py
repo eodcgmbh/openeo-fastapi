@@ -50,7 +50,7 @@ class OpenEOApi:
         )
 
     def register_get_conformance(self):
-        """Register conformance page (GET /).
+        """Register conformance page (GET /conformance).
         Returns:
             None
         """
@@ -65,18 +65,93 @@ class OpenEOApi:
         )
 
     def register_get_file_formats(self):
-        """Register conformance page (GET /file_formats).
+        """Register supported file formats page (GET /file_formats).
         Returns:
             None
         """
         self.router.add_api_route(
-            name="conformance",
+            name="file_formats",
             path=f"/{self.client.settings.OPENEO_VERSION}/file_formats",
             response_model=responses.FileFormatsGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
             methods=["GET"],
             endpoint=self.client.get_file_formats,
+        )
+
+    def register_get_health(self):
+        """Register api health endpoint (GET /health).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="health",
+            path=f"/{self.client.settings.OPENEO_VERSION}/health",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.get_health,
+        )
+
+    def register_get_user_info(self):
+        """Register conformance page (GET /me).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="me",
+            path=f"/{self.client.settings.OPENEO_VERSION}/me",
+            response_model=responses.MeGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.get_user_info,
+        )
+
+    def register_get_udf_runtimes(self):
+        """Register supported udf runtimes (GET /udf_runtimes).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="udf_runtimes",
+            path=f"/{self.client.settings.OPENEO_VERSION}/udf_runtimes",
+            response_model=responses.UdfRuntimesGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.udf_runtimes,
+        )
+
+    def register_validate_user_process_graph(self):
+        """Register validate user process graph (GET /validation).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="validation",
+            path=f"/{self.client.settings.OPENEO_VERSION}/validation",
+            response_model=responses.ValidationPostResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["POST"],
+            endpoint=self.client.processes.validate_user_process_graph,
+        )
+
+    def register_run_sync_job(self):
+        """Register run synchronous job (GET /result).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="result",
+            path=f"/{self.client.settings.OPENEO_VERSION}/result",
+            response_model=None,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["POST"],
+            endpoint=self.client.jobs.process_sync_job,
         )
 
     def register_get_collections(self):
@@ -434,6 +509,11 @@ class OpenEOApi:
             None
         """
         self.register_get_conformance()
+        self.register_get_health()
+        self.register_get_user_info()
+        self.register_run_sync_job()
+        self.register_get_udf_runtimes()
+        self.register_validate_user_process_graph()
         self.register_get_file_formats()
         self.register_get_collections()
         self.register_get_collection()

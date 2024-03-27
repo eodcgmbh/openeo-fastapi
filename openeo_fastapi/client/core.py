@@ -3,9 +3,11 @@ from typing import Optional
 from urllib.parse import urlunparse
 
 from attrs import define, field
+from fastapi import Depends, HTTPException, Response
 
-from openeo_fastapi.api import responses
+from openeo_fastapi.api import responses, types
 from openeo_fastapi.client import conformance
+from openeo_fastapi.client.auth import Authenticator, User
 from openeo_fastapi.client.collections import CollectionRegister
 from openeo_fastapi.client.files import FilesRegister
 from openeo_fastapi.client.jobs import JobsRegister
@@ -105,4 +107,23 @@ class OpenEOCore:
         return responses.FileFormatsGetResponse(
             input={_format.title: _format for _format in self.input_formats},
             output={_format.title: _format for _format in self.output_formats},
+        )
+
+    def get_user_info(
+        self, user: User = Depends(Authenticator.validate)
+    ) -> responses.MeGetResponse:
+        """ """
+        return responses.MeGetResponse(user_id=user.user_id.__str__())
+
+    def get_health(self):
+        """ """
+        return Response(status_code=200, content="OK")
+
+    def udf_runtimes(self) -> responses.UdfRuntimesGetResponse:
+        """ """
+        raise HTTPException(
+            status_code=501,
+            detail=types.Error(
+                code="FeatureUnsupported", message="Feature not supported."
+            ),
         )

@@ -13,6 +13,7 @@ from openeo_fastapi.api.responses import (
     ProcessesGetResponse,
     ProcessGraphsGetResponse,
     ProcessGraphWithMetadata,
+    ValidationPostResponse,
 )
 from openeo_fastapi.api.types import Endpoint, Error, Process
 from openeo_fastapi.client.auth import Authenticator, User
@@ -147,7 +148,10 @@ class ProcessRegister(EndpointRegister):
         """
         Lists all information about a user-defined process, including its process graph.
         """
-        graph = get(get_model=UserDefinedProcessGraph, primary_key=process_graph_id)
+        graph = get(
+            get_model=UserDefinedProcessGraph,
+            primary_key=[process_graph_id, user.user_id],
+        )
 
         if not graph:
             raise HTTPException(
@@ -189,8 +193,14 @@ class ProcessRegister(EndpointRegister):
         """
         Deletes the data related to this user-defined process, including its process graph.
         """
-        if get(get_model=UserDefinedProcessGraph, primary_key=process_graph_id):
-            delete(delete_model=UserDefinedProcessGraph, primary_key=process_graph_id)
+        if get(
+            get_model=UserDefinedProcessGraph,
+            primary_key=[process_graph_id, user.user_id],
+        ):
+            delete(
+                delete_model=UserDefinedProcessGraph,
+                primary_key=[process_graph_id, user.user_id],
+            )
             return Response(
                 status_code=204,
                 content="The user-defined process has been successfully deleted.",
@@ -202,3 +212,42 @@ class ProcessRegister(EndpointRegister):
                 message=f"The requested resource {process_graph_id} was not found.",
             ),
         )
+
+    def validate_user_process_graph(
+        self,
+        body: ProcessGraphWithMetadata,
+        user: User = Depends(Authenticator.validate),
+    ) -> ValidationPostResponse:
+        """ """
+        from openeo_pg_parser_networkx.graph import OpenEOProcessGraph
+        from openeo_pg_parser_networkx.resolving_utils import resolve_process_graph
+
+        def get_udp_spec(process_id: str, namespace: str):
+            """
+            Get UDP spec
+            """
+            if not namespace:
+                raise PermissionError("No namespace given for UDP.")
+
+            udp = get(
+                get_model=UserDefinedProcessGraph,
+                primary_key=[process_id, namespace],
+            )
+            return udp.dict()
+
+        try:
+            OpenEOProcessGraph(pg_data=body.process_graph)
+            resolve_process_graph(
+                process_graph=body.process_graph,
+                process_registry=self.process_registry,
+                get_udp_spec=get_udp_spec,
+                namespace=user.user_id if user else "user",
+            )
+        except Exception as e:
+            return Response(
+                status_code=201,
+                content=ValidationPostResponse(
+                    errors=[Error(code="Graph validation failed", message=f"{str(e)}")]
+                ).json(),
+            )
+        return ValidationPostResponse(errors=[])

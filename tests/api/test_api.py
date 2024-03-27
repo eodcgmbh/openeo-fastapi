@@ -37,6 +37,40 @@ def test_get_capabilities(core_api, app_settings):
     assert response.json()["title"] == "Test Api"
 
 
+def test_get_health(core_api, app_settings):
+    """Test the health endpoint is available."""
+
+    test_app = TestClient(core_api.app)
+
+    response = test_app.get(f"/{app_settings.OPENEO_VERSION}/health")
+
+    assert response.status_code == 200
+
+
+def test_get_userinfo(mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings):
+    """Test the user info is available."""
+
+    test_app = TestClient(core_api.app)
+
+    response = test_app.get(
+        f"/{app_settings.OPENEO_VERSION}/me",
+        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+    )
+
+    assert response.status_code == 200
+    assert "user_id" in response.json()
+
+
+def test_get_udf_runtimes(core_api, app_settings):
+    """Test the udf runtimes endpoint is registered."""
+
+    test_app = TestClient(core_api.app)
+
+    response = test_app.get(f"/{app_settings.OPENEO_VERSION}/udf_runtimes")
+
+    assert response.status_code == 501
+
+
 def test_get_conformance(core_api, app_settings):
     """Test the /conformance endpoint as intended."""
 
@@ -153,7 +187,6 @@ def test_overwriting_register(mocked_oidc_config, mocked_oidc_userinfo, app_sett
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
-    # assert response.content == ''
     assert response.status_code == 200
 
 
