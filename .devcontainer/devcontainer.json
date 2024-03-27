@@ -7,19 +7,13 @@
 
     "workspaceFolder": "/openeo-fastapi",
 
-	"settings": {
-		"python.defaultInterpreterPath": "/openeo-fastapi/.venv",
-		"python.venvPath": "/openeo-fastapi/.venv",
-		"python.pythonPath": "/openeo-fastapi/.venv/bin/python",
-	},
-
 	"extensions": [
 		"ms-python.python",
 		"ms-toolsai.jupyter",
-		"ms-python.vscode-pylance",
 		"eamodio.gitlens",
 		"GitLab.gitlab-workflow",
-		"ms-azuretools.vscode-docker"
+		"ms-azuretools.vscode-docker",
+		"ms-python.vscode-pylance"
 	],
 
 	"remoteEnv": {
