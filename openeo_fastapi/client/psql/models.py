@@ -53,7 +53,7 @@ class UdpORM(BASE):
     __tablename__ = "udps"
 
     id = Column(String, primary_key=True, nullable=False)
-    user_id = Column(UUID(as_uuid=True), nullable=False)
+    user_id = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
     process_graph = Column(JSON, nullable=False)
     created = Column(DateTime, default=datetime.datetime.utcnow(), nullable=False)
     parameters = Column("parameters", JSON)

@@ -109,3 +109,19 @@ def test_delete_user_process_graph(
     )
 
     assert response.status_code == 404
+
+
+def test_validate_user_process_graph(
+    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings, process_graph
+):
+    """Test the /process_graphs endpoint as intended."""
+
+    test_app = TestClient(core_api.app)
+
+    response = post_request(
+        test_app,
+        f"/{app_settings.OPENEO_VERSION}/validation",
+        process_graph,
+    )
+
+    assert response.status_code == 201

@@ -102,7 +102,7 @@ def test_not_implemented(
     mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings
 ):
     """
-    Test the following endpoints are initialised correctly, but return an error.
+    Test the following endpoints are registered and available correctly, but return an error.
 
     /jobs/{job_id} DELETE
     /jobs/{job_id}/estimate GET
@@ -110,6 +110,7 @@ def test_not_implemented(
     /jobs/{job_id}/results GET
     /jobs/{job_id}/results POST
     /jobs/{job_id}/results DELETE
+    /result POST
     """
 
     def assert_not(response):
@@ -134,7 +135,10 @@ def test_not_implemented(
             )
         )
 
-    posts = [f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/results"]
+    posts = [
+        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/results",
+        f"/{app_settings.OPENEO_VERSION}/result",
+    ]
 
     for post in posts:
         assert_not(
