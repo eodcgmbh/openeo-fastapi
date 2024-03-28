@@ -114,6 +114,18 @@ def s2a_collection(collections):
     return collections["collections"][0]
 
 
+@pytest.fixture
+def s1_collection_items():
+    with open(os.path.join(current_directory, "data/items.json")) as f_in:
+        return json.load(f_in)
+
+
+@pytest.fixture
+def s1_collection_item():
+    with open(os.path.join(current_directory, "data/item.json")) as f_in:
+        return json.load(f_in)
+
+
 @pytest.fixture()
 def mocked_oidc_config():
     resp_content_bytes = json.dumps(
