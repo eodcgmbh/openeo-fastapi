@@ -73,7 +73,9 @@ class OpenEOCore:
                 fragment=None,
             )
         )
+        import logging
 
+        logging.warning(url)
         return responses.WellKnownOpeneoGetResponse(
             versions=[
                 responses.Version(

@@ -26,6 +26,16 @@ def test_api_core(core_api):
     assert isinstance(core_api.app, FastAPI)
 
 
+def test_get_wellknown(core_api, app_settings):
+    """Test the OpenEOApi and OpenEOCore classes interact as intended."""
+
+    test_app = TestClient(core_api.app)
+
+    response = test_app.get(f"/.well-known/openeo/")
+
+    assert response.status_code == 200
+
+
 def test_get_capabilities(core_api, app_settings):
     """Test the OpenEOApi and OpenEOCore classes interact as intended."""
 
