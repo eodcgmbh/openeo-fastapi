@@ -22,7 +22,7 @@ ALEMBIC_DIR = Path(__file__).parent.parent / "tests/alembic/"
 fs = fsspec.filesystem(protocol="file")
 
 SETTINGS_DICT = {
-    "API_DNS": "http://test.api.org",
+    "API_DNS": "test.api.org",
     "API_TLS": "False",
     "API_TITLE": "Test Api",
     "API_DESCRIPTION": "My Test Api",
@@ -34,7 +34,7 @@ SETTINGS_DICT = {
 
 
 os.environ["ALEMBIC_DIR"] = str(ALEMBIC_DIR)
-os.environ["API_DNS"] = "http://test.api.org"
+os.environ["API_DNS"] = "test.api.org"
 os.environ["API_TLS"] = "False"
 os.environ["API_TITLE"] = "Test Api"
 os.environ["API_DESCRIPTION"] = "My Test Api"
@@ -112,6 +112,18 @@ def collections():
 @pytest.fixture
 def s2a_collection(collections):
     return collections["collections"][0]
+
+
+@pytest.fixture
+def s1_collection_items():
+    with open(os.path.join(current_directory, "data/items.json")) as f_in:
+        return json.load(f_in)
+
+
+@pytest.fixture
+def s1_collection_item():
+    with open(os.path.join(current_directory, "data/item.json")) as f_in:
+        return json.load(f_in)
 
 
 @pytest.fixture()

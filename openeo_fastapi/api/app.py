@@ -185,6 +185,38 @@ class OpenEOApi:
             endpoint=self.client.collections.get_collection,
         )
 
+    def register_get_collection_items(self):
+        """Register collection items Endpoint (GET /collections/{collection_id}/items).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="collection_items",
+            path=f"/{self.client.settings.OPENEO_VERSION}/collections"
+            + "/{collection_id}/items",
+            response_model=responses.Collections,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.collections.get_collection_items,
+        )
+
+    def register_get_collection_item(self):
+        """Register collection item Endpoit (GET /collections/{collection_id}/items/{item_id}).
+        Returns:
+            None
+        """
+        self.router.add_api_route(
+            name="collection_item",
+            path=f"/{self.client.settings.OPENEO_VERSION}"
+            + "/collections/{collection_id}/items/{item_id}",
+            response_model=responses.Collection,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.collections.get_collection_item,
+        )
+
     def register_get_processes(self):
         """Register Endpoint for Processes (GET /processes).
 
@@ -517,6 +549,8 @@ class OpenEOApi:
         self.register_get_file_formats()
         self.register_get_collections()
         self.register_get_collection()
+        self.register_get_collection_items()
+        self.register_get_collection_item()
         self.register_get_processes()
         self.register_list_user_process_graphs()
         self.register_get_user_process_graph()

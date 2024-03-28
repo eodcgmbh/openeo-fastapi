@@ -7,7 +7,7 @@ from pydantic import BaseSettings, HttpUrl, validator
 class AppSettings(BaseSettings):
     """Place to store application settings."""
 
-    API_DNS: HttpUrl
+    API_DNS: str
     API_TLS: bool = True
 
     ALEMBIC_DIR: Path

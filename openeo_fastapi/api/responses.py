@@ -328,7 +328,7 @@ class Collection(BaseModel):
         ),
         title="STAC Collection Cube Dimensions",
     )
-    summaries: Optional[dict[str, Union[list[Any], CollectionSummaryStats]]] = Field(
+    summaries: Optional[dict[str, Union[list[Any], Any]]] = Field(
         None,
         description=(
             "Collection properties from STAC extensions (e.g. EO,SAR, Satellite or Scientific) or even "

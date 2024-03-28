@@ -166,6 +166,8 @@ class JobsRegister(EndpointRegister):
             job_id=job_id,
             process_graph_id=body.process.process_graph_id,
             status=Status.created,
+            title=body.title,
+            description=body.description,
             user_id=user.user_id,
             created=datetime.datetime.now(),
         )

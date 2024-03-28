@@ -14,6 +14,14 @@ COLLECTIONS_ENDPOINTS = [
         path="/collections/{collection_id}",
         methods=["GET"],
     ),
+    Endpoint(
+        path="/collections/{collection_id}/items",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/collections/{collection_id}/items/{item_id}",
+        methods=["GET"],
+    ),
 ]
 
 
@@ -82,3 +90,50 @@ class CollectionRegister(EndpointRegister):
                 status_code=404,
                 detail=Error(code="NotFound", message="No Collections found."),
             )
+
+    async def get_collection_items(self, collection_id):
+        """
+        Returns Basic metadata for all datasets
+        """
+        not_found = HTTPException(
+            status_code=404,
+            detail=Error(
+                code="NotFound", message=f"Collection {collection_id} not found."
+            ),
+        )
+
+        if (
+            not self.settings.STAC_COLLECTIONS_WHITELIST
+            or collection_id in self.settings.STAC_COLLECTIONS_WHITELIST
+        ):
+            path = f"collections/{collection_id}/items"
+            resp = await self._proxy_request(path)
+
+            if resp:
+                return resp
+            raise not_found
+        raise not_found
+
+    async def get_collection_item(self, collection_id, item_id):
+        """
+        Returns Basic metadata for all datasets
+        """
+        not_found = HTTPException(
+            status_code=404,
+            detail=Error(
+                code="NotFound",
+                message=f"Item {item_id} not found in collection {collection_id}.",
+            ),
+        )
+
+        if (
+            not self.settings.STAC_COLLECTIONS_WHITELIST
+            or collection_id in self.settings.STAC_COLLECTIONS_WHITELIST
+        ):
+            path = f"collections/{collection_id}/items/{item_id}"
+            resp = await self._proxy_request(path)
+
+            if resp:
+                return resp
+            raise not_found
+        raise not_found
