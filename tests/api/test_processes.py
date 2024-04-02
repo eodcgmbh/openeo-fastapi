@@ -77,7 +77,15 @@ def test_put_user_process_graph(
     )
 
     assert response.status_code == 201
+    
+    # Try to create twice
+    response = put_request(
+        test_app,
+        f"/{app_settings.OPENEO_VERSION}/process_graphs/{process_graph['id']}",
+        process_graph,
+    )
 
+    assert response.status_code == 500
 
 def test_delete_user_process_graph(
     mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings, process_graph

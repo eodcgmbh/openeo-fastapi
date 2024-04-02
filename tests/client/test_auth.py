@@ -1,4 +1,5 @@
 import pytest
+from fastapi.exceptions import HTTPException
 from pydantic import ValidationError
 
 from openeo_fastapi.client import auth, exceptions
@@ -78,14 +79,14 @@ def test_issuer_handler__validate_oidc_token(
 def test_issuer_handler__validate_oidc_token_bad_config(
     mocked_bad_oidc_config, mocked_oidc_userinfo, mocked_issuer
 ):
-    with pytest.raises(exceptions.InvalidIssuerConfig):
+    with pytest.raises(HTTPException):
         mocked_issuer._validate_oidc_token(token=OIDC_TOKEN_EXAMPLE)
 
 
 def test_issuer_handler__validate_oidc_token_bad_userinfo(
     mocked_oidc_config, mocked_bad_oidc_userinfo, mocked_issuer
 ):
-    with pytest.raises(exceptions.TokenInvalid):
+    with pytest.raises(HTTPException):
         mocked_issuer._validate_oidc_token(token=OIDC_TOKEN_EXAMPLE)
 
 
@@ -99,7 +100,7 @@ def test_issuer_handler_validate_oidc_token(
 def test_issuer_handler_validate_basic_token(
     mocked_oidc_config, mocked_oidc_userinfo, mocked_issuer
 ):
-    with pytest.raises(exceptions.TokenCantBeValidated):
+    with pytest.raises(HTTPException):
         mocked_issuer.validate_token(token=BASIC_TOKEN_EXAMPLE)
 
 

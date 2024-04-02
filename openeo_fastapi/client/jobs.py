@@ -5,6 +5,7 @@ from typing import Optional
 from fastapi import Depends, Response
 from fastapi.exceptions import HTTPException
 from pydantic import BaseModel, Extra
+from sqlalchemy.exc import IntegrityError
 
 from openeo_fastapi.api.requests import JobsRequest
 from openeo_fastapi.api.responses import (
@@ -177,21 +178,22 @@ class JobsRegister(EndpointRegister):
             user_id=user.user_id, created=datetime.datetime.now(), **body.process.dict()
         )
 
-        # Call engine create
-        created = create(create_object=process_graph)
-        if not created:
+        try:
+            create(create_object=process_graph)
+        except IntegrityError:
             raise HTTPException(
                 status_code=500,
-                detail="Job creation could not add the process graph for this job.",
+                detail=Error(code="Internal", message=f"The process graph {process_graph.id} already exists."),
             )
 
-        created_job = create(create_object=job)
-
-        if not created_job:
+        try:
+            create(create_object=job)
+        except IntegrityError:
             raise HTTPException(
                 status_code=500,
-                detail="Job creation could not add the job to the database.",
+                detail=Error(code="Internal", message=f"The job {job.job_id} already exists."),
             )
+
         return Response(
             status_code=201,
             headers={
@@ -254,24 +256,13 @@ class JobsRegister(EndpointRegister):
                     created=datetime.datetime.now(),
                     **body.process.dict(),
                 )
-
-                # Check a process graph with this id does not already exist
-                existing_process_graph = get(
-                    get_model=ProcessGraph,
-                    primary_key=new_process_graph.id,
-                )
-                if existing_process_graph:
+                
+                try:
+                    create(create_object=new_process_graph)
+                except IntegrityError:
                     raise HTTPException(
                         status_code=500,
-                        detail=f"Server could not create new process graph, Process graph with {existing_process_graph.process_graph_id} already exists!",
-                    )
-
-                # Call engine create
-                created = create(create_object=new_process_graph)
-                if not created:
-                    raise HTTPException(
-                        status_code=500,
-                        detail="Server could not create a new process graph for the job.",
+                        detail=Error(code="Internal", message=f"The process graph {new_process_graph.id}."),
                     )
 
                 # Update job id with new process_graph_id

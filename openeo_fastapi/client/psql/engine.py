@@ -1,7 +1,9 @@
-from typing import Any, List, Union
+from typing import Any, Union
 
+from fastapi.exceptions import HTTPException
 from pydantic import BaseModel
 from sqlalchemy import create_engine, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from openeo_fastapi.client.psql.settings import DataBaseSettings

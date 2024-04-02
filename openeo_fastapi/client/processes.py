@@ -7,7 +7,8 @@ import openeo_processes_dask.specs
 from fastapi import Depends, HTTPException, Response
 from openeo_pg_parser_networkx import Process as pgProcess
 from openeo_pg_parser_networkx import ProcessRegistry
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
+from sqlalchemy.exc import IntegrityError
 
 from openeo_fastapi.api.responses import (
     ProcessesGetResponse,
@@ -180,7 +181,13 @@ class ProcessRegister(EndpointRegister):
             returns=body.returns,
         )
 
-        create(create_object=udp)
+        try:
+            create(create_object=udp)
+        except IntegrityError:
+            raise HTTPException(
+                status_code=500,
+                detail=Error(code="Internal", message=f"The user defined process graph {udp.id} already exists."),
+            )
 
         return Response(
             status_code=201,

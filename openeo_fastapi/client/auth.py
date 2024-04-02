@@ -4,9 +4,11 @@ from abc import ABC, abstractmethod
 from enum import Enum
 
 import requests
-from fastapi import Header
-from pydantic import BaseModel, Field, ValidationError, validator
+from fastapi import Header, HTTPException
+from pydantic import BaseModel, ValidationError, validator
+from sqlalchemy.exc import IntegrityError
 
+from openeo_fastapi.api.types import Error
 from openeo_fastapi.client.exceptions import (
     InvalidIssuerConfig,
     TokenCantBeValidated,
@@ -61,7 +63,9 @@ class Authenticator(ABC):
             return found_user
 
         user = User(user_id=uuid.uuid4(), oidc_sub=user_info.info["sub"])
-        create(user)
+
+        create(create_object=user)
+            
         return user
 
 
@@ -148,13 +152,19 @@ class IssuerHandler(BaseModel):
         issuer_oidc_config = self._get_issuer_config()
 
         if issuer_oidc_config.status_code != 200:
-            raise InvalidIssuerConfig()
+            raise HTTPException(
+                status_code=500,
+                detail=Error(code="InvalidIssuerConfig", message=f"The issuer config is not available. Tokens cannot be validated currently. Try again later."),
+            )
 
         userinfo_url = issuer_oidc_config.json()[OIDC_USERINFO]
         resp = self._get_user_info(userinfo_url, token)
 
         if resp.status_code != 200:
-            raise TokenInvalid()
+            raise HTTPException(
+                status_code=500,
+                detail=Error(code="TokenInvalid", message=f"The provided token is not valid."),
+            )
 
         return UserInfo(info=resp.json())
 
@@ -165,4 +175,8 @@ class IssuerHandler(BaseModel):
 
         if parsed_token.method.value == AuthMethod.OIDC.value:
             return self._validate_oidc_token(parsed_token.token)
-        raise TokenCantBeValidated()
+        
+        raise HTTPException(
+            status_code=500,
+            detail=Error(code="TokenCantBeValidated", message=f"The provided token cannot be validated."),
+        )
