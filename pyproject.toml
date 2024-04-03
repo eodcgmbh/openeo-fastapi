@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "openeo-fastapi"
-version = "2024.3.2"
+version = "2024.4.1"
 description = "FastApi implementation conforming to the OpenEO Api specification."
 authors = ["Sean Hoyal <sean.hoyal@external.eodc.eu>"]
 readme = "README.md"
@@ -49,6 +49,7 @@ pytest-cov = "^4.0.0"
 pytest-asyncio = "^0.23.0"
 aioresponses = "^0.7.5"
 pytest-postgresql = ">=4.1.1"
+sphinx = "7.2.6"
 
 [tool.poetry.scripts]
 openeo_fastapi = "openeo_fastapi.cli:cli"

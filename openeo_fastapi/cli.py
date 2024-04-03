@@ -84,22 +84,29 @@ def new(path):
             raise ValueError("Provided path does not exist.")
     else:
         path = Path(fs.get_mapper("").root)
-        
+    
+    
     openeo_dir = path / "openeo_api"
+    db_dir = openeo_dir / "psql"
+    init_file = openeo_dir / "__init__.py"
+    app_file = openeo_dir / "app.py"
+    revise_file = openeo_dir / "revise.py"
+
+
+    alembic_dir = db_dir / "alembic"
+    alembic_models = db_dir / "models.py"
+    alembic_ini = db_dir / "alembic.ini"
+
     fs.mkdir(openeo_dir)
 
-    db_dir = openeo_dir / "psql"
     fs.mkdir(db_dir)
     
-    alembic_dir = db_dir / "alembic"
     fs.mkdir(alembic_dir)
-    
-    alembic_models = db_dir / "models.py"
+
     fs.touch(alembic_models)
     with fs.open(alembic_models, 'w') as f:
         f.write(get_models_template())
     
-    alembic_ini = db_dir / "alembic.ini"
     alembic_cfg = Config(alembic_ini)
     
     command.init(
@@ -107,10 +114,8 @@ def new(path):
         directory=alembic_dir
     )
     
-    init_file = openeo_dir / "__init__.py"
     fs.touch(init_file)
     
-    app_file = openeo_dir / "app.py"
     fs.touch(app_file)
     with fs.open(app_file, 'w') as f:
         f.write(get_app_template())
