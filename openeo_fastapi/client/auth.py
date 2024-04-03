@@ -6,14 +6,8 @@ from enum import Enum
 import requests
 from fastapi import Header, HTTPException
 from pydantic import BaseModel, ValidationError, validator
-from sqlalchemy.exc import IntegrityError
 
 from openeo_fastapi.api.types import Error
-from openeo_fastapi.client.exceptions import (
-    InvalidIssuerConfig,
-    TokenCantBeValidated,
-    TokenInvalid,
-)
 from openeo_fastapi.client.psql.engine import Filter, create, get_first_or_default
 from openeo_fastapi.client.psql.models import UserORM
 from openeo_fastapi.client.settings import AppSettings

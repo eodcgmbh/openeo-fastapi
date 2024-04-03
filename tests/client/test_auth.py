@@ -2,7 +2,7 @@ import pytest
 from fastapi.exceptions import HTTPException
 from pydantic import ValidationError
 
-from openeo_fastapi.client import auth, exceptions
+from openeo_fastapi.client import auth
 
 BASIC_TOKEN_EXAMPLE = "Bearer /basic/openeo/rubbish.not.a.token"
 OIDC_TOKEN_EXAMPLE = "Bearer /oidc/issuer/rubbish.not.a.token"
