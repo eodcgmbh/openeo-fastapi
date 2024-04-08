@@ -4,7 +4,6 @@ nav:
   - Getting Started: setup.md
   - User Guide: 
       - Manipulating endpoints: guide/registers.md
-      - Extend the object relational Models: guide/orms.md
       - Add your own auth: guide/auth.md
       - Extend the object relational Models: guide/orms.md
   - Reference:
@@ -30,3 +29,4 @@ nav:
     - Team: team.md
     - About: about.md
 theme: readthedocs
+repo_url: https://github.com/eodcgmbh/openeo-fastapi
