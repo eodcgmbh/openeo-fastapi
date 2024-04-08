@@ -12,8 +12,6 @@ class AppSettings(BaseSettings):
     """The domain name hosting the API."""
     API_TLS: bool = True
     """Whether the API http scheme should be http or https."""
-    ALEMBIC_DIR: Path
-    """The path leading to the alembic directory to be used."""
     API_TITLE: str
     """The API title to be provided to FastAPI."""
     API_DESCRIPTION: str

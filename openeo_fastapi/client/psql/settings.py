@@ -20,4 +20,4 @@ class DataBaseSettings(BaseSettings):
     """The name of the databse being used on the host."""
 
     ALEMBIC_DIR: Path
-    """The path to the alembic directory for applying revisions."""
+    """The path leading to the alembic directory to be used."""
