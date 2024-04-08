@@ -1,28 +1,33 @@
+"""Pydantic Models describing different api request and response bodies."""
 import uuid
-from enum import Enum
-from typing import Any, Dict, List, Optional, TypedDict, Union
 
 from pydantic import AnyUrl, BaseModel, Extra, Field, validator
+from typing import Any, Optional, TypedDict, Union
 
 from openeo_fastapi.api.types import (
     Billing,
+    Dimension,
     Endpoint,
     Error,
+    Extent,
     File,
     FileFormat,
     Link,
     Process,
     RFC3339Datetime,
+    StacProvider,
     Status,
-    Storage1,
-    Type1,
-    Type2,
+    Storage,
     Type5,
+    Version,
     Usage,
 )
 
-
+###########
+# Base
+###########
 class Capabilities(BaseModel):
+    """Response model for GET (/)."""
     api_version: str = Field(
         ...,
         description="Version number of the openEO specification this back-end implements.",
@@ -110,143 +115,75 @@ class Capabilities(BaseModel):
             },
         ],
     )
+    
+
+class MeGetResponse(BaseModel):
+    """Response model for GET (/me)."""
+    user_id: uuid.UUID
+    name: Optional[str] = Field(
+        None,
+        description="The user name, a human-friendly displayable name. Could be the user's real name or a nickname.",
+    )
+    default_plan: Optional[str] = Field(
+        None,
+        description="Name of the plan the user has subscribed to.\n\nOverrides the default plan of the back-end, but back-ends\nMAY also allow overriding this plan for each individual\nprocessing request (e.g. job or service) with the\ncorresponding `plan` property.",
+        example="free",
+    )
+    storage: Optional[Storage] = Field(
+        None,
+        description="Information about the storage space available to the user.",
+        title="User Storage",
+    )
+    budget: Optional[float] = None
+    links: Optional[list[Link]] = Field(
+        None,
+        description="Links related to the user profile, e.g. where payments\nare handled or the user profile could be edited.\n\nIt is RECOMMENDED to provide links with the following `rel` (relation) types:\n\n1. `payment`: A page where users can recharge their user account with money or credits.\n\n2. `edit-form`: Points to a page where the user can edit his user profile.\n\nFor additional relation types see also the lists of\n[common relation types in openEO](#section/API-Principles/Web-Linking).",
+        example=[
+            {"href": "https://example.openeo.org/john_doe/payment/", "rel": "payment"},
+            {"href": "https://example.openeo.org/john_doe/edit/", "rel": "edit-form"},
+            {
+                "href": "https://example.openeo.org/john_doe/",
+                "rel": "alternate",
+                "type": "text/html",
+                "title": "User profile",
+            },
+            {
+                "href": "https://example.openeo.org/john_doe.vcf",
+                "rel": "alternate",
+                "type": "text/vcard",
+                "title": "vCard of John Doe",
+            },
+        ],
+    )
 
 
 class ConformanceGetResponse(BaseModel):
+    """Response model for GET (/conformance)."""
     conformsTo: list[AnyUrl]
 
 
-class Version(BaseModel):
-    url: AnyUrl = Field(
-        ...,
-        description="*Absolute* URLs to the service.",
-        example="https://example.com/api/v1.0",
-    )
-    production: Optional[bool] = None
-    api_version: str = Field(
-        ...,
-        description="Version number of the openEO specification this back-end implements.",
-    )
-
-
 class WellKnownOpeneoGetResponse(BaseModel):
+    """Response model for GET (/.well-known/openeo)."""
     versions: list[Version]
+    
+
+class UdfRuntimesGetResponse(BaseModel):
+    """Response model for GET (/udf_runtimes)."""
+    pass
+
+    class Config:
+        extra = Extra.allow
 
 
 #############
 # Collections
 #############
-class Role(Enum):
-    producer = "producer"
-    licensor = "licensor"
-    processor = "processor"
-    host = "host"
-
-
-class StacProvider(BaseModel):
-    name: str = Field(
-        ...,
-        description="The name of the organization or the individual.",
-        example="Cool EO Cloud Corp",
-    )
-    description: Optional[str] = Field(
-        None,
-        description=(
-            "Multi-line description to add further provider information such as processing details for "
-            "processors and producers, hosting details for hosts or basic contact information."
-            "CommonMark 0.29 syntax MAY be used for rich text representation."
-        ),
-        example="No further processing applied.",
-    )
-    roles: Optional[list[Role]] = Field(
-        None,
-        description=(
-            "Roles of the provider.\n\nThe provider's role(s) can be one or more of the following "
-            "elements:\n* licensor: The organization that is licensing the dataset under the license"
-            "specified in the collection's license field.\n* producer: The producer of the data is the"
-            "provider that initially captured and processed the source data, e.g. ESA for Sentinel-2 data."
-            "* processor: A processor is any provider who processed data to a derived product.\n* host: The"
-            "host is the actual provider offering the data on their storage. There SHOULD be no more than"
-            "one host, specified as last element of the list."
-        ),
-        example=["producer", "licensor", "host"],
-    )
-    url: Optional[AnyUrl] = Field(
-        None,
-        description=(
-            "Homepage on which the provider describes the dataset and publishes contact information."
-        ),
-        example="http://cool-eo-cloud-corp.com",
-    )
-
-
-class StacProviders(BaseModel):
-    __root__: list[StacProvider] = Field(
-        ...,
-        description=(
-            "A list of providers, which MAY include all organizations capturing or processing "
-            "the data or the hosting provider. Providers SHOULD be listed in chronological order"
-            "with the most recent provider being the last element of the list."
-        ),
-    )
-
-
-class Dimension(BaseModel):
-    type: Type2 = Field(..., description="Type of the dimension.")
-    description: Optional[str] = None
-
-
-class Spatial(BaseModel):
-    bbox: Optional[list[list[float]]] = Field(
-        None,
-        description=(
-            "One or more bounding boxes that describe the spatial extent\nof the dataset."
-            "The first bounding box describes the overall spatial extent\nof the data. All "
-            "subsequent bounding boxes describe more\nprecise bounding boxes, e.g. to identify "
-            "clusters of data.\nClients only interested in the overall spatial extent will "
-            "only need to access the first item in each array."
-        ),
-        min_items=1,
-    )
-
-
-class Temporal(BaseModel):
-    interval: Optional[list[list[Any]]] = Field(
-        None,
-        description=(
-            "One or more time intervals that describe the temporal extent of the dataset."
-            "The first time interval describes the overall temporal extent of the data. "
-            "All subsequent time intervals describe more precise time intervals, e.g. to "
-            "identify clusters of data. Clients only interested in the overall extent will"
-            "only need to access the first item in each array."
-        ),
-        min_items=1,
-    )
-
-
-class Extent(BaseModel):
-    spatial: Spatial = Field(
-        ...,
-        description="The *potential* spatial extents of the features in the collection.",
-        title="Collection Spatial Extent",
-    )
-    temporal: Temporal = Field(
-        ...,
-        description="The *potential* temporal extents of the features in the collection.",
-        title="Collection Temporal Extent",
-    )
-
-
-class CollectionSummaryStats(BaseModel):
-    min: Union[str, float] = Field(alias="minimum")
-    max: Union[str, float] = Field(alias="maximum")
-
-
 class Collection(BaseModel):
+    """Response model for GET (/collection/{collection_id})"""
     stac_version: str
     stac_extensions: Optional[list[Union[AnyUrl, str]]] = None
-    type: Optional[Type1] = Field(
-        None, description="For STAC versions >= 1.0.0-rc.1 this field is required."
+    type: str = Field(
+        description="For STAC versions >= 1.0.0-rc.1 this field is required.", default="Collection"
     )
     id: str
     title: Optional[str] = Field(
@@ -283,7 +220,7 @@ class Collection(BaseModel):
         ),
     )
     license: str
-    providers: Optional[StacProviders] = None
+    providers: Optional[list[StacProvider]] = None
     extent: Extent = Field(
         ...,
         description=(
@@ -362,6 +299,7 @@ class Collection(BaseModel):
 
 
 class Collections(TypedDict, total=False):
+    """Response model for GET (/collections)."""
     collections: list[Collection]
     links: list[dict[str, Any]]
 
@@ -370,11 +308,19 @@ class Collections(TypedDict, total=False):
 # Processes
 ###########
 class ProcessesGetResponse(BaseModel):
+    """Response model for GET (/processes)."""
     processes: list[Process]
     links: list[Link]
 
 
 class ProcessGraphWithMetadata(Process):
+    """Reponse model for
+                GET (/process_graphs/{process_graph_id})
+    
+    Request model for
+            PUT (/process_graphs/{process_graph_id})
+            POST (/validation)
+    """
     id: str = Field(default=None, alias="id")
     summary: Optional[Any] = None
     description: Optional[Any] = None
@@ -387,6 +333,7 @@ class ProcessGraphWithMetadata(Process):
 
 
 class ProcessGraphsGetResponse(BaseModel):
+    """Response model for GET (/process_graphs)."""
     processes: list[ProcessGraphWithMetadata] = Field(
         ..., description="Array of user-defined processes"
     )
@@ -394,13 +341,14 @@ class ProcessGraphsGetResponse(BaseModel):
 
 
 class ValidationPostResponse(BaseModel):
+    """Response model for POST (/validation)."""
     errors: list[Error] = Field(..., description="A list of validation errors.")
-
 
 ###########
 # Jobs
 ###########
 class BatchJob(BaseModel):
+    """Reponse model for GET (/jobs/{job_id})."""
     job_id: uuid.UUID = Field(default=None, alias="id")
     title: Optional[str] = None
     description: Optional[str] = None
@@ -435,16 +383,19 @@ class BatchJob(BaseModel):
 
 
 class JobsGetResponse(BaseModel):
+    """Reponse model for GET (/jobs)."""
     jobs: list[BatchJob]
     links: list[Link]
 
 
 class JobsGetLogsResponse(BaseModel):
+    """Reponse model for GET (/jobs/{job_id}/logs)."""
     logs: list[Any]
     links: list[Link]
 
 
 class JobsGetEstimateGetResponse(BaseModel):
+    """Reponse model for GET (/jobs/{job_id}/estimate)."""
     costs: Optional[float] = None
     duration: Optional[str] = Field(
         None,
@@ -468,12 +419,29 @@ class JobsGetEstimateGetResponse(BaseModel):
     )
 
 
+class JobsRequest(BaseModel):
+    """Request model for
+            POST (/jobs)
+            PATCH (/jobs/{job_id})
+            POST (/result)
+    """
+    title: str = None
+    description: Optional[str] = None
+    process: Optional[ProcessGraphWithMetadata] = None
+    plan: Optional[str] = None
+    budget: Optional[str] = None
+
+###########
+# Files
+###########
 class FilesGetResponse(BaseModel):
+    """Reponse model for GET (/files)."""
     files: list[File]
     links: list[Link]
 
 
 class FileFormatsGetResponse(BaseModel):
+    """Reponse model for GET (/file_formats)."""
     input: dict[str, FileFormat] = Field(
         ...,
         description="Map of supported input file formats, i.e. file formats a back-end can **read** from. The property keys are the file format names that are used by clients and users, for example in process graphs.",
@@ -485,48 +453,3 @@ class FileFormatsGetResponse(BaseModel):
         title="Output File Formats",
     )
 
-
-class MeGetResponse(BaseModel):
-    user_id: uuid.UUID
-    name: Optional[str] = Field(
-        None,
-        description="The user name, a human-friendly displayable name. Could be the user's real name or a nickname.",
-    )
-    default_plan: Optional[str] = Field(
-        None,
-        description="Name of the plan the user has subscribed to.\n\nOverrides the default plan of the back-end, but back-ends\nMAY also allow overriding this plan for each individual\nprocessing request (e.g. job or service) with the\ncorresponding `plan` property.",
-        example="free",
-    )
-    storage: Optional[Storage1] = Field(
-        None,
-        description="Information about the storage space available to the user.",
-        title="User Storage",
-    )
-    budget: Optional[float] = None
-    links: Optional[list[Link]] = Field(
-        None,
-        description="Links related to the user profile, e.g. where payments\nare handled or the user profile could be edited.\n\nIt is RECOMMENDED to provide links with the following `rel` (relation) types:\n\n1. `payment`: A page where users can recharge their user account with money or credits.\n\n2. `edit-form`: Points to a page where the user can edit his user profile.\n\nFor additional relation types see also the lists of\n[common relation types in openEO](#section/API-Principles/Web-Linking).",
-        example=[
-            {"href": "https://example.openeo.org/john_doe/payment/", "rel": "payment"},
-            {"href": "https://example.openeo.org/john_doe/edit/", "rel": "edit-form"},
-            {
-                "href": "https://example.openeo.org/john_doe/",
-                "rel": "alternate",
-                "type": "text/html",
-                "title": "User profile",
-            },
-            {
-                "href": "https://example.openeo.org/john_doe.vcf",
-                "rel": "alternate",
-                "type": "text/vcard",
-                "title": "vCard of John Doe",
-            },
-        ],
-    )
-
-
-class UdfRuntimesGetResponse(BaseModel):
-    pass
-
-    class Config:
-        extra = Extra.allow

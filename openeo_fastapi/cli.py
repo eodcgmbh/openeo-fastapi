@@ -1,3 +1,4 @@
+"""CLI to support quick initialisation of the project source directory."""
 import click
 import fsspec
 
@@ -9,31 +10,16 @@ def get_app_template():
     """
         Generate the default app file for an openeo api app.
     """
-    # You can load the template content from a file or define it inline here
-    # For simplicity, let's define inline templates
-    return """# Your main Python code goes here
+    return """
 from fastapi import FastAPI
 
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.api.types import Billing, FileFormat, GisDataType, Link, Plan
 from openeo_fastapi.client.core import OpenEOCore
 
-formats = [
-    FileFormat(
-        title="json",
-        gis_data_types=[GisDataType("vector")],
-        parameters={}
-    )
-]
+formats = []
 
-links = [
-    Link(
-        href="https://eodc.eu/",
-        rel="about",
-        type="text/html",
-        title="Homepage of the service provider",
-    )
-]
+links = []
 
 client = OpenEOCore(
     input_formats=formats,
@@ -65,7 +51,21 @@ def get_revision_template():
     """
         Generate the default revision file for the openeo api app.
     """
-    pass
+    return """import os
+from alembic import command
+from alembic.config import Config
+from pathlib import Path
+
+from openeo_fastapi.client.psql.settings import DataBaseSettings
+
+settings=DataBaseSettings()
+
+os.chdir(Path(settings.ALEMBIC_DIR))
+alembic_cfg = Config("alembic.ini")
+
+command.revision(alembic_cfg, autogenerate=True)
+command.upgrade(alembic_cfg, "head")
+"""
 
 @click.group()
 def cli():
@@ -75,7 +75,7 @@ def cli():
 @click.command()
 @click.option('--path', default=None, type=str)
 def new(path):
-    """Initialize a new openeo_fastapi api project at the specified directory."""
+    """Initialize a source directory for an openeo_fastapi api project at the specified location."""
     fs = fsspec.filesystem(protocol="file")
         
     if path:
@@ -84,7 +84,6 @@ def new(path):
             raise ValueError("Provided path does not exist.")
     else:
         path = Path(fs.get_mapper("").root)
-    
     
     openeo_dir = path / "openeo_api"
     db_dir = openeo_dir / "psql"

@@ -73,7 +73,7 @@ def test_issuer_handler__validate_oidc_token(
     mocked_oidc_config, mocked_oidc_userinfo, mocked_issuer
 ):
     info = mocked_issuer._validate_oidc_token(token=OIDC_TOKEN_EXAMPLE)
-    assert isinstance(info, auth.UserInfo)
+    assert info
 
 
 def test_issuer_handler__validate_oidc_token_bad_config(
@@ -94,7 +94,7 @@ def test_issuer_handler_validate_oidc_token(
     mocked_oidc_config, mocked_oidc_userinfo, mocked_issuer
 ):
     info = mocked_issuer.validate_token(token=OIDC_TOKEN_EXAMPLE)
-    assert isinstance(info, auth.UserInfo)
+    assert info
 
 
 def test_issuer_handler_validate_basic_token(

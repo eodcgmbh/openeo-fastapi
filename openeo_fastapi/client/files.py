@@ -1,6 +1,10 @@
-from typing import Optional
+"""Class and model to define the framework and partial application logic for interacting with Files.
 
+Classes:
+    - FilesRegister: Framework for defining and extending the logic for working with Files.
+"""
 from fastapi import Depends, HTTPException
+from typing import Optional
 
 from openeo_fastapi.api.types import Endpoint, Error
 from openeo_fastapi.client.auth import Authenticator, User
@@ -39,20 +43,14 @@ class FilesRegister(EndpointRegister):
     def list_files(
         self, limit: Optional[int] = 10, user: User = Depends(Authenticator.validate)
     ):
-        """_summary_
+        """List the  files in the user workspace.
 
         Args:
-            limit (int): _description_
-            user (User): _description_
+            limit (int): The limit to apply to the length of the list.
+            user (User): The User returned from the Authenticator.
 
         Raises:
-            HTTPException: _description_
-            HTTPException: _description_
-            HTTPException: _description_
-            HTTPException: _description_
-
-        Returns:
-            _type_: _description_
+            HTTPException: Raises an exception with relevant status code and descriptive message of failure.
         """
         raise HTTPException(
             status_code=501,
@@ -60,20 +58,14 @@ class FilesRegister(EndpointRegister):
         )
 
     def download_file(self, path: str, user: User = Depends(Authenticator.validate)):
-        """_summary_
+        """Download the file from the user's workspace.
 
         Args:
-            path (str): _description_
-            user (User): _description_
+            path (str): The path leading to the file.
+            user (User): The User returned from the Authenticator.
 
         Raises:
-            HTTPException: _description_
-            HTTPException: _description_
-            HTTPException: _description_
-            HTTPException: _description_
-
-        Returns:
-            _type_: _description_
+            HTTPException: Raises an exception with relevant status code and descriptive message of failure.
         """
         raise HTTPException(
             status_code=501,
@@ -81,20 +73,14 @@ class FilesRegister(EndpointRegister):
         )
 
     def upload_file(self, path: str, user: User = Depends(Authenticator.validate)):
-        """_summary_
+        """Upload the file from the user's workspace.
 
         Args:
-            path (str): _description_
-            user (User): _description_
+            path (str): The path leading to the file.
+            user (User): The User returned from the Authenticator.
 
         Raises:
-            HTTPException: _description_
-            HTTPException: _description_
-            HTTPException: _description_
-            HTTPException: _description_
-
-        Returns:
-            _type_: _description_
+            HTTPException: Raises an exception with relevant status code and descriptive message of failure.
         """
         raise HTTPException(
             status_code=501,
@@ -102,20 +88,14 @@ class FilesRegister(EndpointRegister):
         )
 
     def delete_file(self, path: str, user: User = Depends(Authenticator.validate)):
-        """_summary_
+        """Delete the file from the user's workspace.
 
         Args:
-            path (str): _description_
-            user (User): _description_
+            path (str): The path leading to the file.
+            user (User): The User returned from the Authenticator.
 
         Raises:
-            HTTPException: _description_
-            HTTPException: _description_
-            HTTPException: _description_
-            HTTPException: _description_
-
-        Returns:
-            _type_: _description_
+            HTTPException: Raises an exception with relevant status code and descriptive message of failure.
         """
         raise HTTPException(
             status_code=501,
