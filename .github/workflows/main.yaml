@@ -70,6 +70,9 @@ jobs:
       - name: Run pytest
         run: poetry run pytest --cov=openeo-fastapi --cov-report=xml
 
+      - name: Build new documentation
+        run: mkdocs gh-deploy
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
