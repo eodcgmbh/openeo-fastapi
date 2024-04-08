@@ -27,7 +27,6 @@ SETTINGS_DICT = {
     "API_TITLE": "Test Api",
     "API_DESCRIPTION": "My Test Api",
     "STAC_API_URL": "http://test-stac-api.mock.com/api/",
-    "ALEMBIC_DIR": str(ALEMBIC_DIR),
     "OIDC_URL": "http://test-oidc-api.mock.com/api/",
     "OIDC_ORGANISATION": "issuer",
 }
