@@ -70,10 +70,32 @@ jobs:
       - name: Run pytest
         run: poetry run pytest --cov=openeo-fastapi --cov-report=xml
 
-      - name: Build new documentation
-        run: mkdocs gh-deploy
-
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage.xml
+
+  docs:
+    name: ${{ matrix.os }} / ${{ matrix.python-version }}
+    runs-on: ${{ matrix.image }}
+    strategy:
+      matrix:
+        os: [Ubuntu]
+        python-version: ["3.11"]
+        include:
+          - os: Ubuntu
+            image: ubuntu-22.04
+      fail-fast: false
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install mkdocs
+        run: pip install mkdocs
+
+      - name: Build new documentation
+        run: mkdocs gh-deploy
