@@ -2,7 +2,7 @@ site_name: OpenEO FastApi
 nav:
   - Home: index.md
   - Getting Started: setup.md
-  - User Guide: 
+  - User Guide:
       - Manipulating endpoints: guide/registers.md
       - Add your own auth: guide/auth.md
       - Extend the object relational Models: guide/orms.md
@@ -25,8 +25,5 @@ nav:
             - openeo_fastapi.client.psql.models: package/client/models.md
             - openeo_fastapi.client.psql.settings: package/client/settings.md
       - openeo_fastapi.cli: package/cli.md
-  - Other:
-    - Team: team.md
-    - About: about.md
 theme: readthedocs
 repo_url: https://github.com/eodcgmbh/openeo-fastapi

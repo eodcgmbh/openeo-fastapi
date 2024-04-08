@@ -59,5 +59,4 @@ The name of the databse being used on the host.
 
 #### ALEMBIC\_DIR
 
-The path to the alembic directory for applying revisions.
-
+The path leading to the alembic directory to be used.

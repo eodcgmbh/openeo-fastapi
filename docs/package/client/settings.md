@@ -4,7 +4,6 @@
   * [AppSettings](#openeo_fastapi.client.settings.AppSettings)
     * [API\_DNS](#openeo_fastapi.client.settings.AppSettings.API_DNS)
     * [API\_TLS](#openeo_fastapi.client.settings.AppSettings.API_TLS)
-    * [ALEMBIC\_DIR](#openeo_fastapi.client.settings.AppSettings.ALEMBIC_DIR)
     * [API\_TITLE](#openeo_fastapi.client.settings.AppSettings.API_TITLE)
     * [API\_DESCRIPTION](#openeo_fastapi.client.settings.AppSettings.API_DESCRIPTION)
     * [OPENEO\_VERSION](#openeo_fastapi.client.settings.AppSettings.OPENEO_VERSION)
@@ -45,12 +44,6 @@ The domain name hosting the API.
 #### API\_TLS
 
 Whether the API http scheme should be http or https.
-
-<a id="openeo_fastapi.client.settings.AppSettings.ALEMBIC_DIR"></a>
-
-#### ALEMBIC\_DIR
-
-The path leading to the alembic directory to be used.
 
 <a id="openeo_fastapi.client.settings.AppSettings.API_TITLE"></a>
 
@@ -143,4 +136,3 @@ def parse_env_var(cls, field_name: str, raw_val: str) -> Any
 ```
 
 Parse any variables and handle and csv lists into python list type.
-
