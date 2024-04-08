@@ -3,8 +3,8 @@ nav:
   - Home: index.md
   - Getting Started: setup.md
   - User Guide: 
-      - Override endpoints: guide/overriding.md
-      - Add new endpoints: guide/adding.md
+      - Manipulating endpoints: guide/registers.md
+      - Extend the object relational Models: guide/orms.md
       - Add your own auth: guide/auth.md
       - Extend the object relational Models: guide/orms.md
   - Reference:

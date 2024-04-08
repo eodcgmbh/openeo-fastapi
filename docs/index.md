@@ -7,4 +7,3 @@ to the database schema, and finally increase the offering of the baseline api wi
 would like to add.
 
 * [Getting Started](setup.md)
-* [User Guide](setup.md)

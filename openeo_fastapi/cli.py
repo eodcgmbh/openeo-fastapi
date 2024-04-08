@@ -6,66 +6,12 @@ from alembic import command
 from alembic.config import Config
 from pathlib import Path
 
-def get_app_template():
-    """
-        Generate the default app file for an openeo api app.
-    """
-    return """
-from fastapi import FastAPI
-
-from openeo_fastapi.api.app import OpenEOApi
-from openeo_fastapi.api.types import Billing, FileFormat, GisDataType, Link, Plan
-from openeo_fastapi.client.core import OpenEOCore
-
-formats = []
-
-links = []
-
-client = OpenEOCore(
-    input_formats=formats,
-    output_formats=formats,
-    links=links,
-    billing=Billing(
-        currency="credits",
-        default_plan="a-cloud",
-        plans=[Plan(name="user", description="Subscription plan.", paid=True)],
-    )
+from openeo_fastapi.templates import (
+    get_app_template,
+    get_models_template,
+    get_revision_template
 )
 
-api = OpenEOApi(client=client, app=FastAPI())
-
-app = api.app
-"""
-
-def get_models_template():
-    """
-        Generate the default models file for an openeo api app.
-    """
-    return """from openeo_fastapi.client.psql.settings import BASE
-from openeo_fastapi.client.psql.models import *
-
-metadata = BASE.metadata
-"""
-
-def get_revision_template():
-    """
-        Generate the default revision file for the openeo api app.
-    """
-    return """import os
-from alembic import command
-from alembic.config import Config
-from pathlib import Path
-
-from openeo_fastapi.client.psql.settings import DataBaseSettings
-
-settings=DataBaseSettings()
-
-os.chdir(Path(settings.ALEMBIC_DIR))
-alembic_cfg = Config("alembic.ini")
-
-command.revision(alembic_cfg, autogenerate=True)
-command.upgrade(alembic_cfg, "head")
-"""
 
 @click.group()
 def cli():
@@ -85,7 +31,7 @@ def new(path):
     else:
         path = Path(fs.get_mapper("").root)
     
-    openeo_dir = path / "openeo_api"
+    openeo_dir = path
     db_dir = openeo_dir / "psql"
     init_file = openeo_dir / "__init__.py"
     app_file = openeo_dir / "app.py"
@@ -121,6 +67,8 @@ def new(path):
 
     revise_file = openeo_dir / "revise.py"
     fs.touch(revise_file)
+    with fs.open(revise_file, 'w') as f:
+        f.write(get_revision_template())
 
     pass
 
