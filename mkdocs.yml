@@ -1,0 +1,32 @@
+site_name: OpenEO FastApi
+nav:
+  - Home: index.md
+  - Getting Started: setup.md
+  - User Guide: 
+      - Override endpoints: guide/overriding.md
+      - Add new endpoints: guide/adding.md
+      - Add your own auth: guide/auth.md
+      - Extend the object relational Models: guide/orms.md
+  - Reference:
+      - openeo_fastapi.api:
+        - openeo_fastapi.api.app: package/api/app.md
+        - openeo_fastapi.api.models: package/api/models.md
+        - openeo_fastapi.api.types: package/api/types.md
+      - openeo_fastapi.client:
+        - openeo_fastapi.client.auth: package/client/auth.md
+        - openeo_fastapi.client.collections: package/client/collections.md
+        - openeo_fastapi.client.core: package/client/core.md
+        - openeo_fastapi.client.files: package/client/files.md
+        - openeo_fastapi.client.jobs: package/client/jobs.md
+        - openeo_fastapi.client.processes: package/client/processes.md
+        - openeo_fastapi.client.register: package/client/register.md
+        - openeo_fastapi.client.settings: package/client/settings.md
+        - openeo_fastapi.client.psql:
+            - openeo_fastapi.client.psql.engine: package/client/engine.md
+            - openeo_fastapi.client.psql.models: package/client/models.md
+            - openeo_fastapi.client.psql.settings: package/client/settings.md
+      - openeo_fastapi.cli: package/cli.md
+  - Other:
+    - Team: team.md
+    - About: about.md
+theme: readthedocs

@@ -5,7 +5,7 @@ from sqlalchemy import BOOLEAN, Column, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-from openeo_fastapi.client.psql.models import JobORM, ProcessGraphORM, UdpORM, UserORM
+from openeo_fastapi.client.psql.models import JobORM, UdpORM, UserORM
 
 
 def test_db_setup_and_userorm_model(mock_engine):
@@ -37,7 +37,7 @@ def test_job_model(mock_engine):
         job_id=job_uid,
         user_id=user_uid,
         status="created",
-        process_graph_id=uuid.uuid4(),
+        process={"id":{"data":"x"}},
     )
 
     session = sessionmaker(mock_engine)
@@ -49,31 +49,6 @@ def test_job_model(mock_engine):
         found_job = select(JobORM).filter_by(job_id=job_uid)
 
         assert sesh.scalars(found_job).first()
-
-
-def test_processgraph_model(mock_engine):
-    """ """
-
-    user_uid = uuid.uuid4()
-    process_graph_uid = "SOMEPGID"
-
-    user = UserORM(user_id=user_uid, oidc_sub="someone@egi.eu")
-    processgraph = ProcessGraphORM(
-        id=process_graph_uid,
-        user_id=user_uid,
-        process_graph={"process": {"args": "one"}},
-    )
-
-    session = sessionmaker(mock_engine)
-    with session.begin() as sesh:
-        sesh.add(user)
-        sesh.add(processgraph)
-
-    with session.begin() as sesh:
-        found_pg = select(ProcessGraphORM).filter_by(id=process_graph_uid)
-
-        assert sesh.scalars(found_pg).first()
-
 
 def test_udpor_model(mock_engine):
     """ """

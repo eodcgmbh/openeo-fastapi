@@ -4,7 +4,7 @@ from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.testclient import TestClient
 
 from openeo_fastapi.api.app import OpenEOApi
-from openeo_fastapi.api.responses import FilesGetResponse
+from openeo_fastapi.api.models import FilesGetResponse
 from openeo_fastapi.api.types import (
     Billing,
     Endpoint,
@@ -84,20 +84,17 @@ def test_get_udf_runtimes(core_api, app_settings):
 def test_get_conformance(core_api, app_settings):
     """Test the /conformance endpoint as intended."""
 
-    from openeo_fastapi.client.conformance import BASIC_CONFORMANCE_CLASSES
-
     test_app = TestClient(core_api.app)
 
     response = test_app.get(f"/{app_settings.OPENEO_VERSION}/conformance")
 
     assert response.status_code == 200
-    assert len(BASIC_CONFORMANCE_CLASSES) == len(response.json()["conformsTo"])
+    assert 2 == len(response.json()["conformsTo"])
 
 
 def test_get_file_formats(core_api, app_settings):
     """Test the /conformance endpoint as intended."""
 
-    from openeo_fastapi.client.conformance import BASIC_CONFORMANCE_CLASSES
 
     test_app = TestClient(core_api.app)
 
