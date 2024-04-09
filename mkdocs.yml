@@ -21,9 +21,9 @@ nav:
         - openeo_fastapi.client.register: package/client/register.md
         - openeo_fastapi.client.settings: package/client/settings.md
         - openeo_fastapi.client.psql:
-            - openeo_fastapi.client.psql.engine: package/client/engine.md
-            - openeo_fastapi.client.psql.models: package/client/models.md
-            - openeo_fastapi.client.psql.settings: package/client/settings.md
+            - openeo_fastapi.client.psql.engine: package/client/psql/engine.md
+            - openeo_fastapi.client.psql.models: package/client/psql/models.md
+            - openeo_fastapi.client.psql.settings: package/client/psql/settings.md
       - openeo_fastapi.cli: package/cli.md
 theme: readthedocs
 repo_url: https://github.com/eodcgmbh/openeo-fastapi
