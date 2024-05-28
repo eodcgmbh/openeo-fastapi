@@ -1,12 +1,14 @@
 """OpenEO Api class for preparing the FastApi object from the client that is provided by the user.
 """
 import attr
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response
 from starlette.responses import JSONResponse
 
 from openeo_fastapi.api import models
+from openeo_fastapi.client.auth import Authenticator
 
 HIDDEN_PATHS = ["/openapi.json", "/docs", "/docs/oauth2-redirect", "/redoc"]
+
 
 @attr.define
 class OpenEOApi:
@@ -17,9 +19,11 @@ class OpenEOApi:
     router: APIRouter = attr.ib(default=attr.Factory(APIRouter))
     response_class: type[Response] = attr.ib(default=JSONResponse)
 
+    def override_authentication(self, func):
+        self.app.dependency_overrides[Authenticator.validate] = func
+
     def register_well_known(self):
-        """Register well known endpoint (GET /.well-known/openeo).
-        """
+        """Register well known endpoint (GET /.well-known/openeo)."""
         self.router.add_api_route(
             name=".well-known",
             path="/.well-known/openeo",
@@ -410,7 +414,7 @@ class OpenEOApi:
 
     def register_core(self):
         """
-            Add application logic to the API layer.
+        Add application logic to the API layer.
         """
         self.register_get_conformance()
         self.register_get_health()
@@ -446,15 +450,16 @@ class OpenEOApi:
 
     def http_exception_handler(self, request, exception):
         """
-            Register exception handler to turn python exceptions into expected OpenEO error output.
+        Register exception handler to turn python exceptions into expected OpenEO error output.
         """
-        
+
         exception_headers = {
             "allow_origin": "*",
             "allow_credentials": "true",
             "allow_methods": "*",
         }
         from fastapi.encoders import jsonable_encoder
+
         return JSONResponse(
             headers=exception_headers,
             status_code=exception.status_code,
@@ -463,7 +468,7 @@ class OpenEOApi:
 
     def __attrs_post_init__(self):
         """
-            Post-init hook responsible for setting up the application upon instantiation of the class.
+        Post-init hook responsible for setting up the application upon instantiation of the class.
         """
         # Register core endpoints
         self.register_core()

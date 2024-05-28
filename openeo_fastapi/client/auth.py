@@ -33,7 +33,8 @@ class User(BaseModel):
     created_at: datetime.datetime = datetime.datetime.utcnow()
 
     class Config:
-        """Pydantic model class config."""    
+        """Pydantic model class config."""
+
         orm_mode = True
         arbitrary_types_allowed = True
         extra = "ignore"
@@ -47,8 +48,8 @@ class User(BaseModel):
 # TODO Might make more sense to merge with IssueHandler class.
 # TODO The validate function needs to be easier to overwrite and inject into the OpenEO Core client.
 class Authenticator(ABC):
-    """Basic class to hold the validation call to be used by the api endpoints requiring authentication.
-    """
+    """Basic class to hold the validation call to be used by the api endpoints requiring authentication."""
+
     # Authenticator validate method needs to know what decisions to make based on user info response from the issuer handler.
     # This will be different for different backends, so just put it as ABC for now. We might be able to define this if we want
     # to specify an auth config when initialising the backend.
@@ -82,7 +83,6 @@ class Authenticator(ABC):
         user = User(user_id=uuid.uuid4(), oidc_sub=user_info["sub"])
 
         create(create_object=user)
-            
         return user
 
 
@@ -186,7 +186,10 @@ class IssuerHandler(BaseModel):
         if issuer_oidc_config.status_code != 200:
             raise HTTPException(
                 status_code=500,
-                detail=Error(code="InvalidIssuerConfig", message=f"The issuer config is not available. Tokens cannot be validated currently. Try again later."),
+                detail=Error(
+                    code="InvalidIssuerConfig",
+                    message=f"The issuer config is not available. Tokens cannot be validated currently. Try again later.",
+                ),
             )
 
         userinfo_url = issuer_oidc_config.json()[OIDC_USERINFO]
@@ -195,7 +198,9 @@ class IssuerHandler(BaseModel):
         if resp.status_code != 200:
             raise HTTPException(
                 status_code=500,
-                detail=Error(code="TokenInvalid", message=f"The provided token is not valid."),
+                detail=Error(
+                    code="TokenInvalid", message=f"The provided token is not valid."
+                ),
             )
 
         return resp.json()
@@ -217,8 +222,11 @@ class IssuerHandler(BaseModel):
 
         if parsed_token.method.value == AuthMethod.OIDC.value:
             return self._validate_oidc_token(parsed_token.token)
-        
+
         raise HTTPException(
             status_code=500,
-            detail=Error(code="TokenCantBeValidated", message=f"The provided token cannot be validated."),
+            detail=Error(
+                code="TokenCantBeValidated",
+                message=f"The provided token cannot be validated.",
+            ),
         )

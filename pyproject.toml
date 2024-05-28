@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "openeo-fastapi"
-version = "2024.4.2"
+version = "2024.5.1"
 description = "FastApi implementation conforming to the OpenEO Api specification."
 authors = ["Sean Hoyal <sean.hoyal@external.eodc.eu>"]
 readme = "README.md"

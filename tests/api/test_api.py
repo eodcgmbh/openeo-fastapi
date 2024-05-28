@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Response
@@ -94,7 +95,6 @@ def test_get_conformance(core_api, app_settings):
 
 def test_get_file_formats(core_api, app_settings):
     """Test the /conformance endpoint as intended."""
-
 
     test_app = TestClient(core_api.app)
 
@@ -291,3 +291,27 @@ def test_extending_register(mocked_oidc_config, mocked_oidc_userinfo, app_settin
     )
 
     assert response.status_code == 200
+
+
+def test_overwrite_authenticator_validate(
+    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings
+):
+    """Test the user info is available."""
+
+    test_app = TestClient(core_api.app)
+
+    specific_uuid = uuid.uuid4()
+
+    def my_new_cool_auth():
+        return User(user_id=specific_uuid, oidc_sub="the-real-user")
+
+    core_api.override_authentication(my_new_cool_auth)
+
+    response = test_app.get(
+        f"/{app_settings.OPENEO_VERSION}/me",
+        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+    )
+
+    assert response.status_code == 200
+    assert "user_id" in response.json()
+    assert response.json()["user_id"] == str(specific_uuid)
