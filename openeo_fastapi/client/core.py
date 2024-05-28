@@ -3,13 +3,12 @@
 Classes:
     - OpenEOCore: Framework for defining the application logic that will passed onto the OpenEO Api.
 """
-import logging
 from collections import namedtuple
 from typing import Any, Optional
 from urllib.parse import urlunparse
 
 from attrs import define, field
-from fastapi import Depends, HTTPException, Request, Response
+from fastapi import Depends, HTTPException, Response
 
 from openeo_fastapi.api.models import (
     Capabilities,

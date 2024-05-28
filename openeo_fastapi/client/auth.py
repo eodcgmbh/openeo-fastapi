@@ -13,7 +13,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 
 import requests
-from fastapi import Header, HTTPException, Request
+from fastapi import Header, HTTPException
 from pydantic import BaseModel, ValidationError, validator
 
 from openeo_fastapi.api.types import Error
@@ -83,7 +83,6 @@ class Authenticator(ABC):
         user = User(user_id=uuid.uuid4(), oidc_sub=user_info["sub"])
 
         create(create_object=user)
-        print("user ", user)
         return user
 
 
@@ -124,7 +123,6 @@ class AuthToken(BaseModel):
     @classmethod
     def from_token(cls, token: str):
         """Takes the openeo format token, splits it into the component parts, and returns an Auth token."""
-        print("TOKEN: ", token)
         return cls(
             **dict(zip(["bearer", "method", "provider", "token"], token.split("/")))
         )
