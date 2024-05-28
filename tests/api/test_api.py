@@ -1,8 +1,12 @@
 import uuid
 from typing import Optional
 
+import pytest
 from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.testclient import TestClient
+from sqlalchemy import Column
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.types import BOOLEAN
 
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.api.models import FilesGetResponse
@@ -18,6 +22,7 @@ from openeo_fastapi.api.types import (
 from openeo_fastapi.client.auth import Authenticator, User
 from openeo_fastapi.client.core import OpenEOCore
 from openeo_fastapi.client.files import FILE_ENDPOINTS, FilesRegister
+from openeo_fastapi.client.psql.models import UserORM
 
 
 def test_api_core(core_api):
@@ -315,3 +320,50 @@ def test_overwrite_authenticator_validate(
     assert response.status_code == 200
     assert "user_id" in response.json()
     assert response.json()["user_id"] == str(specific_uuid)
+
+
+def test_extending_the_usermodel(
+    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings
+):
+    """Test the user model can be extended in the api available."""
+
+    # Extend the UserORM class
+    class ExtendedUserORM(UserORM):
+        """ORM for the UserORM table."""
+
+        new_value = Column(BOOLEAN, nullable=False)
+
+    # Try to revise the database using the extended UserORM
+    import os
+    from pathlib import Path
+
+    from alembic import command
+    from alembic.config import Config
+
+    from tests.conftest import ALEMBIC_DIR
+
+    os.chdir(Path(ALEMBIC_DIR))
+    alembic_cfg = Config("alembic.ini")
+
+    command.revision(alembic_cfg, f"openeo-fastapi-extended", autogenerate=True)
+    command.upgrade(alembic_cfg, "head")
+
+    test_app = TestClient(core_api.app)
+
+    with pytest.raises(IntegrityError):
+        test_app.get(
+            f"/{app_settings.OPENEO_VERSION}/me",
+            headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        )
+
+    def my_new_cool_auth():
+        return User(user_id=uuid.uuid4(), oidc_sub="the-real-user", new_value=True)
+
+    core_api.override_authentication(my_new_cool_auth)
+
+    response = test_app.get(
+        f"/{app_settings.OPENEO_VERSION}/me",
+        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+    )
+
+    assert response.status_code == 200
