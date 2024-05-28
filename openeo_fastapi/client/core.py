@@ -4,7 +4,7 @@ Classes:
     - OpenEOCore: Framework for defining the application logic that will passed onto the OpenEO Api.
 """
 from collections import namedtuple
-from typing import Any, Optional
+from typing import Optional
 from urllib.parse import urlunparse
 
 from attrs import define, field
