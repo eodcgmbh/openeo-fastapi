@@ -3,26 +3,23 @@
 Classes:
     - OpenEOCore: Framework for defining the application logic that will passed onto the OpenEO Api.
 """
+import logging
 from collections import namedtuple
-from typing import Optional
+from typing import Any, Optional
 from urllib.parse import urlunparse
 
 from attrs import define, field
-from fastapi import Depends, HTTPException, Response
+from fastapi import Depends, HTTPException, Request, Response
 
 from openeo_fastapi.api.models import (
     Capabilities,
     ConformanceGetResponse,
     FileFormatsGetResponse,
     MeGetResponse,
+    UdfRuntimesGetResponse,
     WellKnownOpeneoGetResponse,
-    UdfRuntimesGetResponse
 )
-from openeo_fastapi.api.types import (
-    Error,
-    STACConformanceClasses,
-    Version,
-)
+from openeo_fastapi.api.types import Error, STACConformanceClasses, Version
 from openeo_fastapi.client.auth import Authenticator, User
 from openeo_fastapi.client.collections import CollectionRegister
 from openeo_fastapi.client.files import FilesRegister
@@ -50,10 +47,9 @@ class OpenEOCore:
     processes: Optional[ProcessRegister] = None
 
     def __attrs_post_init__(self):
-        """Post init hook to set the client registers, if none where provided by the user set to the defaults!
-        """
+        """Post init hook to set the client registers, if none where provided by the user set to the defaults!"""
         self.settings = AppSettings()
-        
+
         self.collections = self.collections or CollectionRegister(self.settings)
         self.files = self.files or FilesRegister(self.settings, self.links)
         self.jobs = self.jobs or JobsRegister(self.settings, self.links)
@@ -61,7 +57,7 @@ class OpenEOCore:
 
     def _combine_endpoints(self):
         """For the various registers that hold endpoint functions, concat those endpoints to register in get_capabilities.
-        
+
         Returns:
             List: A list of all the endpoints that will be supported by this api deployment.
         """
@@ -100,10 +96,10 @@ class OpenEOCore:
         return ConformanceGetResponse(
             conformsTo=[
                 STACConformanceClasses.CORE.value,
-                STACConformanceClasses.COLLECTIONS.value
+                STACConformanceClasses.COLLECTIONS.value,
             ]
         )
-        
+
     def get_file_formats(self) -> FileFormatsGetResponse:
         """Get the supported file formats for processing input and output.
 
@@ -131,13 +127,13 @@ class OpenEOCore:
         Returns:
             MeGetResponse: The user information for the validated user.
         """
-        return MeGetResponse(user_id=user.user_id.__str__())
-    
+        return MeGetResponse(user_id=user.user_id)
+
     def get_well_known(self) -> WellKnownOpeneoGetResponse:
         """Get the supported file formats for processing input and output.
 
         Returns:
-            WellKnownOpeneoGetResponse: The api/s which are exposed at this server. 
+            WellKnownOpeneoGetResponse: The api/s which are exposed at this server.
         """
         prefix = "https" if self.settings.API_TLS else "http"
 
@@ -171,13 +167,11 @@ class OpenEOCore:
 
         Raises:
             HTTPException: Raises an exception with relevant status code and descriptive message of failure.
-        
+
         Returns:
             UdfRuntimesGetResponse: The metadata for the requested BatchJob.
         """
         raise HTTPException(
             status_code=501,
-            detail=Error(
-                code="FeatureUnsupported", message="Feature not supported."
-            ),
+            detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
