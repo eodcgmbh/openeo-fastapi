@@ -322,6 +322,9 @@ def test_overwrite_authenticator_validate(
     assert response.json()["user_id"] == str(specific_uuid)
 
 
+@pytest.mark.skip(
+    reason="Can only be run independently, as it revisions the database and will break the tests which run after."
+)
 def test_extending_the_usermodel(
     mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings
 ):
@@ -345,8 +348,10 @@ def test_extending_the_usermodel(
     os.chdir(Path(ALEMBIC_DIR))
     alembic_cfg = Config("alembic.ini")
 
-    command.revision(alembic_cfg, f"openeo-fastapi-extended", autogenerate=True)
-    command.upgrade(alembic_cfg, "head")
+    command.revision(
+        alembic_cfg, f"openeo-fastapi-extended", rev_id="downgrademe", autogenerate=True
+    )
+    command.upgrade(alembic_cfg, revision="downgrademe")
 
     test_app = TestClient(core_api.app)
 
@@ -365,5 +370,9 @@ def test_extending_the_usermodel(
         f"/{app_settings.OPENEO_VERSION}/me",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
+
+    # Downgrade to remove the use of the ExtendedUserORM
+    # Doesnt seem to work
+    command.downgrade(alembic_cfg, revision="downgrademe")
 
     assert response.status_code == 200
