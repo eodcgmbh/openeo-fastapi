@@ -1,14 +1,16 @@
 """Standardisation of common functionality to interact with the ORMs and the database.
 """
+from typing import Any, Union
+
 from pydantic import BaseModel
-from sqlalchemy import create_engine, select
+from sqlalchemy import Engine, create_engine, select
 from sqlalchemy.orm import sessionmaker
-from typing import Any, Union                                                                                                                                                    
 
 from openeo_fastapi.client.psql.settings import DataBaseSettings
 
+
 # TODO Refactor this module to be a class that can work with different SQL Backends.
-def get_engine():
+def get_engine() -> Engine:
     """Get the engine using config from pydantic settings.
 
     Returns:

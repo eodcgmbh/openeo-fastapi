@@ -247,3 +247,23 @@ def cleanup_out_folder():
 
     if fs.exists(alembic_cache_dir):
         fs.rm(alembic_cache_dir, recursive=True)
+
+
+@pytest.fixture(scope="function")
+def test_job():
+    import datetime
+    import uuid
+
+    from openeo_fastapi.client.jobs import Job
+    from openeo_fastapi.client.psql.engine import create
+
+    job = Job(
+        job_id=uuid.uuid4(),
+        status="created",
+        process={"process_graph": {"data": "x"}},
+        user_id=uuid.uuid4(),
+        created=datetime.datetime.now(),
+    )
+    create(job)
+
+    return job

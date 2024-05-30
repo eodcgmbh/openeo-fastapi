@@ -1,12 +1,11 @@
 """Defining the settings to be used at the application layer of the API."""
-from pathlib import Path
 from typing import Any, Optional
 
 from pydantic import BaseSettings, HttpUrl, validator
 
 
 class AppSettings(BaseSettings):
-    """The application settings that need to be defined when the app is initialised. """
+    """The application settings that need to be defined when the app is initialised."""
 
     API_DNS: str
     """The domain name hosting the API."""

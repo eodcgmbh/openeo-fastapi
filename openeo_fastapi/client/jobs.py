@@ -73,7 +73,6 @@ class Job(BaseModel):
     """Pydantic model representing an OpenEO Job."""
 
     job_id: uuid.UUID
-    """"""
     process: ProcessGraphWithMetadata
     status: Status
     user_id: uuid.UUID
@@ -84,6 +83,7 @@ class Job(BaseModel):
 
     class Config:
         """Pydantic model class config."""
+
         orm_mode = True
         arbitrary_types_allowed = True
         extra = Extra.ignore
@@ -107,8 +107,7 @@ class Job(BaseModel):
 
 
 class JobsRegister(EndpointRegister):
-    """The JobRegister to regulate the application logic for the API behaviour.
-    """
+    """The JobRegister to regulate the application logic for the API behaviour."""
 
     def __init__(self, settings, links) -> None:
         """Initialize the JobRegister.
@@ -188,7 +187,9 @@ class JobsRegister(EndpointRegister):
         except IntegrityError:
             raise HTTPException(
                 status_code=500,
-                detail=Error(code="Internal", message=f"The job {job.job_id} already exists."),
+                detail=Error(
+                    code="Internal", message=f"The job {job.job_id} already exists."
+                ),
             )
 
         return Response(
@@ -387,7 +388,11 @@ class JobsRegister(EndpointRegister):
             detail=Error(code="FeatureUnsupported", message="Feature not supported."),
         )
 
-    def process_sync_job(self, body: JobsRequest = JobsRequest(), user: User = Depends(Authenticator.validate)):
+    def process_sync_job(
+        self,
+        body: JobsRequest = JobsRequest(),
+        user: User = Depends(Authenticator.validate),
+    ):
         """Start the processing of a synchronous Job.
 
         Args:
@@ -396,7 +401,7 @@ class JobsRegister(EndpointRegister):
 
         Raises:
             HTTPException: Raises an exception with relevant status code and descriptive message of failure.
-                        
+
         """
         raise HTTPException(
             status_code=501,
