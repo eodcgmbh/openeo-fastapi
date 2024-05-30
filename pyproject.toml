@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "openeo-fastapi"
-version = "2024.5.2"
+version = "2024.5.3"
 description = "FastApi implementation conforming to the OpenEO Api specification."
 authors = ["Sean Hoyal <sean.hoyal@external.eodc.eu>"]
 readme = "README.md"
@@ -23,7 +23,7 @@ uvicorn = "^0.29.0"
 fastapi = "^0.95.1"
 pydantic = "<2"
 attrs = "^23.1.0"
-httpx = "^0.24.1"
+httpx = "^0.27.0"
 aiohttp = ">3.9"
 pystac-client = ">=0.7.5"
 openeo-pg-parser-networkx = ">=2024.1.1"
