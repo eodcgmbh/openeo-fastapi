@@ -27,6 +27,7 @@ class JobORM(BASE):
     """ORM for the job table."""
 
     __tablename__ = "jobs"
+    __table_args__ = {"extend_existing": True}
 
     job_id = Column(UUID(as_uuid=True), primary_key=True)
     """UUID of the job."""
@@ -50,6 +51,7 @@ class UdpORM(BASE):
     """ORM for the UDPS table."""
 
     __tablename__ = "udps"
+    __table_args__ = {"extend_existing": True}
 
     id = Column(VARCHAR, primary_key=True, nullable=False)
     """The string name of the UDP. CPK with user_id. Different users can use the same string for id."""
@@ -64,6 +66,6 @@ class UdpORM(BASE):
     returns = Column("returns", JSON)
     """The return types of the UDP."""
     summary = Column("summary", VARCHAR)
-    """A summary of the UPD.""" 
+    """A summary of the UPD."""
     description = Column("description", VARCHAR)
     """A description of what the UDP is intended to do."""
