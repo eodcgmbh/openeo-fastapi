@@ -53,7 +53,7 @@ def app_settings():
     return settings.AppSettings(**SETTINGS_DICT)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def core_api():
     formats = [
         FileFormat(
@@ -189,7 +189,7 @@ def mocked_issuer():
     )
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def mock_engine(postgresql):
     """Postgresql engine for SQLAlchemy."""
     import os
