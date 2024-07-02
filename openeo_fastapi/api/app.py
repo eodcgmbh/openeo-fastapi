@@ -380,7 +380,7 @@ class OpenEOApi:
         """Register endpoint for downloading a specific file (GET /files/{path})."""
         self.router.add_api_route(
             name="download_file",
-            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path}",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path:path}",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -392,7 +392,7 @@ class OpenEOApi:
         """Register endpoint for uploading a new file (PUT /files/{path})."""
         self.router.add_api_route(
             name="upload_file",
-            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path}",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path:path}",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -404,7 +404,7 @@ class OpenEOApi:
         """Register endpoint for deleting a new file (DELETE /files/{path})."""
         self.router.add_api_route(
             name="delete_file",
-            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path}",
+            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path:path}",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
