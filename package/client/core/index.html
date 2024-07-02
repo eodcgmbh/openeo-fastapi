@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>openeo_fastapi.client.core - OpenEO FastApi</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "openeo_fastapi.client.core";
+        var mkdocs_page_input_path = "package/client/core.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> OpenEO FastApi
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../setup/">Getting Started</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/registers/">Manipulating endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/auth/">Add your own auth</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/orms/">Extend the object relational Models</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >openeo_fastapi.api</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/app/">openeo_fastapi.api.app</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/models/">openeo_fastapi.api.models</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/types/">openeo_fastapi.api.types</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >openeo_fastapi.client</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../auth/">openeo_fastapi.client.auth</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../collections/">openeo_fastapi.client.collections</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">openeo_fastapi.client.core</a>
+    <ul class="current">
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../files/">openeo_fastapi.client.files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../jobs/">openeo_fastapi.client.jobs</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../processes/">openeo_fastapi.client.processes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../register/">openeo_fastapi.client.register</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../settings/">openeo_fastapi.client.settings</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >openeo_fastapi.client.psql</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/engine/">openeo_fastapi.client.psql.engine</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/models/">openeo_fastapi.client.psql.models</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/settings/">openeo_fastapi.client.psql.settings</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cli/">openeo_fastapi.cli</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">OpenEO FastApi</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">openeo_fastapi.client</li>
+      <li class="breadcrumb-item active">openeo_fastapi.client.core</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/eodcgmbh/openeo-fastapi/edit/master/docs/package/client/core.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#openeo_fastapi.client.core">openeo_fastapi.client.core</a></li>
+<li><a href="#openeo_fastapi.client.core.OpenEOCore">OpenEOCore</a><ul>
+<li><a href="#openeo_fastapi.client.core.OpenEOCore.__attrs_post_init__">__attrs_post_init__</a></li>
+<li><a href="#openeo_fastapi.client.core.OpenEOCore.get_capabilities">get_capabilities</a></li>
+<li><a href="#openeo_fastapi.client.core.OpenEOCore.get_conformance">get_conformance</a></li>
+<li><a href="#openeo_fastapi.client.core.OpenEOCore.get_file_formats">get_file_formats</a></li>
+<li><a href="#openeo_fastapi.client.core.OpenEOCore.get_health">get_health</a></li>
+<li><a href="#openeo_fastapi.client.core.OpenEOCore.get_user_info">get_user_info</a></li>
+<li><a href="#openeo_fastapi.client.core.OpenEOCore.get_well_known">get_well_known</a></li>
+<li><a href="#openeo_fastapi.client.core.OpenEOCore.get_udf_runtimes">get_udf_runtimes</a></li>
+</ul>
+</li>
+</ul>
+<p><a id="openeo_fastapi.client.core"></a></p>
+<h1 id="openeo_fastapiclientcore">openeo_fastapi.client.core</h1>
+<p>Class and model to define the framework and partial application logic for interacting with Jobs.</p>
+<p>Classes:
+    - OpenEOCore: Framework for defining the application logic that will passed onto the OpenEO Api.</p>
+<p><a id="openeo_fastapi.client.core.OpenEOCore"></a></p>
+<h2 id="openeocore-objects">OpenEOCore Objects</h2>
+<pre><code class="language-python">@define
+class OpenEOCore()
+</code></pre>
+<p>Client for defining the application logic for the OpenEO Api.</p>
+<p><a id="openeo_fastapi.client.core.OpenEOCore.__attrs_post_init__"></a></p>
+<h4 id="__attrs_post_init__">__attrs_post_init__</h4>
+<pre><code class="language-python">def __attrs_post_init__()
+</code></pre>
+<p>Post init hook to set the client registers, if none where provided by the user set to the defaults!</p>
+<p><a id="openeo_fastapi.client.core.OpenEOCore.get_capabilities"></a></p>
+<h4 id="get_capabilities">get_capabilities</h4>
+<pre><code class="language-python">def get_capabilities() -&gt; Capabilities
+</code></pre>
+<p>Get the capabilities of the api.</p>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>Capabilities</code> - The capabilities of the api based off what the user provided.</li>
+</ul>
+<p><a id="openeo_fastapi.client.core.OpenEOCore.get_conformance"></a></p>
+<h4 id="get_conformance">get_conformance</h4>
+<pre><code class="language-python">def get_conformance() -&gt; ConformanceGetResponse
+</code></pre>
+<p>Get the capabilities of the api.</p>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>ConformanceGetResponse</code> - The conformance classes that this Api wil of the api based off what the user provided.</li>
+</ul>
+<p><a id="openeo_fastapi.client.core.OpenEOCore.get_file_formats"></a></p>
+<h4 id="get_file_formats">get_file_formats</h4>
+<pre><code class="language-python">def get_file_formats() -&gt; FileFormatsGetResponse
+</code></pre>
+<p>Get the supported file formats for processing input and output.</p>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>FileFormatsGetResponse</code> - The response defining the input and output formats.</li>
+</ul>
+<p><a id="openeo_fastapi.client.core.OpenEOCore.get_health"></a></p>
+<h4 id="get_health">get_health</h4>
+<pre><code class="language-python">def get_health()
+</code></pre>
+<p>Basic health endpoint expected to return status code 200.</p>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>Response</code> - Status code 200.</li>
+</ul>
+<p><a id="openeo_fastapi.client.core.OpenEOCore.get_user_info"></a></p>
+<h4 id="get_user_info">get_user_info</h4>
+<pre><code class="language-python">def get_user_info(user: User = Depends(
+    Authenticator.validate)) -&gt; MeGetResponse
+</code></pre>
+<p>Get the supported file formats for processing input and output.</p>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>MeGetResponse</code> - The user information for the validated user.</li>
+</ul>
+<p><a id="openeo_fastapi.client.core.OpenEOCore.get_well_known"></a></p>
+<h4 id="get_well_known">get_well_known</h4>
+<pre><code class="language-python">def get_well_known() -&gt; WellKnownOpeneoGetResponse
+</code></pre>
+<p>Get the supported file formats for processing input and output.</p>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>WellKnownOpeneoGetResponse</code> - The api/s which are exposed at this server.</li>
+</ul>
+<p><a id="openeo_fastapi.client.core.OpenEOCore.get_udf_runtimes"></a></p>
+<h4 id="get_udf_runtimes">get_udf_runtimes</h4>
+<pre><code class="language-python">def get_udf_runtimes() -&gt; UdfRuntimesGetResponse
+</code></pre>
+<p>Get the supported file formats for processing input and output.</p>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>UdfRuntimesGetResponse</code> - The metadata for the requested BatchJob.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../collections/" class="btn btn-neutral float-left" title="openeo_fastapi.client.collections"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../files/" class="btn btn-neutral float-right" title="openeo_fastapi.client.files">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eodcgmbh/openeo-fastapi" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../collections/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../files/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
