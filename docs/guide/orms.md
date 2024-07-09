@@ -41,7 +41,7 @@ In order to effectively use the extended models, you need to update the models.p
 
 #### Using extended model
 
-In order use the class ExtendedJob, we will need to extend the register. The example below extends the JobRegister and edits the create_job function to create the ExtendedJob and includes setting the value for the new parameter. You will need to version the database in order for the new model to work, and additionally add the NewJobsRegister to the app instance [See Registers](/guide/registers/).
+In order use the class ExtendedJob, we will need to extend the register. The example below extends the JobRegister and edits the create_job function to create the ExtendedJob and includes setting the value for the new parameter. You will need to version the database in order for the new model to work, and additionally add the NewJobsRegister to the app instance [See Registers](/openeo-fastapi/guide/registers/).
 
     ...
     from openeo_fastapi.client.jobs import JobsRegister
