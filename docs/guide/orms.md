@@ -1,10 +1,10 @@
 ## Extending the Object Relational models.
 
-Currently it is possible to extend the object relational models that the api uses, so that they can be used in any extended Endpoint Registers.
+Currently it's possible to extend the object relational models that the api uses in order to support extra values a backend might want to includse in any EndpointRegisters.
 
 ## How to extend the models.
 
-In order to effectively use the extended models, you need  to  update the models.py file found in the alembic directory. After updating the models.py file, you will need to manually update the endpoints where you would like the new model to be used. This is a current pain point, and it would be good to improve this in the future.
+In order to effectively use the extended models, you need to update the models.py file found in the alembic directory. After updating the models.py file, you will need to manually update the endpoints where you would like the new model to be used. This is a current pain point, and it would be good to improve this in the future.
 
 #### Original - models.py
 
@@ -41,7 +41,7 @@ In order to effectively use the extended models, you need  to  update the models
 
 #### Using extended model
 
-In order use the class ExtendedJob, we will need to extend the register. The example below extends the JobRegister and edits the create job function to create the ExtendedJob and including setting the value for the new parameter. You will need to version the database in order for the new model to work.
+In order use the class ExtendedJob, we will need to extend the register. The example below extends the JobRegister and edits the create_job function to create the ExtendedJob and includes setting the value for the new parameter. You will need to version the database in order for the new model to work, and additionally add the NewJobsRegister to the app instance [See Registers](/docs/guide/registers.md).
 
     ...
     from openeo_fastapi.client.jobs import JobsRegister
