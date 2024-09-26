@@ -24,7 +24,25 @@ class AppSettings(BaseSettings):
     OIDC_ORGANISATION: str
     """The abbreviation of the OIDC provider's organisation name, e.g. egi."""
     OIDC_POLICIES: Optional[list[str]]
-    """The OIDC roles to check against when authenticating a user."""
+    """The OIDC policies to check against when authorizing a user. If not provided, all users with a valid token from the issuer will be admitted.
+
+    "&&" Is used to denote the addition of another policy.
+    Policies in the list should be structures as "key, value".
+    The key referers to some value that is expected to be found in the OIDC userinfo request.
+    The value referes to some value that is then checked for presence in the values found at the key location.
+
+    Example:
+    ```
+    {
+        "email": user@test.org,
+        "groups" : [ "/staff" ]
+    }
+
+    A valid policy to allow members from the group staff would be, "groups, /staff". This would be the value provided to OIDC_POLICIES.
+
+    If you wanted to include users from another group called "/trial", the updated value to OIDC_POLICIES would be, "groups, /staff && groups, /trial"
+    ```
+    """
     STAC_VERSION: str = "1.0.0"
     """The STAC Version that is being supported by this deployments data discovery endpoints."""
     STAC_API_URL: HttpUrl

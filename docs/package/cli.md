@@ -27,7 +27,7 @@ Defining group for executor CLI.
 
 ```python
 @click.command()
-@click.option('--path', default=None, type=str)
+@click.option("--path", default=None, type=str)
 def new(path)
 ```
 

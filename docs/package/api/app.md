@@ -5,6 +5,7 @@
     * [register\_well\_known](#openeo_fastapi.api.app.OpenEOApi.register_well_known)
     * [register\_get\_capabilities](#openeo_fastapi.api.app.OpenEOApi.register_get_capabilities)
     * [register\_get\_conformance](#openeo_fastapi.api.app.OpenEOApi.register_get_conformance)
+    * [register\_get\_credentials\_oidc](#openeo_fastapi.api.app.OpenEOApi.register_get_credentials_oidc)
     * [register\_get\_file\_formats](#openeo_fastapi.api.app.OpenEOApi.register_get_file_formats)
     * [register\_get\_health](#openeo_fastapi.api.app.OpenEOApi.register_get_health)
     * [register\_get\_user\_info](#openeo_fastapi.api.app.OpenEOApi.register_get_user_info)
@@ -81,6 +82,16 @@ Register endpoint for capabilities (GET /).
 
 ```python
 def register_get_conformance()
+```
+
+Register endpoint for api conformance (GET /conformance).
+
+<a id="openeo_fastapi.api.app.OpenEOApi.register_get_credentials_oidc"></a>
+
+#### register\_get\_credentials\_oidc
+
+```python
+def register_get_credentials_oidc()
 ```
 
 Register endpoint for api conformance (GET /conformance).
@@ -404,4 +415,3 @@ def __attrs_post_init__()
 ```
 
 Post-init hook responsible for setting up the application upon instantiation of the class.
-

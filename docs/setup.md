@@ -1,6 +1,6 @@
 #  Getting Started
 
-Everything on this page is all you need to go from 0 to having your OpenEO Api server running locally. 
+Everything on this page is all you need to go from 0 to having your OpenEO Api server running locally.
 
 ## Environment Setup
 
@@ -65,19 +65,19 @@ Set the target metadata. In this example, I am importing from the **/psql/models
 
 ## Set the environment variables
 
-These variables need to be set in the environment of the deployment. Those marked required need to be set, and those set False, have some default value that only needs to be provided 
+These variables need to be set in the environment of the deployment. Those marked required need to be set, and those set False, have some default value that only needs to be provided
 
 | Variable    | Description | Required |
 | -------- | ------- | ------- |
-| API_DNS  | The domain name hosting the API. | True | 
+| API_DNS  | The domain name hosting the API. | True |
 | API_TLS  | Whether the API http scheme should be http or https.  | True |
-| API_TITLE  | The API title to be provided to FastAPI. | True | 
+| API_TITLE  | The API title to be provided to FastAPI. | True |
 | API_DESCRIPTION  | The API description to be provided to FastAPI. | True |
 | OPENEO_VERSION  | The OpenEO Api specification version supported in this deployment of the API. Defaults to "1.1.0". | False |
 | OPENEO_PREFIX  | The OpenEO prefix to be used when creating the endpoint urls. Defaults to the value of the openeo_version | True |
 | OIDC_URL  | The URL of the OIDC provider used to authenticate tokens against. | True |
 | OIDC_ORGANISATION  | The abbreviation of the OIDC provider's organisation name. | True |
-| OIDC_ROLES  | The OIDC roles to check against when authenticating a user. | False |
+| OIDC_POLICIES  | The OIDC policies user to check to authorize a user. | False |
 | STAC_VERSION  | The STAC Version that is being supported by this deployments data discovery endpoints. Defaults to "1.0.0". | False |
 | STAC_API_URL  | The STAC URL of the catalogue that the application deployment will proxy to. | True |
 | STAC_COLLECTIONS_WHITELIST  | The collection ids to filter by when proxying to the Stac catalogue. | False |
@@ -87,6 +87,7 @@ These variables need to be set in the environment of the deployment. Those marke
 | POSTGRESQL_PORT  | The post on the host the database is available on. | True |
 | POSTGRES_DB  | The name of the databse being used on the host. | True |
 | ALEMBIC_DIR  | The path to the alembic directory for applying revisions. | True |
+
 
 ## Deploy the application.
 
