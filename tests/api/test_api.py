@@ -90,7 +90,7 @@ def test_get_userinfo(
 
     response = test_app.get(
         f"{app_settings.OPENEO_PREFIX}/me",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     assert response.status_code == 200
@@ -222,7 +222,7 @@ def test_overwriting_register(
     test_client = test_client = TestClient(api.app)
     response = test_client.get(
         f"{app_settings.OPENEO_PREFIX}/files",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     assert response.status_code == 200
@@ -324,7 +324,7 @@ def test_extending_register(
     test_client = test_client = TestClient(api.app)
     response = test_client.head(
         f"{app_settings.OPENEO_PREFIX}/files/somefile.txt",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     assert response.status_code == 200

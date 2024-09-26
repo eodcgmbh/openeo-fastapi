@@ -35,7 +35,7 @@ def test_not_implemented(
         assert_not(
             test_app.get(
                 get,
-                headers={"Authorization": "Bearer /oidc/egi/not-real"},
+                headers={"Authorization": "Bearer oidc/egi/not-real"},
             )
         )
 
@@ -45,7 +45,7 @@ def test_not_implemented(
         assert_not(
             test_app.put(
                 post,
-                headers={"Authorization": "Bearer /oidc/egi/not-real"},
+                headers={"Authorization": "Bearer oidc/egi/not-real"},
             )
         )
 
@@ -55,6 +55,6 @@ def test_not_implemented(
         assert_not(
             test_app.delete(
                 delete,
-                headers={"Authorization": "Bearer /oidc/egi/not-real"},
+                headers={"Authorization": "Bearer oidc/egi/not-real"},
             )
         )

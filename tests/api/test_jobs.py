@@ -27,7 +27,7 @@ def test_list_jobs(
 
     response = test_app.get(
         f"{app_settings.OPENEO_PREFIX}/jobs",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     assert response.status_code == 200
@@ -88,7 +88,7 @@ def test_update_job(
 
     response = test_app.get(
         f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     assert response.json()["process"]["id"] == new_pg_id
@@ -116,7 +116,7 @@ def test_get_job(
 
     response = test_app.get(
         f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     assert response.status_code == 200
@@ -160,7 +160,7 @@ def test_not_implemented(
         assert_not(
             test_app.get(
                 get,
-                headers={"Authorization": "Bearer /oidc/egi/not-real"},
+                headers={"Authorization": "Bearer oidc/egi/not-real"},
             )
         )
 
@@ -173,7 +173,7 @@ def test_not_implemented(
         assert_not(
             test_app.post(
                 post,
-                headers={"Authorization": "Bearer /oidc/egi/not-real"},
+                headers={"Authorization": "Bearer oidc/egi/not-real"},
             )
         )
 
@@ -186,6 +186,6 @@ def test_not_implemented(
         assert_not(
             test_app.delete(
                 delete,
-                headers={"Authorization": "Bearer /oidc/egi/not-real"},
+                headers={"Authorization": "Bearer oidc/egi/not-real"},
             )
         )

@@ -6,14 +6,15 @@ from pydantic import ValidationError
 
 from openeo_fastapi.client import auth
 
-BASIC_TOKEN_EXAMPLE = "Bearer /basic/openeo/rubbish.not.a.token"
-OIDC_TOKEN_EXAMPLE = "Bearer /oidc/issuer/rubbish.not.a.token"
+BASIC_TOKEN_EXAMPLE = "Bearer basic/openeo/rubbish.not.a.token"
+OIDC_TOKEN_EXAMPLE = "Bearer oidc/issuer/rubbish.not.a.token"
 
 INVALID_TOKEN_EXAMPLE_1 = "bearer /basic/openeo/rubbish.not.a.token"
 INVALID_TOKEN_EXAMPLE_2 = "Bearer /basicopeneorubbish.not.a.token"
 INVALID_TOKEN_EXAMPLE_3 = "Bearer //openeo/rubbish.not.a.token"
 INVALID_TOKEN_EXAMPLE_4 = "Bearer /basic//rubbish.not.a.token"
 INVALID_TOKEN_EXAMPLE_5 = "Bearer /basic/openeo/"
+INVALID_TOKEN_EXAMPLE_6 = "Bearer /basic/openeo/rubbish.not.a.token"
 
 
 def test_auth_method():
@@ -32,7 +33,6 @@ def test_auth_method():
 
 def test_auth_token():
     def token_checks(token: auth.AuthToken, method: str, provider: str):
-        assert token.bearer
         assert token.method.value == method
         assert token.provider == provider
 
@@ -57,6 +57,9 @@ def test_auth_token():
 
     with pytest.raises(ValidationError):
         auth.AuthToken.from_token(INVALID_TOKEN_EXAMPLE_5)
+
+    with pytest.raises(ValidationError):
+        auth.AuthToken.from_token(INVALID_TOKEN_EXAMPLE_6)
 
 
 def test_issuer_handler_init():
