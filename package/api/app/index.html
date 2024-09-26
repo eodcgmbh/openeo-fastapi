@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>openeo_fastapi.api.app - OpenEO FastApi</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "openeo_fastapi.api.app";
+        var mkdocs_page_input_path = "package/api/app.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> OpenEO FastApi
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../setup/">Getting Started</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/registers/">Manipulating endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/auth/">Add your own auth</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/orms/">Extend the object relational Models</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >openeo_fastapi.api</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">openeo_fastapi.api.app</a>
+    <ul class="current">
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../models/">openeo_fastapi.api.models</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../types/">openeo_fastapi.api.types</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >openeo_fastapi.client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/auth/">openeo_fastapi.client.auth</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/collections/">openeo_fastapi.client.collections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/core/">openeo_fastapi.client.core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/files/">openeo_fastapi.client.files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/jobs/">openeo_fastapi.client.jobs</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/processes/">openeo_fastapi.client.processes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/register/">openeo_fastapi.client.register</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/settings/">openeo_fastapi.client.settings</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >openeo_fastapi.client.psql</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../client/psql/engine/">openeo_fastapi.client.psql.engine</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../client/psql/models/">openeo_fastapi.client.psql.models</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../client/psql/settings/">openeo_fastapi.client.psql.settings</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cli/">openeo_fastapi.cli</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">OpenEO FastApi</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">openeo_fastapi.api</li>
+      <li class="breadcrumb-item active">openeo_fastapi.api.app</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/eodcgmbh/openeo-fastapi/edit/master/docs/package/api/app.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#openeo_fastapi.api.app">openeo_fastapi.api.app</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi">OpenEOApi</a><ul>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_well_known">register_well_known</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_capabilities">register_get_capabilities</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_conformance">register_get_conformance</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_credentials_oidc">register_get_credentials_oidc</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_file_formats">register_get_file_formats</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_health">register_get_health</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_user_info">register_get_user_info</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_udf_runtimes">register_get_udf_runtimes</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_validate_user_process_graph">register_validate_user_process_graph</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_run_sync_job">register_run_sync_job</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_collections">register_get_collections</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_collection">register_get_collection</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_collection_items">register_get_collection_items</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_collection_item">register_get_collection_item</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_processes">register_get_processes</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_list_user_process_graphs">register_list_user_process_graphs</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_user_process_graph">register_get_user_process_graph</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_put_user_process_graph">register_put_user_process_graph</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_delete_user_process_graph">register_delete_user_process_graph</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_jobs">register_get_jobs</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_create_job">register_create_job</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_update_job">register_update_job</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_job">register_get_job</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_delete_job">register_delete_job</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_estimate">register_get_estimate</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_logs">register_get_logs</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_get_results">register_get_results</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_start_job">register_start_job</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_cancel_job">register_cancel_job</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_list_files">register_list_files</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_download_file">register_download_file</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_upload_file">register_upload_file</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_delete_file">register_delete_file</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.register_core">register_core</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.http_exception_handler">http_exception_handler</a></li>
+<li><a href="#openeo_fastapi.api.app.OpenEOApi.__attrs_post_init__">__attrs_post_init__</a></li>
+</ul>
+</li>
+</ul>
+<p><a id="openeo_fastapi.api.app"></a></p>
+<h1 id="openeo_fastapiapiapp">openeo_fastapi.api.app</h1>
+<p>OpenEO Api class for preparing the FastApi object from the client that is provided by the user.</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi"></a></p>
+<h2 id="openeoapi-objects">OpenEOApi Objects</h2>
+<pre><code class="language-python">@attr.define
+class OpenEOApi()
+</code></pre>
+<p>Factory for creating FastApi applications conformant to the OpenEO Api specification.</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_well_known"></a></p>
+<h4 id="register_well_known">register_well_known</h4>
+<pre><code class="language-python">def register_well_known()
+</code></pre>
+<p>Register well known endpoint (GET /.well-known/openeo).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_capabilities"></a></p>
+<h4 id="register_get_capabilities">register_get_capabilities</h4>
+<pre><code class="language-python">def register_get_capabilities()
+</code></pre>
+<p>Register endpoint for capabilities (GET /).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_conformance"></a></p>
+<h4 id="register_get_conformance">register_get_conformance</h4>
+<pre><code class="language-python">def register_get_conformance()
+</code></pre>
+<p>Register endpoint for api conformance (GET /conformance).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_credentials_oidc"></a></p>
+<h4 id="register_get_credentials_oidc">register_get_credentials_oidc</h4>
+<pre><code class="language-python">def register_get_credentials_oidc()
+</code></pre>
+<p>Register endpoint for api conformance (GET /conformance).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_file_formats"></a></p>
+<h4 id="register_get_file_formats">register_get_file_formats</h4>
+<pre><code class="language-python">def register_get_file_formats()
+</code></pre>
+<p>Register endpoint for supported file formats (GET /file_formats).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_health"></a></p>
+<h4 id="register_get_health">register_get_health</h4>
+<pre><code class="language-python">def register_get_health()
+</code></pre>
+<p>Register endpoint for api health (GET /health).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_user_info"></a></p>
+<h4 id="register_get_user_info">register_get_user_info</h4>
+<pre><code class="language-python">def register_get_user_info()
+</code></pre>
+<p>Register endpoint for user info (GET /me).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_udf_runtimes"></a></p>
+<h4 id="register_get_udf_runtimes">register_get_udf_runtimes</h4>
+<pre><code class="language-python">def register_get_udf_runtimes()
+</code></pre>
+<p>Register endpoint to list the supported udf runtimes (GET /udf_runtimes).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_validate_user_process_graph"></a></p>
+<h4 id="register_validate_user_process_graph">register_validate_user_process_graph</h4>
+<pre><code class="language-python">def register_validate_user_process_graph()
+</code></pre>
+<p>Register endpoint for validating a user process graph (GET /validation).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_run_sync_job"></a></p>
+<h4 id="register_run_sync_job">register_run_sync_job</h4>
+<pre><code class="language-python">def register_run_sync_job()
+</code></pre>
+<p>Register endpoint for executing synchronous jobs (GET /result).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_collections"></a></p>
+<h4 id="register_get_collections">register_get_collections</h4>
+<pre><code class="language-python">def register_get_collections()
+</code></pre>
+<p>Register endpoint for listing available collections (GET /collections).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_collection"></a></p>
+<h4 id="register_get_collection">register_get_collection</h4>
+<pre><code class="language-python">def register_get_collection()
+</code></pre>
+<p>Register endpoint for getting a specific collection (GET /collections/{collection_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_collection_items"></a></p>
+<h4 id="register_get_collection_items">register_get_collection_items</h4>
+<pre><code class="language-python">def register_get_collection_items()
+</code></pre>
+<p>Register endpoint for getting collection items (GET /collections/{collection_id}/items).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_collection_item"></a></p>
+<h4 id="register_get_collection_item">register_get_collection_item</h4>
+<pre><code class="language-python">def register_get_collection_item()
+</code></pre>
+<p>Register endpoint for getting a specific collection item (GET /collections/{collection_id}/items/{item_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_processes"></a></p>
+<h4 id="register_get_processes">register_get_processes</h4>
+<pre><code class="language-python">def register_get_processes()
+</code></pre>
+<p>Register endpoint for listing all predefined processes (GET /processes).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_list_user_process_graphs"></a></p>
+<h4 id="register_list_user_process_graphs">register_list_user_process_graphs</h4>
+<pre><code class="language-python">def register_list_user_process_graphs()
+</code></pre>
+<p>Register endpoint for listing user defined processes graphs (GET /processes_graphs).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_user_process_graph"></a></p>
+<h4 id="register_get_user_process_graph">register_get_user_process_graph</h4>
+<pre><code class="language-python">def register_get_user_process_graph()
+</code></pre>
+<p>Register endpoint for getting a specific user defined processes graphs (GET /processes_graphs/{process_graph_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_put_user_process_graph"></a></p>
+<h4 id="register_put_user_process_graph">register_put_user_process_graph</h4>
+<pre><code class="language-python">def register_put_user_process_graph()
+</code></pre>
+<p>Register endpoint for creatings a user defined processes graph (PUT /processes_graphs/{process_graph_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_delete_user_process_graph"></a></p>
+<h4 id="register_delete_user_process_graph">register_delete_user_process_graph</h4>
+<pre><code class="language-python">def register_delete_user_process_graph()
+</code></pre>
+<p>Register endpoint for deleting a user defined processes graph (DELETE /processes_graphs/{process_graph_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_jobs"></a></p>
+<h4 id="register_get_jobs">register_get_jobs</h4>
+<pre><code class="language-python">def register_get_jobs()
+</code></pre>
+<p>Register endpoint for listing all jobs (GET /jobs).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_create_job"></a></p>
+<h4 id="register_create_job">register_create_job</h4>
+<pre><code class="language-python">def register_create_job()
+</code></pre>
+<p>Register endpoint for creating a new job (POST /jobs).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_update_job"></a></p>
+<h4 id="register_update_job">register_update_job</h4>
+<pre><code class="language-python">def register_update_job()
+</code></pre>
+<p>Register update jobs endpoint (POST /jobs/{job_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_job"></a></p>
+<h4 id="register_get_job">register_get_job</h4>
+<pre><code class="language-python">def register_get_job()
+</code></pre>
+<p>Register endpoint for retreiving job metadata (GET /jobs/{job_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_delete_job"></a></p>
+<h4 id="register_delete_job">register_delete_job</h4>
+<pre><code class="language-python">def register_delete_job()
+</code></pre>
+<p>Register endpoint for deleting the record of a batch job (GET /jobs/{job_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_estimate"></a></p>
+<h4 id="register_get_estimate">register_get_estimate</h4>
+<pre><code class="language-python">def register_get_estimate()
+</code></pre>
+<p>Register endpoint for estimating a batch job (GET /jobs/{job_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_logs"></a></p>
+<h4 id="register_get_logs">register_get_logs</h4>
+<pre><code class="language-python">def register_get_logs()
+</code></pre>
+<p>Register endpoint for retrieving job logs (GET /jobs/{job_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_get_results"></a></p>
+<h4 id="register_get_results">register_get_results</h4>
+<pre><code class="language-python">def register_get_results()
+</code></pre>
+<p>Register endpoint for getting the results from a batch job (GET /jobs/{job_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_start_job"></a></p>
+<h4 id="register_start_job">register_start_job</h4>
+<pre><code class="language-python">def register_start_job()
+</code></pre>
+<p>Register endpoint for starting batch job processing (GET /jobs/{job_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_cancel_job"></a></p>
+<h4 id="register_cancel_job">register_cancel_job</h4>
+<pre><code class="language-python">def register_cancel_job()
+</code></pre>
+<p>Register endpoint for cancelling job processing (GET /jobs/{job_id}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_list_files"></a></p>
+<h4 id="register_list_files">register_list_files</h4>
+<pre><code class="language-python">def register_list_files()
+</code></pre>
+<p>Register endpoint for listing a user's fils (GET /files).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_download_file"></a></p>
+<h4 id="register_download_file">register_download_file</h4>
+<pre><code class="language-python">def register_download_file()
+</code></pre>
+<p>Register endpoint for downloading a specific file (GET /files/{path}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_upload_file"></a></p>
+<h4 id="register_upload_file">register_upload_file</h4>
+<pre><code class="language-python">def register_upload_file()
+</code></pre>
+<p>Register endpoint for uploading a new file (PUT /files/{path}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_delete_file"></a></p>
+<h4 id="register_delete_file">register_delete_file</h4>
+<pre><code class="language-python">def register_delete_file()
+</code></pre>
+<p>Register endpoint for deleting a new file (DELETE /files/{path}).</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.register_core"></a></p>
+<h4 id="register_core">register_core</h4>
+<pre><code class="language-python">def register_core()
+</code></pre>
+<p>Add application logic to the API layer.</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.http_exception_handler"></a></p>
+<h4 id="http_exception_handler">http_exception_handler</h4>
+<pre><code class="language-python">def http_exception_handler(request, exception)
+</code></pre>
+<p>Register exception handler to turn python exceptions into expected OpenEO error output.</p>
+<p><a id="openeo_fastapi.api.app.OpenEOApi.__attrs_post_init__"></a></p>
+<h4 id="__attrs_post_init__">__attrs_post_init__</h4>
+<pre><code class="language-python">def __attrs_post_init__()
+</code></pre>
+<p>Post-init hook responsible for setting up the application upon instantiation of the class.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../../guide/orms/" class="btn btn-neutral float-left" title="Extend the object relational Models"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../models/" class="btn btn-neutral float-right" title="openeo_fastapi.api.models">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eodcgmbh/openeo-fastapi" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../../guide/orms/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../models/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
