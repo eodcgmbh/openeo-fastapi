@@ -11,7 +11,7 @@ def post_request(app: TestClient, path: str, data: dict):
 
     response = app.post(
         path,
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
         data=payload,
     )
 
@@ -26,7 +26,7 @@ def patch_request(app: TestClient, path: str, data: dict):
 
     response = app.patch(
         path,
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
         data=payload,
     )
 
@@ -41,7 +41,7 @@ def put_request(app: TestClient, path: str, data: dict):
 
     response = app.put(
         path,
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
         data=payload,
     )
 

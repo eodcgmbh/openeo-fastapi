@@ -72,8 +72,6 @@ class Authenticator(ABC):
         policies = None
         if settings.OIDC_POLICIES:
             policies = settings.OIDC_POLICIES
-
-        assert policies
         issuer = IssuerHandler(issuer_uri=settings.OIDC_URL, policies=policies)
 
         user_info = issuer.validate_token(authorization)
@@ -102,16 +100,9 @@ class AuthMethod(Enum):
 class AuthToken(BaseModel):
     """The AuthToken breaks down the OpenEO token into its consituent parts to be used for validation."""
 
-    bearer: bool
     method: AuthMethod
     provider: str
     token: str
-
-    @validator("bearer", pre=True)
-    def passwords_match(cls, v, values, **kwargs):
-        if v != "Bearer ":
-            return ValueError("Token not formatted correctly")
-        return True
 
     @validator("provider", pre=True)
     def check_provider(cls, v, values, **kwargs):
@@ -128,9 +119,11 @@ class AuthToken(BaseModel):
     @classmethod
     def from_token(cls, token: str):
         """Takes the openeo format token, splits it into the component parts, and returns an Auth token."""
-        return cls(
-            **dict(zip(["bearer", "method", "provider", "token"], token.split("/")))
-        )
+
+        if "Bearer " in token:
+            token = token.removeprefix("Bearer ")
+
+        return cls(**dict(zip(["method", "provider", "token"], token.split("/"))))
 
 
 class IssuerHandler(BaseModel):
@@ -267,8 +260,6 @@ class IssuerHandler(BaseModel):
                 )
 
             userinfo = resp.json()
-
-            assert self.policies
 
             # If policies have been set for this provider, only allow users who match.
             if self.policies:

@@ -89,6 +89,5 @@ class AppSettings(BaseSettings):
             elif field_name == "OIDC_ROLES":
                 return [str(x) for x in raw_val.split(",")]
             elif field_name == "OIDC_POLICIES":
-                print("LIST CLEANING", [str(x) for x in raw_val.split("&&")])
                 return [str(x) for x in raw_val.split("&&")]
             return cls.json_loads(raw_val)
