@@ -2,7 +2,7 @@
 """
 import attr
 from fastapi import APIRouter, Depends, HTTPException, Response
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, RedirectResponse
 
 from openeo_fastapi.api import models
 from openeo_fastapi.client.auth import Authenticator
@@ -38,7 +38,7 @@ class OpenEOApi:
         """Register endpoint for capabilities (GET /)."""
         self.router.add_api_route(
             name="capabilities",
-            path=f"/{self.client.settings.OPENEO_VERSION}" + "/",
+            path=f"{self.client.settings.OPENEO_PREFIX}" + "/",
             response_model=models.Capabilities,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -50,7 +50,7 @@ class OpenEOApi:
         """Register endpoint for api conformance (GET /conformance)."""
         self.router.add_api_route(
             name="conformance",
-            path=f"/{self.client.settings.OPENEO_VERSION}/conformance",
+            path=f"{self.client.settings.OPENEO_PREFIX}/conformance",
             response_model=models.ConformanceGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -58,11 +58,23 @@ class OpenEOApi:
             endpoint=self.client.get_conformance,
         )
 
+    def register_get_credentials_oidc(self):
+        """Register endpoint for api conformance (GET /conformance)."""
+        self.router.add_api_route(
+            name="credentials_oidc",
+            path=f"{self.client.settings.OPENEO_PREFIX}/credentials/oidc",
+            response_model=models.CredentialsOidcGetResponse,
+            response_model_exclude_unset=False,
+            response_model_exclude_none=True,
+            methods=["GET"],
+            endpoint=self.client.get_credentials_oidc,
+        )
+
     def register_get_file_formats(self):
         """Register endpoint for supported file formats (GET /file_formats)."""
         self.router.add_api_route(
             name="file_formats",
-            path=f"/{self.client.settings.OPENEO_VERSION}/file_formats",
+            path=f"{self.client.settings.OPENEO_PREFIX}/file_formats",
             response_model=models.FileFormatsGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -74,7 +86,7 @@ class OpenEOApi:
         """Register endpoint for api health (GET /health)."""
         self.router.add_api_route(
             name="health",
-            path=f"/{self.client.settings.OPENEO_VERSION}/health",
+            path=f"{self.client.settings.OPENEO_PREFIX}/health",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -86,7 +98,7 @@ class OpenEOApi:
         """Register endpoint for user info (GET /me)."""
         self.router.add_api_route(
             name="me",
-            path=f"/{self.client.settings.OPENEO_VERSION}/me",
+            path=f"{self.client.settings.OPENEO_PREFIX}/me",
             response_model=models.MeGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -98,7 +110,7 @@ class OpenEOApi:
         """Register endpoint to list the supported udf runtimes (GET /udf_runtimes)."""
         self.router.add_api_route(
             name="udf_runtimes",
-            path=f"/{self.client.settings.OPENEO_VERSION}/udf_runtimes",
+            path=f"{self.client.settings.OPENEO_PREFIX}/udf_runtimes",
             response_model=models.UdfRuntimesGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -110,7 +122,7 @@ class OpenEOApi:
         """Register endpoint for validating a user process graph (GET /validation)."""
         self.router.add_api_route(
             name="validation",
-            path=f"/{self.client.settings.OPENEO_VERSION}/validation",
+            path=f"{self.client.settings.OPENEO_PREFIX}/validation",
             response_model=models.ValidationPostResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -122,7 +134,7 @@ class OpenEOApi:
         """Register endpoint for executing synchronous jobs (GET /result)."""
         self.router.add_api_route(
             name="result",
-            path=f"/{self.client.settings.OPENEO_VERSION}/result",
+            path=f"{self.client.settings.OPENEO_PREFIX}/result",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -134,7 +146,7 @@ class OpenEOApi:
         """Register endpoint for listing available collections (GET /collections)."""
         self.router.add_api_route(
             name="collections",
-            path=f"/{self.client.settings.OPENEO_VERSION}/collections",
+            path=f"{self.client.settings.OPENEO_PREFIX}/collections",
             response_model=models.Collections,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -146,7 +158,7 @@ class OpenEOApi:
         """Register endpoint for getting a specific collection (GET /collections/{collection_id})."""
         self.router.add_api_route(
             name="collection",
-            path=f"/{self.client.settings.OPENEO_VERSION}"
+            path=f"{self.client.settings.OPENEO_PREFIX}"
             + "/collections/{collection_id}",
             response_model=models.Collection,
             response_model_exclude_unset=False,
@@ -159,7 +171,7 @@ class OpenEOApi:
         """Register endpoint for getting collection items (GET /collections/{collection_id}/items)."""
         self.router.add_api_route(
             name="collection_items",
-            path=f"/{self.client.settings.OPENEO_VERSION}/collections"
+            path=f"{self.client.settings.OPENEO_PREFIX}/collections"
             + "/{collection_id}/items",
             response_model=models.Collections,
             response_model_exclude_unset=False,
@@ -172,7 +184,7 @@ class OpenEOApi:
         """Register endpoint for getting a specific collection item (GET /collections/{collection_id}/items/{item_id})."""
         self.router.add_api_route(
             name="collection_item",
-            path=f"/{self.client.settings.OPENEO_VERSION}"
+            path=f"{self.client.settings.OPENEO_PREFIX}"
             + "/collections/{collection_id}/items/{item_id}",
             response_model=models.Collection,
             response_model_exclude_unset=False,
@@ -185,7 +197,7 @@ class OpenEOApi:
         """Register endpoint for listing all predefined processes (GET /processes)."""
         self.router.add_api_route(
             name="processes",
-            path=f"/{self.client.settings.OPENEO_VERSION}/processes",
+            path=f"{self.client.settings.OPENEO_PREFIX}/processes",
             response_model=models.ProcessesGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -197,7 +209,7 @@ class OpenEOApi:
         """Register endpoint for listing user defined processes graphs (GET /processes_graphs)."""
         self.router.add_api_route(
             name="list_user_process_graphs",
-            path=f"/{self.client.settings.OPENEO_VERSION}/process_graphs",
+            path=f"{self.client.settings.OPENEO_PREFIX}/process_graphs",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -209,7 +221,7 @@ class OpenEOApi:
         """Register endpoint for getting a specific user defined processes graphs (GET /processes_graphs/{process_graph_id})."""
         self.router.add_api_route(
             name="get_user_process_graphs",
-            path=f"/{self.client.settings.OPENEO_VERSION}/process_graphs"
+            path=f"{self.client.settings.OPENEO_PREFIX}/process_graphs"
             + "/{process_graph_id}",
             response_model=None,
             response_model_exclude_unset=False,
@@ -222,7 +234,7 @@ class OpenEOApi:
         """Register endpoint for creatings a user defined processes graph (PUT /processes_graphs/{process_graph_id})."""
         self.router.add_api_route(
             name="put_user_process_graphs",
-            path=f"/{self.client.settings.OPENEO_VERSION}/process_graphs"
+            path=f"{self.client.settings.OPENEO_PREFIX}/process_graphs"
             + "/{process_graph_id}",
             response_model=None,
             response_model_exclude_unset=False,
@@ -235,7 +247,7 @@ class OpenEOApi:
         """Register endpoint for deleting a user defined processes graph (DELETE /processes_graphs/{process_graph_id})."""
         self.router.add_api_route(
             name="delete_user_process_graphs",
-            path=f"/{self.client.settings.OPENEO_VERSION}/process_graphs"
+            path=f"{self.client.settings.OPENEO_PREFIX}/process_graphs"
             + "/{process_graph_id}",
             response_model=None,
             response_model_exclude_unset=False,
@@ -248,7 +260,7 @@ class OpenEOApi:
         """Register endpoint for listing all jobs (GET /jobs)."""
         self.router.add_api_route(
             name="get_jobs",
-            path=f"/{self.client.settings.OPENEO_VERSION}/jobs",
+            path=f"{self.client.settings.OPENEO_PREFIX}/jobs",
             response_model=models.JobsGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -260,7 +272,7 @@ class OpenEOApi:
         """Register endpoint for creating a new job (POST /jobs)."""
         self.router.add_api_route(
             name="post_job",
-            path=f"/{self.client.settings.OPENEO_VERSION}/jobs",
+            path=f"{self.client.settings.OPENEO_PREFIX}/jobs",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -272,7 +284,7 @@ class OpenEOApi:
         """Register update jobs endpoint (POST /jobs/{job_id})."""
         self.router.add_api_route(
             name="post_job",
-            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}",
+            path=f"{self.client.settings.OPENEO_PREFIX}/jobs" + "/{job_id}",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -284,7 +296,7 @@ class OpenEOApi:
         """Register endpoint for retreiving job metadata (GET /jobs/{job_id})."""
         self.router.add_api_route(
             name="get_job",
-            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}",
+            path=f"{self.client.settings.OPENEO_PREFIX}/jobs" + "/{job_id}",
             response_model=models.BatchJob,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -296,7 +308,7 @@ class OpenEOApi:
         """Register endpoint for deleting the record of a batch job (GET /jobs/{job_id})."""
         self.router.add_api_route(
             name="delete_job",
-            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}",
+            path=f"{self.client.settings.OPENEO_PREFIX}/jobs" + "/{job_id}",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -308,7 +320,7 @@ class OpenEOApi:
         """Register endpoint for estimating a batch job (GET /jobs/{job_id})."""
         self.router.add_api_route(
             name="get_estimate",
-            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/estimate",
+            path=f"{self.client.settings.OPENEO_PREFIX}/jobs" + "/{job_id}/estimate",
             response_model=models.JobsGetEstimateGetResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -320,7 +332,7 @@ class OpenEOApi:
         """Register endpoint for retrieving job logs (GET /jobs/{job_id})."""
         self.router.add_api_route(
             name="get_logs",
-            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/logs",
+            path=f"{self.client.settings.OPENEO_PREFIX}/jobs" + "/{job_id}/logs",
             response_model=models.JobsGetLogsResponse,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -332,7 +344,7 @@ class OpenEOApi:
         """Register endpoint for getting the results from a batch job (GET /jobs/{job_id})."""
         self.router.add_api_route(
             name="get_results",
-            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
+            path=f"{self.client.settings.OPENEO_PREFIX}/jobs" + "/{job_id}/results",
             response_model=models.Collection,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -344,7 +356,7 @@ class OpenEOApi:
         """Register endpoint for starting batch job processing (GET /jobs/{job_id})."""
         self.router.add_api_route(
             name="start_job",
-            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
+            path=f"{self.client.settings.OPENEO_PREFIX}/jobs" + "/{job_id}/results",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -356,7 +368,7 @@ class OpenEOApi:
         """Register endpoint for cancelling job processing (GET /jobs/{job_id})."""
         self.router.add_api_route(
             name="cancel_job",
-            path=f"/{self.client.settings.OPENEO_VERSION}/jobs" + "/{job_id}/results",
+            path=f"{self.client.settings.OPENEO_PREFIX}/jobs" + "/{job_id}/results",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -368,7 +380,7 @@ class OpenEOApi:
         """Register endpoint for listing a user's fils (GET /files)."""
         self.router.add_api_route(
             name="list_files",
-            path=f"/{self.client.settings.OPENEO_VERSION}/files",
+            path=f"{self.client.settings.OPENEO_PREFIX}/files",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -380,7 +392,7 @@ class OpenEOApi:
         """Register endpoint for downloading a specific file (GET /files/{path})."""
         self.router.add_api_route(
             name="download_file",
-            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path:path}",
+            path=f"{self.client.settings.OPENEO_PREFIX}/files" + "/{path:path}",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -392,7 +404,7 @@ class OpenEOApi:
         """Register endpoint for uploading a new file (PUT /files/{path})."""
         self.router.add_api_route(
             name="upload_file",
-            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path:path}",
+            path=f"{self.client.settings.OPENEO_PREFIX}/files" + "/{path:path}",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -404,7 +416,7 @@ class OpenEOApi:
         """Register endpoint for deleting a new file (DELETE /files/{path})."""
         self.router.add_api_route(
             name="delete_file",
-            path=f"/{self.client.settings.OPENEO_VERSION}/files" + "/{path:path}",
+            path=f"{self.client.settings.OPENEO_PREFIX}/files" + "/{path:path}",
             response_model=None,
             response_model_exclude_unset=False,
             response_model_exclude_none=True,
@@ -417,6 +429,7 @@ class OpenEOApi:
         Add application logic to the API layer.
         """
         self.register_get_conformance()
+        self.register_get_credentials_oidc()
         self.register_get_health()
         self.register_get_user_info()
         self.register_run_sync_job()

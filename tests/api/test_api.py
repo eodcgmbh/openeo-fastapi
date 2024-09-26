@@ -27,6 +27,13 @@ def test_api_core(core_api):
     assert isinstance(core_api.app, FastAPI)
 
 
+def test_policies_set(app_settings):
+    """Test the OIDC Policies have been set correctly."""
+
+    assert app_settings.OIDC_POLICIES
+    assert len(app_settings.OIDC_POLICIES) == 1
+
+
 def test_get_wellknown(core_api, app_settings):
     """Test the OpenEOApi and OpenEOCore classes interact as intended."""
 
@@ -42,10 +49,21 @@ def test_get_capabilities(core_api, app_settings):
 
     test_app = TestClient(core_api.app)
 
-    response = test_app.get(f"/{app_settings.OPENEO_VERSION}/")
+    response = test_app.get(f"{app_settings.OPENEO_PREFIX}/")
 
     assert response.status_code == 200
     assert response.json()["title"] == "Test Api"
+
+
+def test_get_credentials_oidc(core_api, app_settings):
+    """Test the OpenEOApi and OpenEOCore classes interact as intended."""
+
+    test_app = TestClient(core_api.app)
+
+    response = test_app.get(f"{app_settings.OPENEO_PREFIX}/credentials/oidc")
+
+    assert response.status_code == 200
+    assert len(response.json()["providers"]) == 1
 
 
 def test_get_health(core_api, app_settings):
@@ -53,18 +71,25 @@ def test_get_health(core_api, app_settings):
 
     test_app = TestClient(core_api.app)
 
-    response = test_app.get(f"/{app_settings.OPENEO_VERSION}/health")
+    response = test_app.get(f"{app_settings.OPENEO_PREFIX}/health")
 
     assert response.status_code == 200
 
 
-def test_get_userinfo(mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings):
+def test_get_userinfo(
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    core_api,
+    app_settings,
+):
     """Test the user info is available."""
 
     test_app = TestClient(core_api.app)
 
     response = test_app.get(
-        f"/{app_settings.OPENEO_VERSION}/me",
+        f"{app_settings.OPENEO_PREFIX}/me",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
@@ -77,7 +102,7 @@ def test_get_udf_runtimes(core_api, app_settings):
 
     test_app = TestClient(core_api.app)
 
-    response = test_app.get(f"/{app_settings.OPENEO_VERSION}/udf_runtimes")
+    response = test_app.get(f"{app_settings.OPENEO_PREFIX}/udf_runtimes")
 
     assert response.status_code == 501
 
@@ -87,7 +112,7 @@ def test_get_conformance(core_api, app_settings):
 
     test_app = TestClient(core_api.app)
 
-    response = test_app.get(f"/{app_settings.OPENEO_VERSION}/conformance")
+    response = test_app.get(f"{app_settings.OPENEO_PREFIX}/conformance")
 
     assert response.status_code == 200
     assert 2 == len(response.json()["conformsTo"])
@@ -98,7 +123,7 @@ def test_get_file_formats(core_api, app_settings):
 
     test_app = TestClient(core_api.app)
 
-    response = test_app.get(f"/{app_settings.OPENEO_VERSION}/file_formats")
+    response = test_app.get(f"{app_settings.OPENEO_PREFIX}/file_formats")
 
     assert response.status_code == 200
 
@@ -123,7 +148,13 @@ def test_exception_handler(core_api):
     assert response.json() == expected_response
 
 
-def test_overwriting_register(mocked_oidc_config, mocked_oidc_userinfo, app_settings):
+def test_overwriting_register(
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    app_settings,
+):
     """Test we are able to over write the file register, and in turn the API endpoint."""
 
     class ExtendedFileRegister(FilesRegister):
@@ -190,14 +221,20 @@ def test_overwriting_register(mocked_oidc_config, mocked_oidc_userinfo, app_sett
 
     test_client = test_client = TestClient(api.app)
     response = test_client.get(
-        f"/{app_settings.OPENEO_VERSION}/files",
+        f"{app_settings.OPENEO_PREFIX}/files",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
     assert response.status_code == 200
 
 
-def test_extending_register(mocked_oidc_config, mocked_oidc_userinfo, app_settings):
+def test_extending_register(
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    app_settings,
+):
     """Test we are able to extend the file register, and in turn the API."""
 
     new_endpoint = Endpoint(
@@ -276,7 +313,7 @@ def test_extending_register(mocked_oidc_config, mocked_oidc_userinfo, app_settin
     # Add the new route from the api to the app router
     api.app.router.add_api_route(
         name="file_headers",
-        path=f"/{api.client.settings.OPENEO_VERSION}/files" + "/{path}",
+        path=f"{api.client.settings.OPENEO_PREFIX}/files" + "/{path}",
         response_model=None,
         response_model_exclude_unset=False,
         response_model_exclude_none=True,
@@ -286,7 +323,7 @@ def test_extending_register(mocked_oidc_config, mocked_oidc_userinfo, app_settin
 
     test_client = test_client = TestClient(api.app)
     response = test_client.head(
-        f"/{app_settings.OPENEO_VERSION}/files/somefile.txt",
+        f"{app_settings.OPENEO_PREFIX}/files/somefile.txt",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
@@ -308,7 +345,7 @@ def test_overwrite_authenticator_validate(
     core_api.override_authentication(my_new_cool_auth)
 
     response = test_app.get(
-        f"/{app_settings.OPENEO_VERSION}/me",
+        f"{app_settings.OPENEO_PREFIX}/me",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 

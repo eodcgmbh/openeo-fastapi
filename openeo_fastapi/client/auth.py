@@ -11,9 +11,11 @@ import datetime
 import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
+from typing import List
 
 import requests
 from fastapi import Header, HTTPException
+from jose import jwt
 from pydantic import BaseModel, ValidationError, validator
 
 from openeo_fastapi.api.types import Error
@@ -21,8 +23,10 @@ from openeo_fastapi.client.psql.engine import Filter, create, get_first_or_defau
 from openeo_fastapi.client.psql.models import UserORM
 from openeo_fastapi.client.settings import AppSettings
 
+ALGORITHMS = ["RS256"]
 OIDC_WELLKNOWN_CONFIG_PATH = "/.well-known/openid-configuration"
 OIDC_USERINFO = "userinfo_endpoint"
+OIDC_JWKS = "jwks_uri"
 
 
 class User(BaseModel):
@@ -65,11 +69,12 @@ class Authenticator(ABC):
         """
         settings = AppSettings()
 
-        issuer = IssuerHandler(
-            issuer_url=settings.OIDC_URL,
-            organisation=settings.OIDC_ORGANISATION,
-            roles=settings.OIDC_ROLES,
-        )
+        policies = None
+        if settings.OIDC_POLICIES:
+            policies = settings.OIDC_POLICIES
+
+        assert policies
+        issuer = IssuerHandler(issuer_uri=settings.OIDC_URL, policies=policies)
 
         user_info = issuer.validate_token(authorization)
 
@@ -131,12 +136,10 @@ class AuthToken(BaseModel):
 class IssuerHandler(BaseModel):
     """General token handler for querying provided tokens against issuers."""
 
-    issuer_url: str
-    organisation: str
-    # TODO Roles will need to be used by the Authenticator class to be checked against the user info.
-    roles: list
+    issuer_uri: str
+    policies: list[str] = None
 
-    @validator("issuer_url", pre=True)
+    @validator("issuer_uri", pre=True)
     def remove_trailing_slash(cls, v, values, **kwargs):
         if v.endswith("/"):
             return v.removesuffix("/")
@@ -148,7 +151,7 @@ class IssuerHandler(BaseModel):
         Returns:
             Direct response object from the request.
         """
-        return requests.get(self.issuer_url + OIDC_WELLKNOWN_CONFIG_PATH)
+        return requests.get(self.issuer_uri + OIDC_WELLKNOWN_CONFIG_PATH)
 
     def _get_user_info(self, info_endpoint, token):
         """Get the user info from  known config of the issuer url.
@@ -168,7 +171,51 @@ class IssuerHandler(BaseModel):
             },
         )
 
-    def _validate_oidc_token(self, token: str):
+    def _get_oidc_jwks(self, issuer_config):
+        """Get the jwks uri from the issuer config.
+
+        Args:
+            issuer_config (dict): The url of the user info endpoint to request.
+
+        Returns:
+            Direct response object from the request.
+        """
+        jwks_uri = issuer_config.json()[OIDC_JWKS]
+        return requests.get(jwks_uri)
+
+    def _validate_token(self, token, jwks):
+        """Ensure the token is valid by verifying the token using the jwts of the issuer.
+
+        Args:
+            token (str): The token to be checked.
+            jwks (dict): The jwks from the issuer.
+
+        Returns:
+            Payload (dict): True represents a valid token, False invalid..
+        """
+        # Decode the JWT token without validation to extract the header
+        unverified_header = jwt.get_unverified_header(token)
+
+        # Find the correct key to verify the token signature
+        rsa_key = {}
+        for key in jwks:
+            if key["kid"] == unverified_header["kid"]:
+                rsa_key = {
+                    "kty": key["kty"],
+                    "kid": key["kid"],
+                    "use": key["use"],
+                    "n": key["n"],
+                    "e": key["e"],
+                }
+                break
+        if rsa_key:
+            # Validate the token and verify claims
+            payload = jwt.decode(
+                token, rsa_key, algorithms=ALGORITHMS, issuer=self.issuer_uri
+            )
+            return payload
+
+    def _authenticate_oidc_user(self, token: str):
         """Validate the provided oidc token against the oidc provider.
 
         Args:
@@ -188,22 +235,66 @@ class IssuerHandler(BaseModel):
                 status_code=500,
                 detail=Error(
                     code="InvalidIssuerConfig",
-                    message=f"The issuer config is not available. Tokens cannot be validated currently. Try again later.",
+                    message="The issuer config is not available. Tokens cannot be validated currently. Try again later.",
                 ),
             )
 
-        userinfo_url = issuer_oidc_config.json()[OIDC_USERINFO]
-        resp = self._get_user_info(userinfo_url, token)
+        jwks_resp = self._get_oidc_jwks(issuer_oidc_config)
 
-        if resp.status_code != 200:
+        if issuer_oidc_config.status_code != 200:
             raise HTTPException(
                 status_code=500,
                 detail=Error(
-                    code="TokenInvalid", message=f"The provided token is not valid."
+                    code="InvalidIssuerConfig",
+                    message=f"Key: jwks_uri is not available at the oidc config {OIDC_WELLKNOWN_CONFIG_PATH} location.",
                 ),
             )
 
-        return resp.json()
+        jwks = jwks_resp.json()["keys"]
+
+        if self._validate_token(token, jwks):
+            # We can see if the user can be authenticated.
+            userinfo_uri = issuer_oidc_config.json()[OIDC_USERINFO]
+
+            resp = self._get_user_info(userinfo_uri, token)
+            if resp.status_code != 200:
+                raise HTTPException(
+                    status_code=500,
+                    detail=Error(
+                        code="InvalidIssuerConfig",
+                        message=f"Key: {OIDC_USERINFO} is not available at the oidc config {OIDC_WELLKNOWN_CONFIG_PATH} location.",
+                    ),
+                )
+
+            userinfo = resp.json()
+
+            assert self.policies
+
+            # If policies have been set for this provider, only allow users who match.
+            if self.policies:
+                for policy in self.policies:
+                    key, value = policy.split(",")
+
+                    for info in userinfo[key]:
+                        if info == value:
+                            return userinfo
+
+                raise HTTPException(
+                    status_code=500,
+                    detail=Error(
+                        code="TokenInvalid",
+                        message=f"No existing access policy applies to user. Contact backend provider.",
+                    ),
+                )
+
+            return userinfo
+
+        raise HTTPException(
+            status_code=500,
+            detail=Error(
+                code="TokenInvalid", message=f"The provided token is not valid."
+            ),
+        )
 
     def validate_token(self, token: str):
         """Try to validate the token against the give OIDC provider.
@@ -221,7 +312,7 @@ class IssuerHandler(BaseModel):
         parsed_token = AuthToken.from_token(token)
 
         if parsed_token.method.value == AuthMethod.OIDC.value:
-            return self._validate_oidc_token(parsed_token.token)
+            return self._authenticate_oidc_user(parsed_token.token)
 
         raise HTTPException(
             status_code=500,

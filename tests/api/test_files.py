@@ -4,7 +4,12 @@ from fastapi.testclient import TestClient
 
 
 def test_not_implemented(
-    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    core_api,
+    app_settings,
 ):
     """
     Test the following endpoints are initialised correctly, but return an error.
@@ -22,8 +27,8 @@ def test_not_implemented(
     test_app = TestClient(core_api.app)
 
     gets = [
-        f"/{app_settings.OPENEO_VERSION}/files",
-        f"/{app_settings.OPENEO_VERSION}/files/somefile.txt",
+        f"{app_settings.OPENEO_PREFIX}/files",
+        f"{app_settings.OPENEO_PREFIX}/files/somefile.txt",
     ]
 
     for get in gets:
@@ -34,7 +39,7 @@ def test_not_implemented(
             )
         )
 
-    puts = [f"/{app_settings.OPENEO_VERSION}/files/somefile.txt"]
+    puts = [f"{app_settings.OPENEO_PREFIX}/files/somefile.txt"]
 
     for post in puts:
         assert_not(
@@ -44,7 +49,7 @@ def test_not_implemented(
             )
         )
 
-    deletes = [f"/{app_settings.OPENEO_VERSION}/files/somefile.txt"]
+    deletes = [f"{app_settings.OPENEO_PREFIX}/files/somefile.txt"]
 
     for delete in deletes:
         assert_not(
