@@ -7,7 +7,13 @@ from tests.utils import patch_request, post_request
 
 
 def test_list_jobs(
-    mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    job_post,
+    core_api,
+    app_settings,
 ):
     """
     Test the /jobs GET endpoint as intended.
@@ -17,10 +23,10 @@ def test_list_jobs(
 
     for x in range(0, 3):
         job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
-        post_request(test_app, f"/{app_settings.OPENEO_VERSION}/jobs", job_post)
+        post_request(test_app, f"{app_settings.OPENEO_PREFIX}/jobs", job_post)
 
     response = test_app.get(
-        f"/{app_settings.OPENEO_VERSION}/jobs",
+        f"{app_settings.OPENEO_PREFIX}/jobs",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
@@ -29,7 +35,13 @@ def test_list_jobs(
 
 
 def test_create_job(
-    mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    job_post,
+    core_api,
+    app_settings,
 ):
     """
     Test the /jobs POST endpoint as intended.
@@ -38,7 +50,7 @@ def test_create_job(
     test_app = TestClient(core_api.app)
     job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
 
-    response = post_request(test_app, f"/{app_settings.OPENEO_VERSION}/jobs", job_post)
+    response = post_request(test_app, f"{app_settings.OPENEO_PREFIX}/jobs", job_post)
 
     assert response.status_code == 201
     assert "access-control-expose-headers" in response.headers.keys()
@@ -46,7 +58,13 @@ def test_create_job(
 
 
 def test_update_job(
-    mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    job_post,
+    core_api,
+    app_settings,
 ):
     """
     Test the /jobs/{job_id} POST endpoint as intended.
@@ -55,7 +73,7 @@ def test_update_job(
     test_app = TestClient(core_api.app)
     job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
 
-    response = post_request(test_app, f"/{app_settings.OPENEO_VERSION}/jobs", job_post)
+    response = post_request(test_app, f"{app_settings.OPENEO_PREFIX}/jobs", job_post)
 
     job_id = response.headers["openeo-identifier"]
 
@@ -63,13 +81,13 @@ def test_update_job(
     updated_pg = {"process": {"id": new_pg_id, "process_graph": {"func": "new-arg"}}}
 
     response = patch_request(
-        test_app, f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}", updated_pg
+        test_app, f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}", updated_pg
     )
 
     assert response.status_code == 204
 
     response = test_app.get(
-        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}",
+        f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
@@ -77,7 +95,13 @@ def test_update_job(
 
 
 def test_get_job(
-    mocked_oidc_config, mocked_oidc_userinfo, job_post, core_api, app_settings
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    job_post,
+    core_api,
+    app_settings,
 ):
     """
     Test the /jobs/{job_id} GET endpoint as intended.
@@ -86,12 +110,12 @@ def test_get_job(
     test_app = TestClient(core_api.app)
     job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
 
-    response = post_request(test_app, f"/{app_settings.OPENEO_VERSION}/jobs", job_post)
+    response = post_request(test_app, f"{app_settings.OPENEO_PREFIX}/jobs", job_post)
 
     job_id = response.headers["openeo-identifier"]
 
     response = test_app.get(
-        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}",
+        f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
@@ -99,7 +123,12 @@ def test_get_job(
 
 
 def test_not_implemented(
-    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    core_api,
+    app_settings,
 ):
     """
     Test the following endpoints are registered and available correctly, but return an error.
@@ -122,9 +151,9 @@ def test_not_implemented(
     job_id = uuid.uuid4()
 
     gets = [
-        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/estimate",
-        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/logs",
-        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/results",
+        f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}/estimate",
+        f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}/logs",
+        f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}/results",
     ]
 
     for get in gets:
@@ -136,8 +165,8 @@ def test_not_implemented(
         )
 
     posts = [
-        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/results",
-        f"/{app_settings.OPENEO_VERSION}/result",
+        f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}/results",
+        f"{app_settings.OPENEO_PREFIX}/result",
     ]
 
     for post in posts:
@@ -149,8 +178,8 @@ def test_not_implemented(
         )
 
     deletes = [
-        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}",
-        f"/{app_settings.OPENEO_VERSION}/jobs/{job_id}/results",
+        f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}",
+        f"{app_settings.OPENEO_PREFIX}/jobs/{job_id}/results",
     ]
 
     for delete in deletes:

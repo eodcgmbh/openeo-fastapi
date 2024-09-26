@@ -10,14 +10,20 @@ def test_get_processes(core_api, app_settings):
 
     test_app = TestClient(core_api.app)
 
-    response = test_app.get(f"/{app_settings.OPENEO_VERSION}/processes")
+    response = test_app.get(f"{app_settings.OPENEO_PREFIX}/processes")
 
     assert response.status_code == 200
     assert "processes" in response.json().keys()
 
 
 def test_list_user_process_graphs(
-    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings, process_graph
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    core_api,
+    app_settings,
+    process_graph,
 ):
     """Test the /process_graphs endpoint as intended."""
 
@@ -25,12 +31,12 @@ def test_list_user_process_graphs(
 
     resp = put_request(
         test_app,
-        f"/{app_settings.OPENEO_VERSION}/process_graphs/{process_graph['id']}",
+        f"{app_settings.OPENEO_PREFIX}/process_graphs/{process_graph['id']}",
         process_graph,
     )
 
     response = test_app.get(
-        f"/{app_settings.OPENEO_VERSION}/process_graphs",
+        f"{app_settings.OPENEO_PREFIX}/process_graphs",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
@@ -42,7 +48,13 @@ def test_list_user_process_graphs(
 
 
 def test_get_user_process_graph(
-    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings, process_graph
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    core_api,
+    app_settings,
+    process_graph,
 ):
     """Test the /process_graphs endpoint as intended."""
 
@@ -50,12 +62,12 @@ def test_get_user_process_graph(
 
     put_request(
         test_app,
-        f"/{app_settings.OPENEO_VERSION}/process_graphs/{process_graph['id']}",
+        f"{app_settings.OPENEO_PREFIX}/process_graphs/{process_graph['id']}",
         process_graph,
     )
 
     response = test_app.get(
-        f"/{app_settings.OPENEO_VERSION}/process_graphs/{process_graph['id']}",
+        f"{app_settings.OPENEO_PREFIX}/process_graphs/{process_graph['id']}",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
@@ -64,7 +76,13 @@ def test_get_user_process_graph(
 
 
 def test_put_user_process_graph(
-    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings, process_graph
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    core_api,
+    app_settings,
+    process_graph,
 ):
     """Test the /process_graphs endpoint as intended."""
 
@@ -72,23 +90,30 @@ def test_put_user_process_graph(
 
     response = put_request(
         test_app,
-        f"/{app_settings.OPENEO_VERSION}/process_graphs/{process_graph['id']}",
+        f"{app_settings.OPENEO_PREFIX}/process_graphs/{process_graph['id']}",
         process_graph,
     )
 
     assert response.status_code == 201
-    
+
     # Try to create twice
     response = put_request(
         test_app,
-        f"/{app_settings.OPENEO_VERSION}/process_graphs/{process_graph['id']}",
+        f"{app_settings.OPENEO_PREFIX}/process_graphs/{process_graph['id']}",
         process_graph,
     )
 
     assert response.status_code == 500
 
+
 def test_delete_user_process_graph(
-    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings, process_graph
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    core_api,
+    app_settings,
+    process_graph,
 ):
     """Test the /process_graphs endpoint as intended."""
 
@@ -98,21 +123,21 @@ def test_delete_user_process_graph(
 
     response = put_request(
         test_app,
-        f"/{app_settings.OPENEO_VERSION}/process_graphs/{process_graph['id']}",
+        f"{app_settings.OPENEO_PREFIX}/process_graphs/{process_graph['id']}",
         process_graph,
     )
 
     assert response.status_code == 201
 
     response = test_app.delete(
-        f"/{app_settings.OPENEO_VERSION}/process_graphs/{process_graph['id']}",
+        f"{app_settings.OPENEO_PREFIX}/process_graphs/{process_graph['id']}",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
     assert response.status_code == 204
 
     response = test_app.delete(
-        f"/{app_settings.OPENEO_VERSION}/process_graphs/doesntexist",
+        f"{app_settings.OPENEO_PREFIX}/process_graphs/doesntexist",
         headers={"Authorization": "Bearer /oidc/egi/not-real"},
     )
 
@@ -120,7 +145,13 @@ def test_delete_user_process_graph(
 
 
 def test_validate_user_process_graph(
-    mocked_oidc_config, mocked_oidc_userinfo, core_api, app_settings, process_graph
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    core_api,
+    app_settings,
+    process_graph,
 ):
     """Test the /process_graphs endpoint as intended."""
 
@@ -128,7 +159,7 @@ def test_validate_user_process_graph(
 
     response = post_request(
         test_app,
-        f"/{app_settings.OPENEO_VERSION}/validation",
+        f"{app_settings.OPENEO_PREFIX}/validation",
         process_graph,
     )
 

@@ -40,7 +40,8 @@ os.environ["API_DESCRIPTION"] = "My Test Api"
 os.environ["STAC_API_URL"] = "http://test-stac-api.mock.com/api/"
 os.environ["OIDC_URL"] = "http://test-oidc-api.mock.com/api/"
 os.environ["OIDC_ORGANISATION"] = "issuer"
-os.environ["OIDC_ROLES"] = "tester,developer"
+os.environ["OIDC_POLICIES"] = "groups, /dev-staff"
+
 
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.api.types import Billing, FileFormat, GisDataType, Link, Plan
@@ -128,7 +129,10 @@ def s1_collection_item():
 @pytest.fixture()
 def mocked_oidc_config():
     resp_content_bytes = json.dumps(
-        {"userinfo_endpoint": "http://nothere.test"}
+        {
+            "userinfo_endpoint": "https://userinfo_endpoint.url",
+            "jwks_uri": "https://jwks_uri.url",
+        }
     ).encode("utf-8")
 
     mocked_response = Response()
@@ -141,11 +145,69 @@ def mocked_oidc_config():
 
 
 @pytest.fixture()
+def mocked_get_oidc_jwks():
+    resp_content_bytes = json.dumps(
+        {
+            "keys": [
+                {
+                    "kty": "RSA",
+                    "use": "sig",
+                    "kid": "1b94c",
+                    "alg": "RS256",
+                    "n": "pblzdW_CNZgICrBM4...EtQErwGiQ1Lztk",
+                    "e": "AQAB",
+                }
+            ]
+        }
+    ).encode("utf-8")
+
+    mocked_response = Response()
+    mocked_response.status_code = 200
+    mocked_response._content = resp_content_bytes
+
+    with patch("openeo_fastapi.client.auth.IssuerHandler._get_oidc_jwks") as mock:
+        mock.return_value = mocked_response
+        yield mock
+
+
+@pytest.fixture()
+def mocked_validate_token():
+    resp_content_bytes = json.dumps(
+        {
+            "iss": "https://auth.example.com/",
+            "sub": "1234567890",
+            "aud": "my-client-id",
+            "iat": 1695555845,
+            "exp": 1695559445,
+            "azp": "my-client-id",
+            "scope": "openid profile email",
+            "email": "user@example.com",
+            "email_verified": True,
+            "name": "John Doe",
+            "preferred_username": "johndoe",
+            "given_name": "John",
+            "family_name": "Doe",
+            "locale": "en-US",
+            "picture": "https://example.com/johndoe.jpg",
+            "roles": ["admin", "editor"],
+        }
+    ).encode("utf-8")
+
+    mocked_response = Response()
+    mocked_response.status_code = 200
+    mocked_response._content = resp_content_bytes
+
+    with patch("openeo_fastapi.client.auth.IssuerHandler._validate_token") as mock:
+        mock.return_value = mocked_response
+        yield mock
+
+
+@pytest.fixture()
 def mocked_oidc_userinfo():
     resp_content_bytes = json.dumps(
         {
-            "eduperson_entitlement": [
-                "entitlment",
+            "groups": [
+                "/dev-staff",
             ],
             "sub": "someuser@testing.test",
         }
@@ -162,8 +224,16 @@ def mocked_oidc_userinfo():
 
 @pytest.fixture()
 def mocked_bad_oidc_config():
+    resp_content_bytes = json.dumps(
+        {
+            "userinfo_endpoint": "https://userinfo_endpoint.url",
+            "jwks_uri": "https://jwks_uri.url",
+        }
+    ).encode("utf-8")
+
     mocked_response = Response()
     mocked_response.status_code = 404
+    mocked_response._content = resp_content_bytes
 
     with patch("openeo_fastapi.client.auth.IssuerHandler._get_issuer_config") as mock:
         mock.return_value = mocked_response
@@ -183,10 +253,31 @@ def mocked_bad_oidc_userinfo():
 @pytest.fixture()
 def mocked_issuer():
     return auth.IssuerHandler(
-        issuer_url="http://issuer.mycloud/",
-        organisation="mycloud",
-        roles=["admin", "user"],
+        issuer_uri="http://issuer.mycloud/", policies=["groups,/dev-staff"]
     )
+
+
+@pytest.fixture
+def mocked_oidc_token():
+    return (
+        "eyJhbGciOiJSUzI1NiIsImtpZCI6IjFiOTRjIn0."
+        "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZW1haWwiOiJqb2huLmRvZUBleGFtcGxlLmNvbSIsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmNvbS8iLCJleHAiOjE2OTU1OTQ0NTB9."
+        "MOCKEDSIGNATURE"
+    )
+
+
+@pytest.fixture()
+def mocked_oidc_jwks():
+    return [
+        {
+            "kty": "RSA",
+            "use": "sig",
+            "kid": "1b94c",
+            "alg": "RS256",
+            "n": "mocked_n_value",
+            "e": "AQAB",
+        }
+    ]
 
 
 @pytest.fixture(autouse=True)

@@ -1,12 +1,11 @@
 """Defining the settings to be used at the application layer of the API."""
-from pathlib import Path
 from typing import Any, Optional
 
 from pydantic import BaseSettings, HttpUrl, validator
 
 
 class AppSettings(BaseSettings):
-    """The application settings that need to be defined when the app is initialised. """
+    """The application settings that need to be defined when the app is initialised."""
 
     API_DNS: str
     """The domain name hosting the API."""
@@ -18,14 +17,32 @@ class AppSettings(BaseSettings):
     """The API description to be provided to FastAPI."""
     OPENEO_VERSION: str = "1.1.0"
     """The OpenEO Api specification version supported in this deployment of the API."""
-    OPENEO_PREFIX = f"/{OPENEO_VERSION}"
+    OPENEO_PREFIX = f"/openeo/{OPENEO_VERSION}"
     """The OpenEO prefix to be used when creating the endpoint urls."""
     OIDC_URL: HttpUrl
-    """The URL of the OIDC provider used to authenticate tokens against."""
+    """The policies to be used for authenticated users with the backend, if not set, any usser with a valid token from the issuer is accepted."""
     OIDC_ORGANISATION: str
     """The abbreviation of the OIDC provider's organisation name, e.g. egi."""
-    OIDC_ROLES: list[str]
-    """The OIDC roles to check against when authenticating a user."""
+    OIDC_POLICIES: Optional[list[str]]
+    """The OIDC policies to check against when authorizing a user. If not provided, all users with a valid token from the issuer will be admitted.
+
+    "&&" Is used to denote the addition of another policy.
+    Policies in the list should be structures as "key, value".
+    The key referers to some value that is expected to be found in the OIDC userinfo request.
+    The value referes to some value that is then checked for presence in the values found at the key location.
+
+    Example:
+    ```
+    {
+        "email": user@test.org,
+        "groups" : [ "/staff" ]
+    }
+
+    A valid policy to allow members from the group staff would be, "groups, /staff". This would be the value provided to OIDC_POLICIES.
+
+    If you wanted to include users from another group called "/trial", the updated value to OIDC_POLICIES would be, "groups, /staff && groups, /trial"
+    ```
+    """
     STAC_VERSION: str = "1.0.0"
     """The STAC Version that is being supported by this deployments data discovery endpoints."""
     STAC_API_URL: HttpUrl
@@ -40,6 +57,27 @@ class AppSettings(BaseSettings):
             return v
         return v.__add__("/")
 
+    @validator("OIDC_POLICIES", pre=True)
+    def split_oidc_policies_str_to_list(cls, v: str) -> str:
+        """Ensure the OIDC_POLICIES are split and formatted correctly."""
+
+        if not v:
+            return v
+
+        cleaned_policies = []
+        for policy in v:
+            try:
+                # TODO Could add a class to handle each oidc policy and return that list instead of just checking value unpacking.
+                no_spaces = policy.replace(" ", "")
+                key, value = no_spaces.split(",")
+            except ValueError:
+                raise ValueError(
+                    f"Policy '{policy}' contains too many comma seperated values."
+                )
+
+            cleaned_policies.append(no_spaces)
+        return cleaned_policies
+
     class Config:
         """Pydantic model class config."""
 
@@ -50,4 +88,7 @@ class AppSettings(BaseSettings):
                 return [str(x) for x in raw_val.split(",")]
             elif field_name == "OIDC_ROLES":
                 return [str(x) for x in raw_val.split(",")]
+            elif field_name == "OIDC_POLICIES":
+                print("LIST CLEANING", [str(x) for x in raw_val.split("&&")])
+                return [str(x) for x in raw_val.split("&&")]
             return cls.json_loads(raw_val)

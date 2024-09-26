@@ -13,8 +13,12 @@ from fastapi import Depends, HTTPException, Response
 from openeo_fastapi.api.models import (
     Capabilities,
     ConformanceGetResponse,
+    CredentialsOidcGetResponse,
+    DefaultClient,
     FileFormatsGetResponse,
+    GrantType,
     MeGetResponse,
+    Provider,
     UdfRuntimesGetResponse,
     WellKnownOpeneoGetResponse,
 )
@@ -84,6 +88,43 @@ class OpenEOCore:
             billing=self.billing,
             links=self.links,
             endpoints=self._combine_endpoints(),
+        )
+
+    def get_credentials_oidc(self) -> CredentialsOidcGetResponse:
+        """Get the capabilities of the api.
+
+        Returns:
+            Capabilities: The capabilities of the api based off what the user provided.
+        """
+        return CredentialsOidcGetResponse(
+            providers=[
+                Provider(
+                    id=self.settings.OIDC_ORGANISATION,
+                    title="EGI Check-in",
+                    issuer=self.settings.OIDC_URL,
+                    scopes=[
+                        "openid",
+                        "email",
+                        "eduperson_entitlement",
+                        "eduperson_scoped_affiliation",
+                    ],
+                    default_clients=[
+                        DefaultClient(
+                            id="openeo-platform-default-client",
+                            redirect_urls=[
+                                "https://editor.openeo.cloud",
+                                "https://editor.openeo.org",
+                                "http://localhost:1410/",
+                            ],
+                            grant_types=[
+                                GrantType.authorization_code_pkce,
+                                GrantType.urn_ietf_params_oauth_grant_type_device_code_pkce,
+                                GrantType.refresh_token,
+                            ],
+                        )
+                    ],
+                )
+            ]
         )
 
     def get_conformance(self) -> ConformanceGetResponse:
