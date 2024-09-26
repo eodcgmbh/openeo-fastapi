@@ -93,17 +93,17 @@ Policies in the list should be structures as "key, value".
 The key referers to some value that is expected to be found in the OIDC userinfo request.
 The value referes to some value that is then checked for presence in the values found at the key location.
 
+**Example**:
+
 ```
-For userinfo:
+{
+    "email": user@test.org,
+    "groups" : [ "/staff" ]
+}
 
-    {
-        "email": user@test.org,
-        "groups" : [ "/staff" ]
-    }
+A valid policy to allow members from the group staff would be, "groups, /staff". This would be the value provided to OIDC_POLICIES.
 
-    A valid policy to allow members from the group staff would be, "groups, /staff". This would be the value provided to OIDC_POLICIES.
-
-    If you wanted to include users from another group called "/trial", the updated value to OIDC_POLICIES would be, "groups, /staff && groups, /trial"
+If you wanted to include users from another group called "/trial", the updated value to OIDC_POLICIES would be, "groups, /staff && groups, /trial"
 ```
 
 <a id="openeo_fastapi.client.settings.AppSettings.STAC_VERSION"></a>
