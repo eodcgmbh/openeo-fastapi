@@ -58,8 +58,13 @@ class AppSettings(BaseSettings):
         return v.__add__("/")
 
     @validator("OIDC_POLICIES", pre=True)
-    def split_oidc_policies_str_to_list(cls, v: str) -> str:
+    def split_oidc_policies_str_to_list(cls, v: list) -> str:
         """Ensure the OIDC_POLICIES are split and formatted correctly."""
+
+        if isinstance(v, str):
+            # We shouldn't have a string here. But in some cases where the settings where taken from code and not an env variable
+            # the config function parse_env_var will not execute. Reclean the value here if that is the case.
+            v = [str(x) for x in v.split("&&") if x != ""]
 
         if not v:
             return v
@@ -86,8 +91,6 @@ class AppSettings(BaseSettings):
             """Parse any variables and handle and csv lists into python list type."""
             if field_name == "STAC_COLLECTIONS_WHITELIST":
                 return [str(x) for x in raw_val.split(",")]
-            elif field_name == "OIDC_ROLES":
-                return [str(x) for x in raw_val.split(",")]
             elif field_name == "OIDC_POLICIES":
-                return [str(x) for x in raw_val.split("&&")]
+                return [str(x) for x in raw_val.split("&&") if x != ""]
             return cls.json_loads(raw_val)
