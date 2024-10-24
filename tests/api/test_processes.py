@@ -37,7 +37,7 @@ def test_list_user_process_graphs(
 
     response = test_app.get(
         f"{app_settings.OPENEO_PREFIX}/process_graphs",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     _json = response.json()
@@ -68,7 +68,7 @@ def test_get_user_process_graph(
 
     response = test_app.get(
         f"{app_settings.OPENEO_PREFIX}/process_graphs/{process_graph['id']}",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     assert response.status_code == 200
@@ -131,14 +131,14 @@ def test_delete_user_process_graph(
 
     response = test_app.delete(
         f"{app_settings.OPENEO_PREFIX}/process_graphs/{process_graph['id']}",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     assert response.status_code == 204
 
     response = test_app.delete(
         f"{app_settings.OPENEO_PREFIX}/process_graphs/doesntexist",
-        headers={"Authorization": "Bearer /oidc/egi/not-real"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     assert response.status_code == 404
