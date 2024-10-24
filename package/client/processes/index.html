@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>openeo_fastapi.client.processes - OpenEO FastApi</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "openeo_fastapi.client.processes";
+        var mkdocs_page_input_path = "package/client/processes.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> OpenEO FastApi
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../setup/">Getting Started</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/registers/">Manipulating endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/auth/">Add your own auth</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/orms/">Extend the object relational Models</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >openeo_fastapi.api</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/app/">openeo_fastapi.api.app</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/models/">openeo_fastapi.api.models</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/types/">openeo_fastapi.api.types</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >openeo_fastapi.client</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../auth/">openeo_fastapi.client.auth</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../collections/">openeo_fastapi.client.collections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../core/">openeo_fastapi.client.core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../files/">openeo_fastapi.client.files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../jobs/">openeo_fastapi.client.jobs</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">openeo_fastapi.client.processes</a>
+    <ul class="current">
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../register/">openeo_fastapi.client.register</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../settings/">openeo_fastapi.client.settings</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >openeo_fastapi.client.psql</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/engine/">openeo_fastapi.client.psql.engine</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/models/">openeo_fastapi.client.psql.models</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/settings/">openeo_fastapi.client.psql.settings</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cli/">openeo_fastapi.cli</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">OpenEO FastApi</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">openeo_fastapi.client</li>
+      <li class="breadcrumb-item active">openeo_fastapi.client.processes</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/eodcgmbh/openeo-fastapi/edit/master/docs/package/client/processes.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#openeo_fastapi.client.processes">openeo_fastapi.client.processes</a></li>
+<li><a href="#openeo_fastapi.client.processes.UserDefinedProcessGraph">UserDefinedProcessGraph</a><ul>
+<li><a href="#openeo_fastapi.client.processes.UserDefinedProcessGraph.Config">Config</a></li>
+<li><a href="#openeo_fastapi.client.processes.UserDefinedProcessGraph.get_orm">get_orm</a></li>
+</ul>
+</li>
+<li><a href="#openeo_fastapi.client.processes.ProcessRegister">ProcessRegister</a><ul>
+<li><a href="#openeo_fastapi.client.processes.ProcessRegister.__init__">__init__</a></li>
+<li><a href="#openeo_fastapi.client.processes.ProcessRegister.get_available_processes">get_available_processes</a></li>
+<li><a href="#openeo_fastapi.client.processes.ProcessRegister.list_processes">list_processes</a></li>
+<li><a href="#openeo_fastapi.client.processes.ProcessRegister.list_user_process_graphs">list_user_process_graphs</a></li>
+<li><a href="#openeo_fastapi.client.processes.ProcessRegister.get_user_process_graph">get_user_process_graph</a></li>
+<li><a href="#openeo_fastapi.client.processes.ProcessRegister.put_user_process_graph">put_user_process_graph</a></li>
+<li><a href="#openeo_fastapi.client.processes.ProcessRegister.delete_user_process_graph">delete_user_process_graph</a></li>
+<li><a href="#openeo_fastapi.client.processes.ProcessRegister.validate_user_process_graph">validate_user_process_graph</a></li>
+</ul>
+</li>
+</ul>
+<p><a id="openeo_fastapi.client.processes"></a></p>
+<h1 id="openeo_fastapiclientprocesses">openeo_fastapi.client.processes</h1>
+<p>Class and model to define the framework and partial application logic for interacting with Process and Process Graphs.</p>
+<p>Classes:
+    - ProcessRegister: Framework for defining and extending the logic for working with Processes and Process Graphs.</p>
+<p><a id="openeo_fastapi.client.processes.UserDefinedProcessGraph"></a></p>
+<h2 id="userdefinedprocessgraph-objects">UserDefinedProcessGraph Objects</h2>
+<pre><code class="language-python">class UserDefinedProcessGraph(BaseModel)
+</code></pre>
+<p>Pydantic model representing an OpenEO User Defined Process Graph.</p>
+<p><a id="openeo_fastapi.client.processes.UserDefinedProcessGraph.Config"></a></p>
+<h2 id="config-objects">Config Objects</h2>
+<pre><code class="language-python">class Config()
+</code></pre>
+<p>Pydantic model class config.</p>
+<p><a id="openeo_fastapi.client.processes.UserDefinedProcessGraph.get_orm"></a></p>
+<h4 id="get_orm">get_orm</h4>
+<pre><code class="language-python">@classmethod
+def get_orm(cls)
+</code></pre>
+<p>Get the ORM model for this pydantic model.</p>
+<p><a id="openeo_fastapi.client.processes.ProcessRegister"></a></p>
+<h2 id="processregister-objects">ProcessRegister Objects</h2>
+<pre><code class="language-python">class ProcessRegister(EndpointRegister)
+</code></pre>
+<p>The ProcessRegister to regulate the application logic for the API behaviour.</p>
+<p><a id="openeo_fastapi.client.processes.ProcessRegister.__init__"></a></p>
+<h4 id="__init__">__init__</h4>
+<pre><code class="language-python">def __init__(links) -&gt; None
+</code></pre>
+<p>Initialize the ProcessRegister.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>links</code> <em>Links</em> - The Links to be used in some function responses.</li>
+</ul>
+<p><a id="openeo_fastapi.client.processes.ProcessRegister.get_available_processes"></a></p>
+<h4 id="get_available_processes">get_available_processes</h4>
+<pre><code class="language-python">@functools.cache
+def get_available_processes()
+</code></pre>
+<p>Returns the pre-defined process from the process registry.</p>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>list[Process]</code> - A list of Processes.</li>
+</ul>
+<p><a id="openeo_fastapi.client.processes.ProcessRegister.list_processes"></a></p>
+<h4 id="list_processes">list_processes</h4>
+<pre><code class="language-python">def list_processes() -&gt; Union[ProcessesGetResponse, None]
+</code></pre>
+<p>Returns Supported predefined processes defined by openeo-processes-dask.</p>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>ProcessesGetResponse</code> - A list of available processes.</li>
+</ul>
+<p><a id="openeo_fastapi.client.processes.ProcessRegister.list_user_process_graphs"></a></p>
+<h4 id="list_user_process_graphs">list_user_process_graphs</h4>
+<pre><code class="language-python">def list_user_process_graphs(
+    limit: Optional[int] = 10,
+    user: User = Depends(Authenticator.validate)
+) -&gt; Union[ProcessGraphsGetResponse, None]
+</code></pre>
+<p>Lists all of a user's user-defined process graphs from the back-end.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>limit</code> <em>int</em> - The limit to apply to the length of the list.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>ProcessGraphsGetResponse</code> - A list of the user's UserDefinedProcessGraph as a ProcessGraphWithMetadata.</li>
+</ul>
+<p><a id="openeo_fastapi.client.processes.ProcessRegister.get_user_process_graph"></a></p>
+<h4 id="get_user_process_graph">get_user_process_graph</h4>
+<pre><code class="language-python">def get_user_process_graph(
+    process_graph_id: str, user: User = Depends(Authenticator.validate)
+) -&gt; Union[ProcessGraphWithMetadata, None]
+</code></pre>
+<p>Lists all information about a user-defined process, including its process graph.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>process_graph_id</code> <em>str</em> - The process graph id.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>ProcessGraphWithMetadata</code> - Retruns the UserDefinedProcessGraph as a ProcessGraphWithMetadata.</li>
+</ul>
+<p><a id="openeo_fastapi.client.processes.ProcessRegister.put_user_process_graph"></a></p>
+<h4 id="put_user_process_graph">put_user_process_graph</h4>
+<pre><code class="language-python">def put_user_process_graph(process_graph_id: str,
+                           body: ProcessGraphWithMetadata,
+                           user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Stores a provided user-defined process with process graph that can be reused in other processes.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>process_graph_id</code> <em>str</em> - The process graph id.</li>
+<li><code>body</code> <em>ProcessGraphWithMetadata</em> - The ProcessGraphWithMetadata should be used to create the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>Response</code> - A general FastApi response to signify resource was created as expected.</li>
+</ul>
+<p><a id="openeo_fastapi.client.processes.ProcessRegister.delete_user_process_graph"></a></p>
+<h4 id="delete_user_process_graph">delete_user_process_graph</h4>
+<pre><code class="language-python">def delete_user_process_graph(process_graph_id: str,
+                              user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Deletes the data related to this user-defined process, including its process graph.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>process_graph_id</code> <em>str</em> - The process graph id.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>Response</code> - A general FastApi response to signify resource was created as expected.</li>
+</ul>
+<p><a id="openeo_fastapi.client.processes.ProcessRegister.validate_user_process_graph"></a></p>
+<h4 id="validate_user_process_graph">validate_user_process_graph</h4>
+<pre><code class="language-python">def validate_user_process_graph(
+    body: ProcessGraphWithMetadata,
+    user: User = Depends(Authenticator.validate)
+) -&gt; ValidationPostResponse
+</code></pre>
+<p>Validates the ProcessGraphWithMetadata that is provided by the user.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>process_graph_id</code> <em>str</em> - The process graph id.</li>
+<li><code>body</code> <em>ProcessGraphWithMetadata</em> - The ProcessGraphWithMetadata should be used to validate the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>ValidationPostResponse</code> - A response to list an errors that where encountered when .</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../jobs/" class="btn btn-neutral float-left" title="openeo_fastapi.client.jobs"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../register/" class="btn btn-neutral float-right" title="openeo_fastapi.client.register">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eodcgmbh/openeo-fastapi" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../jobs/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../register/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../../img/favicon.ico" />
+    <title>openeo_fastapi.client.psql.settings - OpenEO FastApi</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "openeo_fastapi.client.psql.settings";
+        var mkdocs_page_input_path = "package/client/psql/settings.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../.." class="icon icon-home"> OpenEO FastApi
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../../setup/">Getting Started</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../guide/registers/">Manipulating endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../guide/auth/">Add your own auth</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../guide/orms/">Extend the object relational Models</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >openeo_fastapi.api</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../api/app/">openeo_fastapi.api.app</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../api/models/">openeo_fastapi.api.models</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../api/types/">openeo_fastapi.api.types</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >openeo_fastapi.client</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../../auth/">openeo_fastapi.client.auth</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../collections/">openeo_fastapi.client.collections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../core/">openeo_fastapi.client.core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../files/">openeo_fastapi.client.files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../jobs/">openeo_fastapi.client.jobs</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../processes/">openeo_fastapi.client.processes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../register/">openeo_fastapi.client.register</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../settings/">openeo_fastapi.client.settings</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" >openeo_fastapi.client.psql</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../engine/">openeo_fastapi.client.psql.engine</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../models/">openeo_fastapi.client.psql.models</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="#">openeo_fastapi.client.psql.settings</a>
+    <ul class="current">
+    </ul>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../cli/">openeo_fastapi.cli</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">OpenEO FastApi</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">openeo_fastapi.client</li>
+          <li class="breadcrumb-item">openeo_fastapi.client.psql</li>
+      <li class="breadcrumb-item active">openeo_fastapi.client.psql.settings</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/eodcgmbh/openeo-fastapi/edit/master/docs/package/client/psql/settings.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#openeo_fastapi.client.psql.settings">openeo_fastapi.client.psql.settings</a></li>
+<li><a href="#openeo_fastapi.client.psql.settings.DataBaseSettings">DataBaseSettings</a><ul>
+<li><a href="#openeo_fastapi.client.psql.settings.DataBaseSettings.POSTGRES_USER">POSTGRES_USER</a></li>
+<li><a href="#openeo_fastapi.client.psql.settings.DataBaseSettings.POSTGRES_PASSWORD">POSTGRES_PASSWORD</a></li>
+<li><a href="#openeo_fastapi.client.psql.settings.DataBaseSettings.POSTGRESQL_HOST">POSTGRESQL_HOST</a></li>
+<li><a href="#openeo_fastapi.client.psql.settings.DataBaseSettings.POSTGRESQL_PORT">POSTGRESQL_PORT</a></li>
+<li><a href="#openeo_fastapi.client.psql.settings.DataBaseSettings.POSTGRES_DB">POSTGRES_DB</a></li>
+<li><a href="#openeo_fastapi.client.psql.settings.DataBaseSettings.ALEMBIC_DIR">ALEMBIC_DIR</a></li>
+</ul>
+</li>
+</ul>
+<p><a id="openeo_fastapi.client.psql.settings"></a></p>
+<h1 id="openeo_fastapiclientpsqlsettings">openeo_fastapi.client.psql.settings</h1>
+<p>Defining the settings to be used at the application layer of the API for database interaction.</p>
+<p><a id="openeo_fastapi.client.psql.settings.DataBaseSettings"></a></p>
+<h2 id="databasesettings-objects">DataBaseSettings Objects</h2>
+<pre><code class="language-python">class DataBaseSettings(BaseSettings)
+</code></pre>
+<p>Appliction DataBase settings to interact with PSQL.</p>
+<p><a id="openeo_fastapi.client.psql.settings.DataBaseSettings.POSTGRES_USER"></a></p>
+<h4 id="postgres_user">POSTGRES_USER</h4>
+<p>The name of the postgres user.</p>
+<p><a id="openeo_fastapi.client.psql.settings.DataBaseSettings.POSTGRES_PASSWORD"></a></p>
+<h4 id="postgres_password">POSTGRES_PASSWORD</h4>
+<p>The pasword for the postgres user.</p>
+<p><a id="openeo_fastapi.client.psql.settings.DataBaseSettings.POSTGRESQL_HOST"></a></p>
+<h4 id="postgresql_host">POSTGRESQL_HOST</h4>
+<p>The host the database runs on.</p>
+<p><a id="openeo_fastapi.client.psql.settings.DataBaseSettings.POSTGRESQL_PORT"></a></p>
+<h4 id="postgresql_port">POSTGRESQL_PORT</h4>
+<p>The post on the host the database is available on.</p>
+<p><a id="openeo_fastapi.client.psql.settings.DataBaseSettings.POSTGRES_DB"></a></p>
+<h4 id="postgres_db">POSTGRES_DB</h4>
+<p>The name of the databse being used on the host.</p>
+<p><a id="openeo_fastapi.client.psql.settings.DataBaseSettings.ALEMBIC_DIR"></a></p>
+<h4 id="alembic_dir">ALEMBIC_DIR</h4>
+<p>The path leading to the alembic directory to be used.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../models/" class="btn btn-neutral float-left" title="openeo_fastapi.client.psql.models"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../../cli/" class="btn btn-neutral float-right" title="openeo_fastapi.cli">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eodcgmbh/openeo-fastapi" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../models/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../../cli/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="../../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
