@@ -112,8 +112,8 @@ class OpenEOCore:
                         DefaultClient(
                             id="openeo-platform-default-client",
                             redirect_urls=[
-                                "https://editor.openeo.cloud",
-                                "https://editor.openeo.org",
+                                "https://editor.openeo.cloud/",
+                                "https://editor.openeo.org/",
                                 "http://localhost:1410/",
                             ],
                             grant_types=[
