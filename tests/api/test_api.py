@@ -34,7 +34,7 @@ def test_policies_set(app_settings):
     assert len(app_settings.OIDC_POLICIES) == 1
 
 
-def test_get_wellknown(core_api, app_settings):
+def test_get_wellknown(core_api):
     """Test the OpenEOApi and OpenEOCore classes interact as intended."""
 
     test_app = TestClient(core_api.app)
@@ -53,6 +53,21 @@ def test_get_capabilities(core_api, app_settings):
 
     assert response.status_code == 200
     assert response.json()["title"] == "Test Api"
+
+    found_oidc = False
+    found_conformance = False
+    found_wellknown = False
+    for endpoint in response.json()["endpoints"]:
+        if endpoint["path"] == "/credentials/oidc":
+            found_oidc = True
+        elif endpoint["path"] == "/conformance":
+            found_conformance = True
+        elif endpoint["path"] == "/.well-known/openeo":
+            found_wellknown = True
+        if found_oidc & found_conformance & found_wellknown:
+            break
+
+    assert found_oidc & found_conformance & found_wellknown
 
 
 def test_get_credentials_oidc(core_api, app_settings):
