@@ -22,13 +22,32 @@ from openeo_fastapi.api.models import (
     UdfRuntimesGetResponse,
     WellKnownOpeneoGetResponse,
 )
-from openeo_fastapi.api.types import Error, STACConformanceClasses, Version
+from openeo_fastapi.api.types import Endpoint, Error, STACConformanceClasses, Version
 from openeo_fastapi.client.auth import Authenticator, User
 from openeo_fastapi.client.collections import CollectionRegister
 from openeo_fastapi.client.files import FilesRegister
 from openeo_fastapi.client.jobs import JobsRegister
 from openeo_fastapi.client.processes import ProcessRegister
 from openeo_fastapi.client.settings import AppSettings
+
+APPLICATION_ENDPOINTS = [
+    Endpoint(
+        path="/",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/.well-known/openeo",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/conformance",
+        methods=["GET"],
+    ),
+    Endpoint(
+        path="/credentials/oidc",
+        methods=["GET"],
+    ),
+]
 
 
 @define
@@ -49,6 +68,8 @@ class OpenEOCore:
     jobs: Optional[JobsRegister] = None
     processes: Optional[ProcessRegister] = None
 
+    endpoints = APPLICATION_ENDPOINTS
+
     def __attrs_post_init__(self):
         """Post init hook to set the client registers, if none where provided by the user set to the defaults!"""
         self.settings = AppSettings()
@@ -66,7 +87,7 @@ class OpenEOCore:
         """
         registers = [self.collections, self.files, self.jobs, self.processes]
 
-        endpoints = []
+        endpoints = self.endpoints
         for register in registers:
             if register:
                 endpoints.extend(register.endpoints)
