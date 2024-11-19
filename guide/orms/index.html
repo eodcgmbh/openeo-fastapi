@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Extend the object relational Models - OpenEO FastApi</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Extend the object relational Models";
+        var mkdocs_page_input_path = "guide/orms.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> OpenEO FastApi
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../setup/">Getting Started</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../registers/">Manipulating endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../auth/">Add your own auth</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Extend the object relational Models</a>
+    <ul class="current">
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >openeo_fastapi.api</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/api/app/">openeo_fastapi.api.app</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/api/models/">openeo_fastapi.api.models</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/api/types/">openeo_fastapi.api.types</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >openeo_fastapi.client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/client/auth/">openeo_fastapi.client.auth</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/client/collections/">openeo_fastapi.client.collections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/client/core/">openeo_fastapi.client.core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/client/files/">openeo_fastapi.client.files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/client/jobs/">openeo_fastapi.client.jobs</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/client/processes/">openeo_fastapi.client.processes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/client/register/">openeo_fastapi.client.register</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../package/client/settings/">openeo_fastapi.client.settings</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >openeo_fastapi.client.psql</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../package/client/psql/engine/">openeo_fastapi.client.psql.engine</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../package/client/psql/models/">openeo_fastapi.client.psql.models</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../package/client/psql/settings/">openeo_fastapi.client.psql.settings</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../package/cli/">openeo_fastapi.cli</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">OpenEO FastApi</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">User Guide</li>
+      <li class="breadcrumb-item active">Extend the object relational Models</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/eodcgmbh/openeo-fastapi/edit/master/docs/guide/orms.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="extending-the-object-relational-models">Extending the Object Relational models.</h2>
+<p>Currently it's possible to extend the object relational models that the api uses in order to support extra values a backend might want to includse in any EndpointRegisters.</p>
+<h2 id="how-to-extend-the-models">How to extend the models.</h2>
+<p>In order to effectively use the extended models, you need to update the models.py file found in the alembic directory. After updating the models.py file, you will need to manually update the endpoints where you would like the new model to be used. This is a current pain point, and it would be good to improve this in the future.</p>
+<h4 id="original-modelspy">Original - models.py</h4>
+<pre><code>from openeo_fastapi.client.psql.settings import BASE
+from openeo_fastapi.client.psql.models import *
+
+metadata = BASE.metadata
+</code></pre>
+<h4 id="updated-modelspy">Updated - models.py</h4>
+<pre><code>from typing import Optional
+from openeo_fastapi.client.jobs import Job
+from openeo_fastapi.client.psql.settings import BASE
+from openeo_fastapi.client.psql.models import *
+
+class ExtendedJobORM(JobORM):
+
+    special_string = Column(VARCHAR, nullable=True)
+    """A very special string."""
+
+
+class ExtendedJob(Job):
+
+    special_string: Optional[str]
+    """A very special string."""
+
+    @classmethod
+    def get_orm(cls):
+        return ExtendedJobORM
+
+
+metadata = BASE.metadata
+</code></pre>
+<h4 id="using-extended-model">Using extended model</h4>
+<p>In order use the class ExtendedJob, we will need to extend the register. The example below extends the JobRegister and edits the create_job function to create the ExtendedJob and includes setting the value for the new parameter. You will need to version the database in order for the new model to work, and additionally add the NewJobsRegister to the app instance <a href="/openeo-fastapi/guide/registers/">See Registers</a>.</p>
+<pre><code>...
+from openeo_fastapi.client.jobs import JobsRegister
+from openeo_argoworkflows_api.psql.models import ExtendedJob
+
+class NewJobsRegister(JobsRegister):
+
+    def __init__(self, settings, links) -&gt; None:
+        super().__init__(settings, links)
+
+
+    def create_job(
+        self, body: JobsRequest
+    ):
+        """Create a new ExtendedJob.
+        """
+
+        # Create the job
+        job = ExtendedJob(
+            job_id=job_id,
+            process=body.process,
+            status=Status.created,
+            title=body.title,
+            description=body.description,
+            user_id=user.user_id,
+            created=datetime.datetime.now(),
+            special_string="A new type of job."
+        )
+
+        engine.create(create_object=job)
+
+        return Response(
+            status_code=201,
+        )
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../auth/" class="btn btn-neutral float-left" title="Add your own auth"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../package/api/app/" class="btn btn-neutral float-right" title="openeo_fastapi.api.app">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eodcgmbh/openeo-fastapi" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../auth/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../package/api/app/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

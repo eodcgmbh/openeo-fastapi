@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>openeo_fastapi.client.auth - OpenEO FastApi</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "openeo_fastapi.client.auth";
+        var mkdocs_page_input_path = "package/client/auth.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> OpenEO FastApi
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../setup/">Getting Started</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/registers/">Manipulating endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/auth/">Add your own auth</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/orms/">Extend the object relational Models</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >openeo_fastapi.api</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/app/">openeo_fastapi.api.app</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/models/">openeo_fastapi.api.models</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/types/">openeo_fastapi.api.types</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >openeo_fastapi.client</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">openeo_fastapi.client.auth</a>
+    <ul class="current">
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../collections/">openeo_fastapi.client.collections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../core/">openeo_fastapi.client.core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../files/">openeo_fastapi.client.files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../jobs/">openeo_fastapi.client.jobs</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../processes/">openeo_fastapi.client.processes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../register/">openeo_fastapi.client.register</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../settings/">openeo_fastapi.client.settings</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >openeo_fastapi.client.psql</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/engine/">openeo_fastapi.client.psql.engine</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/models/">openeo_fastapi.client.psql.models</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/settings/">openeo_fastapi.client.psql.settings</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cli/">openeo_fastapi.cli</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">OpenEO FastApi</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">openeo_fastapi.client</li>
+      <li class="breadcrumb-item active">openeo_fastapi.client.auth</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/eodcgmbh/openeo-fastapi/edit/master/docs/package/client/auth.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#openeo_fastapi.client.auth">openeo_fastapi.client.auth</a></li>
+<li><a href="#openeo_fastapi.client.auth.User">User</a><ul>
+<li><a href="#openeo_fastapi.client.auth.User.Config">Config</a></li>
+<li><a href="#openeo_fastapi.client.auth.User.get_orm">get_orm</a></li>
+</ul>
+</li>
+<li><a href="#openeo_fastapi.client.auth.Authenticator">Authenticator</a><ul>
+<li><a href="#openeo_fastapi.client.auth.Authenticator.validate">validate</a></li>
+</ul>
+</li>
+<li><a href="#openeo_fastapi.client.auth.AuthMethod">AuthMethod</a></li>
+<li><a href="#openeo_fastapi.client.auth.AuthToken">AuthToken</a><ul>
+<li><a href="#openeo_fastapi.client.auth.AuthToken.from_token">from_token</a></li>
+</ul>
+</li>
+<li><a href="#openeo_fastapi.client.auth.IssuerHandler">IssuerHandler</a><ul>
+<li><a href="#openeo_fastapi.client.auth.IssuerHandler.validate_token">validate_token</a></li>
+</ul>
+</li>
+</ul>
+<p><a id="openeo_fastapi.client.auth"></a></p>
+<h1 id="openeo_fastapiclientauth">openeo_fastapi.client.auth</h1>
+<p>Class and model to define the framework and partial application logic for interacting with Jobs.</p>
+<p>Classes:
+    - User: Framework for defining and extending the logic for working with BatchJobs.
+    - Authenticator: Class holding the abstract validation method used for authentication for API endpoints.
+    - AuthMethod: Enum defining the available auth methods.
+    - AuthToken: Pydantic model for breaking and validating an OpenEO Token into it's consituent parts.
+    - IssuerHandler: Class for handling the AuthToken and validating against the revelant token Issuer and AuthMethod.</p>
+<p><a id="openeo_fastapi.client.auth.User"></a></p>
+<h2 id="user-objects">User Objects</h2>
+<pre><code class="language-python">class User(BaseModel)
+</code></pre>
+<p>Pydantic model manipulating users.</p>
+<p><a id="openeo_fastapi.client.auth.User.Config"></a></p>
+<h2 id="config-objects">Config Objects</h2>
+<pre><code class="language-python">class Config()
+</code></pre>
+<p>Pydantic model class config.</p>
+<p><a id="openeo_fastapi.client.auth.User.get_orm"></a></p>
+<h4 id="get_orm">get_orm</h4>
+<pre><code class="language-python">@classmethod
+def get_orm(cls)
+</code></pre>
+<p>Get the ORM model for this pydantic model.</p>
+<p><a id="openeo_fastapi.client.auth.Authenticator"></a></p>
+<h2 id="authenticator-objects">Authenticator Objects</h2>
+<pre><code class="language-python">class Authenticator(ABC)
+</code></pre>
+<p>Basic class to hold the validation call to be used by the api endpoints requiring authentication.</p>
+<p><a id="openeo_fastapi.client.auth.Authenticator.validate"></a></p>
+<h4 id="validate">validate</h4>
+<pre><code class="language-python">@abstractmethod
+def validate(authorization: str = Header())
+</code></pre>
+<p>Validate the authorisation header and create a new user. This method can be overwritten as needed.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>authorization</code> <em>str</em> - The authorisation header content from the request headers.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>User</code> - The authenticated user.</li>
+</ul>
+<p><a id="openeo_fastapi.client.auth.AuthMethod"></a></p>
+<h2 id="authmethod-objects">AuthMethod Objects</h2>
+<pre><code class="language-python">class AuthMethod(Enum)
+</code></pre>
+<p>Enum defining known auth methods.</p>
+<p><a id="openeo_fastapi.client.auth.AuthToken"></a></p>
+<h2 id="authtoken-objects">AuthToken Objects</h2>
+<pre><code class="language-python">class AuthToken(BaseModel)
+</code></pre>
+<p>The AuthToken breaks down the OpenEO token into its consituent parts to be used for validation.</p>
+<p><a id="openeo_fastapi.client.auth.AuthToken.from_token"></a></p>
+<h4 id="from_token">from_token</h4>
+<pre><code class="language-python">@classmethod
+def from_token(cls, token: str)
+</code></pre>
+<p>Takes the openeo format token, splits it into the component parts, and returns an Auth token.</p>
+<p><a id="openeo_fastapi.client.auth.IssuerHandler"></a></p>
+<h2 id="issuerhandler-objects">IssuerHandler Objects</h2>
+<pre><code class="language-python">class IssuerHandler(BaseModel)
+</code></pre>
+<p>General token handler for querying provided tokens against issuers.</p>
+<p><a id="openeo_fastapi.client.auth.IssuerHandler.validate_token"></a></p>
+<h4 id="validate_token">validate_token</h4>
+<pre><code class="language-python">def validate_token(token: str)
+</code></pre>
+<p>Try to validate the token against the give OIDC provider.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>token</code> <em>str</em> - The OpenEO token to be parsed and validated against the oidc provider.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>The JSON as dictionary from _validate_oidc_token.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../api/types/" class="btn btn-neutral float-left" title="openeo_fastapi.api.types"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../collections/" class="btn btn-neutral float-right" title="openeo_fastapi.client.collections">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eodcgmbh/openeo-fastapi" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../api/types/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../collections/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
