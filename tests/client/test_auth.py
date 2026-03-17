@@ -2,7 +2,6 @@ from unittest.mock import patch
 
 import pytest
 from fastapi.exceptions import HTTPException
-from pydantic import ValueError
 
 from openeo_fastapi.client import auth
 
