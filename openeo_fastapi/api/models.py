@@ -443,9 +443,7 @@ class BatchJob(BaseModel):
         description="Metrics about the resource usage of the batch job.\n\nBack-ends are not expected to update the metrics while processing data,\nso the metrics can only be available after the job has been finished\nor has errored.\nFor usage metrics during processing, metrics can better be added to the\nlogs (e.g. `GET /jobs/{job_id}/logs`) with the same schema.",
     )
 
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("job_id", pre=True, always=True)
+    @field_validator("job_id", mode="before", check_fields=True)
     def as_str(cls, v):
         if isinstance(v, str):
             return v

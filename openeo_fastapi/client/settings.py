@@ -1,8 +1,7 @@
 """Defining the settings to be used at the application layer of the API."""
 from typing import Any, Optional
 
-from pydantic import field_validator, HttpUrl
-from pydantic_settings import BaseSettings
+from pydantic import BaseSettings, HttpUrl, field_validator
 
 
 class AppSettings(BaseSettings):
@@ -24,7 +23,7 @@ class AppSettings(BaseSettings):
     """The policies to be used for authenticated users with the backend, if not set, any usser with a valid token from the issuer is accepted."""
     OIDC_ORGANISATION: str
     """The abbreviation of the OIDC provider's organisation name, e.g. egi."""
-    OIDC_POLICIES: Optional[list[str]]
+    OIDC_POLICIES: Optional[list[str]] = None
     """The OIDC policies to check against when authorizing a user. If not provided, all users with a valid token from the issuer will be admitted.
 
     "&&" Is used to denote the addition of another policy.
@@ -48,7 +47,7 @@ class AppSettings(BaseSettings):
     """The STAC Version that is being supported by this deployments data discovery endpoints."""
     STAC_API_URL: HttpUrl
     """The STAC URL of the catalogue that the application deployment will proxy to."""
-    STAC_COLLECTIONS_WHITELIST: Optional[list[str]]
+    STAC_COLLECTIONS_WHITELIST: Optional[list[str]] = None
     """The collection ids to filter by when proxying to the Stac catalogue."""
 
     @field_validator("STAC_API_URL")

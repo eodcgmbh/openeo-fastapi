@@ -70,15 +70,14 @@ class Role(Enum):
     host = "host"
 
 
-class RFC3339Datetime(BaseModel):
+class RFC3339Datetime(RootModel):
     """Model to consistently represent datetimes as strings compliant to RFC3339Datetime."""
 
-    __root__: str = Field(
-        description="", pattern=r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z"
+    root: str = Field(
+        description="", regex=r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z"
     )
 
-    @field_validator("__root__", mode="before")
-    @classmethod
+    @field_validator("root", mode="before")
     def ensure_non_fractional_and_timezone(cls, v):
         if isinstance(v, datetime.datetime):
             return v.strftime("%Y-%m-%dT%H:%M:%SZ")
