@@ -3,7 +3,7 @@ import uuid
 from enum import Enum
 from typing import Any, List, Optional, TypedDict, Union
 
-from pydantic import ConfigDict, AnyUrl, BaseModel, Field, validator
+from pydantic import ConfigDict, AnyUrl, BaseModel, Field, field_validator
 
 from openeo_fastapi.api.types import (
     Billing,

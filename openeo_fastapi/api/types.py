@@ -4,7 +4,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Optional, Union
 
-from pydantic import field_validator, ConfigDict, AnyUrl, BaseModel, Field
+from pydantic import field_validator, ConfigDict, AnyUrl, BaseModel, Field, RootModel
 
 
 class STACConformanceClasses(Enum):
