@@ -54,12 +54,12 @@ Returns Metadata for specific datasetsbased on collection_id (str).
 **Arguments**:
 
 - `collection_id` _str_ - The collection id to request from the proxy.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
@@ -78,7 +78,7 @@ Returns Basic metadata for all datasets
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
@@ -97,12 +97,12 @@ Returns Basic metadata for all datasets.
 **Arguments**:
 
 - `collection_id` _str_ - The collection id to request from the proxy.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
@@ -122,14 +122,13 @@ Returns Basic metadata for all datasets
 
 - `collection_id` _str_ - The collection id to request from the proxy.
 - `item_id` _str_ - The item id to request from the proxy.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
   The direct response from the request to the stac catalogue.
-

@@ -28,6 +28,7 @@ OIDC_WELLKNOWN_CONFIG_PATH = "/.well-known/openid-configuration"
 OIDC_USERINFO = "userinfo_endpoint"
 OIDC_JWKS = "jwks_uri"
 
+
 class User(BaseModel):
     """Pydantic model manipulating users."""
 
@@ -38,7 +39,7 @@ class User(BaseModel):
     )
     # replaces orm_mode = True
     model_config = ConfigDict(
-        from_attributes=True,        
+        from_attributes=True,
         arbitrary_types_allowed=True,
         extra="ignore",
     )

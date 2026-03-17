@@ -139,9 +139,8 @@ Get the supported file formats for processing input and output.
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
 - `UdfRuntimesGetResponse` - The metadata for the requested BatchJob.
-

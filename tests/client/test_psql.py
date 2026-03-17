@@ -37,7 +37,7 @@ def test_job_model(mock_engine):
         job_id=job_uid,
         user_id=user_uid,
         status="created",
-        process={"id":{"data":"x"}},
+        process={"id": {"data": "x"}},
     )
 
     session = sessionmaker(mock_engine)
@@ -49,6 +49,7 @@ def test_job_model(mock_engine):
         found_job = select(JobORM).filter_by(job_id=job_uid)
 
         assert sesh.scalars(found_job).first()
+
 
 def test_udpor_model(mock_engine):
     """ """
