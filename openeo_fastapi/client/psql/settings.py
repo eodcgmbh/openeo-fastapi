@@ -2,7 +2,7 @@
 from pathlib import Path
 
 from pydantic import SecretStr
-from pydantic_setting import BaseSettings
+from pydantic_settings import BaseSettings
 from sqlalchemy.orm import declarative_base
 
 BASE = declarative_base()
