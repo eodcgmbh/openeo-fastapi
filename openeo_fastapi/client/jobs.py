@@ -10,7 +10,7 @@ from typing import Any, Optional
 
 from fastapi import Depends, Response
 from fastapi.exceptions import HTTPException
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.exc import IntegrityError
 
 from openeo_fastapi.api.models import (
@@ -78,15 +78,16 @@ class Job(BaseModel):
     status: Status
     user_id: uuid.UUID
     created: datetime.datetime
-    title: Optional[str]
-    description: Optional[str]
+    title: Optional[str] = None
+    description: Optional[str] = None
     synchronous: bool = False
 
-    class Config:
-        """Pydantic model class config."""
-        orm_mode = True
-        arbitrary_types_allowed = True
-        extra = Extra.ignore
+    # replaces orm_mode = True
+    model_config = ConfigDict(
+        from_attributes=True,
+        arbitrary_types_allowed=True,
+        extra="ignore",
+    )
 
     @classmethod
     def get_orm(cls):

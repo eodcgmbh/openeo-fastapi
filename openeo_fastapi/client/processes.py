@@ -12,7 +12,7 @@ import openeo_processes_dask.specs
 from fastapi import Depends, HTTPException, Response
 from openeo_pg_parser_networkx import Process as pgProcess
 from openeo_pg_parser_networkx import ProcessRegistry
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.exc import IntegrityError
 
 from openeo_fastapi.api.models import (
@@ -63,11 +63,12 @@ class UserDefinedProcessGraph(BaseModel):
     parameters: Optional[list] = None
     returns: Optional[dict] = None
 
-    class Config:
-        """Pydantic model class config."""
-        orm_mode = True
-        allow_population_by_field_name = True
-        extra = "ignore"
+    # replaces orm_mode = True
+    model_config = ConfigDict(
+        from_attributes=True,
+        arbitrary_types_allowed=True,
+        extra="ignore",
+    )
 
     @classmethod
     def get_orm(cls):
@@ -126,7 +127,7 @@ class ProcessRegister(EndpointRegister):
             list[Process]: A list of Processes.
         """
         return [
-            Process.parse_obj(process.spec)
+            Process.model_validate(process.spec)
             for process in self.process_registry["predefined", None].values()
         ]
 

@@ -4,7 +4,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Optional, Union
 
-from pydantic import AnyUrl, BaseModel, Extra, Field, validator
+from pydantic import AnyUrl, BaseModel, Extra, Field, field_validator, RootModel
 
 
 class STACConformanceClasses(Enum):
@@ -70,14 +70,14 @@ class Role(Enum):
     host = "host"
 
 
-class RFC3339Datetime(BaseModel):
+class RFC3339Datetime(RootModel):
     """Model to consistently represent datetimes as strings compliant to RFC3339Datetime."""
 
-    __root__: str = Field(
+    root: str = Field(
         description="", regex=r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z"
     )
 
-    @validator("__root__", pre=True)
+    @field_validator("root", mode="before")
     def ensure_non_fractional_and_timezone(cls, v):
         if isinstance(v, datetime.datetime):
             return v.strftime("%Y-%m-%dT%H:%M:%SZ")

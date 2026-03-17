@@ -16,7 +16,7 @@ from typing import List
 import requests
 from fastapi import Header, HTTPException
 from jose import jwt
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, ValueError
 
 from openeo_fastapi.api.types import Error
 from openeo_fastapi.client.psql.engine import Filter, create, get_first_or_default
@@ -28,20 +28,20 @@ OIDC_WELLKNOWN_CONFIG_PATH = "/.well-known/openid-configuration"
 OIDC_USERINFO = "userinfo_endpoint"
 OIDC_JWKS = "jwks_uri"
 
-
 class User(BaseModel):
     """Pydantic model manipulating users."""
 
     user_id: uuid.UUID
     oidc_sub: str
-    created_at: datetime.datetime = datetime.datetime.utcnow()
-
-    class Config:
-        """Pydantic model class config."""
-
-        orm_mode = True
-        arbitrary_types_allowed = True
-        extra = "ignore"
+    created_at: datetime.datetime = Field(
+        default_factory=lambda: datetime.datetime.now(datetime.UTC)
+    )
+    # replaces orm_mode = True
+    model_config = ConfigDict(
+        from_attributes=True,        
+        arbitrary_types_allowed=True,
+        extra="ignore",
+    )
 
     @classmethod
     def get_orm(cls):
@@ -104,16 +104,16 @@ class AuthToken(BaseModel):
     provider: str
     token: str
 
-    @validator("provider", pre=True)
+    @field_validator("provider", mode="before")
     def check_provider(cls, v, values, **kwargs):
         if v == "":
-            raise ValidationError("Empty provider string.")
+            raise ValueError("Empty provider string.")
         return v
 
-    @validator("token", pre=True)
+    @field_validator("token", mode="before")
     def check_token(cls, v, values, **kwargs):
         if v == "":
-            raise ValidationError("Empty token string.")
+            raise ValueError("Empty token string.")
         return v
 
     @classmethod
@@ -132,7 +132,7 @@ class IssuerHandler(BaseModel):
     issuer_uri: str
     policies: list[str] = None
 
-    @validator("issuer_uri", pre=True)
+    @field_validator("issuer_uri", mode="before")
     def remove_trailing_slash(cls, v, values, **kwargs):
         if v.endswith("/"):
             return v.removesuffix("/")

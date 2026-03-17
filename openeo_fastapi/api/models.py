@@ -3,7 +3,7 @@ import uuid
 from enum import Enum
 from typing import Any, List, Optional, TypedDict, Union
 
-from pydantic import AnyUrl, BaseModel, Extra, Field, validator
+from pydantic import AnyUrl, BaseModel, Extra, Field, field_validator
 
 from openeo_fastapi.api.types import (
     Billing,
@@ -450,7 +450,7 @@ class BatchJob(BaseModel):
         description="Metrics about the resource usage of the batch job.\n\nBack-ends are not expected to update the metrics while processing data,\nso the metrics can only be available after the job has been finished\nor has errored.\nFor usage metrics during processing, metrics can better be added to the\nlogs (e.g. `GET /jobs/{job_id}/logs`) with the same schema.",
     )
 
-    @validator("job_id", pre=True, always=True)
+    @field_validator("job_id", mode="before", check_fields=True)
     def as_str(cls, v):
         if isinstance(v, str):
             return v
