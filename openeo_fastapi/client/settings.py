@@ -53,11 +53,13 @@ class AppSettings(BaseSettings):
 
     @field_validator("STAC_API_URL")
     @classmethod
-    def ensure_endswith_slash(cls, v: str) -> str:
+    def ensure_endswith_slash(cls, v: HttpUrl) -> str:
         """Ensure the STAC_API_URL ends with a trailing slash."""
-        if v.endswith("/"):
-            return v
-        return v.__add__("/")
+        url = str(v)
+
+        if url.endswith("/"):
+            return url
+        return url.__add__("/")
 
     @field_validator("OIDC_POLICIES", mode="before")
     @classmethod
