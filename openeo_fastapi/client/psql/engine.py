@@ -32,7 +32,7 @@ class Filter(BaseModel):
     """Filter class to assist with providing a filter by funciton with values across different cases."""
 
     column_name: str
-    value: Any
+    value: Any = None
 
 
 def create(create_object: BaseModel) -> bool:

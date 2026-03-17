@@ -1,8 +1,9 @@
 """Defining the settings to be used at the application layer of the API for database interaction."""
 from pathlib import Path
 
-from pydantic import BaseSettings, SecretStr
+from pydantic import SecretStr
 from sqlalchemy.orm import declarative_base
+from pydantic_settings import BaseSettings
 
 BASE = declarative_base()
 

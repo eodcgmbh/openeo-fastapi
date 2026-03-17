@@ -16,7 +16,7 @@ from typing import List
 import requests
 from fastapi import Header, HTTPException
 from jose import jwt
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import ConfigDict, BaseModel, ValidationError, validator
 
 from openeo_fastapi.api.types import Error
 from openeo_fastapi.client.psql.engine import Filter, create, get_first_or_default
@@ -35,13 +35,7 @@ class User(BaseModel):
     user_id: uuid.UUID
     oidc_sub: str
     created_at: datetime.datetime = datetime.datetime.utcnow()
-
-    class Config:
-        """Pydantic model class config."""
-
-        orm_mode = True
-        arbitrary_types_allowed = True
-        extra = "ignore"
+    model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True, extra="ignore")
 
     @classmethod
     def get_orm(cls):
@@ -104,12 +98,16 @@ class AuthToken(BaseModel):
     provider: str
     token: str
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("provider", pre=True)
     def check_provider(cls, v, values, **kwargs):
         if v == "":
             raise ValidationError("Empty provider string.")
         return v
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("token", pre=True)
     def check_token(cls, v, values, **kwargs):
         if v == "":
@@ -132,6 +130,8 @@ class IssuerHandler(BaseModel):
     issuer_uri: str
     policies: list[str] = None
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("issuer_uri", pre=True)
     def remove_trailing_slash(cls, v, values, **kwargs):
         if v.endswith("/"):

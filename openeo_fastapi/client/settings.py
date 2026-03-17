@@ -1,7 +1,8 @@
 """Defining the settings to be used at the application layer of the API."""
 from typing import Any, Optional
 
-from pydantic import BaseSettings, HttpUrl, validator
+from pydantic import field_validator, HttpUrl
+from pydantic_settings import BaseSettings
 
 
 class AppSettings(BaseSettings):
@@ -50,14 +51,16 @@ class AppSettings(BaseSettings):
     STAC_COLLECTIONS_WHITELIST: Optional[list[str]]
     """The collection ids to filter by when proxying to the Stac catalogue."""
 
-    @validator("STAC_API_URL")
+    @field_validator("STAC_API_URL")
+    @classmethod
     def ensure_endswith_slash(cls, v: str) -> str:
         """Ensure the STAC_API_URL ends with a trailing slash."""
         if v.endswith("/"):
             return v
         return v.__add__("/")
 
-    @validator("OIDC_POLICIES", pre=True)
+    @field_validator("OIDC_POLICIES", mode="before")
+    @classmethod
     def split_oidc_policies_str_to_list(cls, v: list) -> str:
         """Ensure the OIDC_POLICIES are split and formatted correctly."""
 
@@ -83,6 +86,8 @@ class AppSettings(BaseSettings):
             cleaned_policies.append(no_spaces)
         return cleaned_policies
 
+    # TODO[pydantic]: We couldn't refactor this class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config:
         """Pydantic model class config."""
 
