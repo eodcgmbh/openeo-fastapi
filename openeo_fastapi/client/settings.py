@@ -18,7 +18,7 @@ class AppSettings(BaseSettings):
     """The API description to be provided to FastAPI."""
     OPENEO_VERSION: str = "1.1.0"
     """The OpenEO Api specification version supported in this deployment of the API."""
-    OPENEO_PREFIX = f"/openeo/{OPENEO_VERSION}"
+    OPENEO_PREFIX: str = f"/openeo/{OPENEO_VERSION}"
     """The OpenEO prefix to be used when creating the endpoint urls."""
     OIDC_URL: HttpUrl
     """The policies to be used for authenticated users with the backend, if not set, any usser with a valid token from the issuer is accepted."""
