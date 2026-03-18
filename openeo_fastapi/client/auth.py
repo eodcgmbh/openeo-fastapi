@@ -13,6 +13,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
 
+import pytz
 import requests
 from fastapi import Header, HTTPException
 from jose import jwt
@@ -35,7 +36,7 @@ class User(BaseModel):
     user_id: uuid.UUID
     oidc_sub: str
     created_at: datetime.datetime = Field(
-        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc)
+        default_factory=lambda: datetime.datetime.now(pytz.utc)
     )
     # replaces orm_mode = True
     model_config = ConfigDict(
