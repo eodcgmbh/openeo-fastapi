@@ -2,7 +2,6 @@
 """
 import datetime
 
-import pytz
 from sqlalchemy import BOOLEAN, VARCHAR, Column, DateTime
 from sqlalchemy.dialects.postgresql import ENUM, JSON, UUID
 
@@ -20,7 +19,9 @@ class UserORM(BASE):
     """UUID of the user."""
     oidc_sub = Column(VARCHAR, unique=True)
     """OIDC substring of the user."""
-    created_at = Column(DateTime, default=pytz.utc, nullable=False)
+    created_at = Column(
+        DateTime, default=datetime.datetime.now(datetime.timezone.utc), nullable=False
+    )
     """The datetime the user was created."""
 
 
@@ -38,7 +39,9 @@ class JobORM(BASE):
     """The status of the Job."""
     user_id = Column(UUID(as_uuid=True), nullable=False)
     """The UUID of the user that owns this job."""
-    created = Column(DateTime, default=pytz.utc, nullable=False)
+    created = Column(
+        DateTime, default=datetime.datetime.now(datetime.timezone.utc), nullable=False
+    )
     """The datetime the job was created."""
     title = Column(VARCHAR)
     """The title of the job."""
@@ -60,7 +63,9 @@ class UdpORM(BASE):
     """The UUID of the user that owns this UDP."""
     process_graph = Column(JSON, nullable=False)
     """The process graph of the UDP."""
-    created = Column(DateTime, default=pytz.utc, nullable=False)
+    created = Column(
+        DateTime, default=datetime.datetime.now(datetime.timezone.utc), nullable=False
+    )
     """The datetime the UDP was created."""
     parameters = Column("parameters", JSON)
     """The parameters of the UDP."""
