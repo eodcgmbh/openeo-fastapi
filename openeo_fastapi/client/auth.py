@@ -35,7 +35,7 @@ class User(BaseModel):
     user_id: uuid.UUID
     oidc_sub: str
     created_at: datetime.datetime = Field(
-        default_factory=lambda: datetime.datetime.now(datetime.UTC)
+        default_factory=lambda: datetime.datetime.now(datetime.timezone.utc)
     )
     # replaces orm_mode = True
     model_config = ConfigDict(
