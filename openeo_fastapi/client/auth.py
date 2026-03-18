@@ -135,9 +135,9 @@ class IssuerHandler(BaseModel):
 
     @field_validator("issuer_uri", mode="before")
     def remove_trailing_slash(cls, v, values, **kwargs):
-        if v.endswith("/"):
-            return v.removesuffix("/")
-        return v
+        if str(v).endswith("/"):
+            return str(v).removesuffix("/")
+        return str(v)
 
     def _get_issuer_config(self):
         """Get the well known config of the issuer url.
