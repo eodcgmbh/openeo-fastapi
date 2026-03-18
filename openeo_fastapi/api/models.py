@@ -1,7 +1,8 @@
 """Pydantic Models describing different api request and response bodies."""
 import uuid
 from enum import Enum
-from typing import Any, List, Optional, TypedDict, Union
+from typing import Any, List, Optional, Union
+from typing_extensions import TypedDict
 
 from pydantic import AnyUrl, BaseModel, ConfigDict, Field, field_validator
 
