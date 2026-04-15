@@ -1,4 +1,5 @@
 """Defining the settings to be used at the application layer of the API."""
+
 from typing import Any, Optional
 
 from pydantic import BaseSettings, HttpUrl, validator
@@ -19,6 +20,10 @@ class AppSettings(BaseSettings):
     """The OpenEO Api specification version supported in this deployment of the API."""
     OPENEO_PREFIX = f"/openeo/{OPENEO_VERSION}"
     """The OpenEO prefix to be used when creating the endpoint urls."""
+    OIDC_PROVIDER_TITLE: Optional[str] = "EGI Check-in"
+    """The provider title that gets shown when authenticating in the front-end."""
+    OIDC_CLIENT_ID: Optional[str] = "openeo-platform-default-client"
+    """The keycloak client ID which gets used for authenticating."""
     OIDC_URL: HttpUrl
     """The policies to be used for authenticated users with the backend, if not set, any usser with a valid token from the issuer is accepted."""
     OIDC_ORGANISATION: str

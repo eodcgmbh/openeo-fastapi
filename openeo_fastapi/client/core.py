@@ -3,6 +3,7 @@
 Classes:
     - OpenEOCore: Framework for defining the application logic that will passed onto the OpenEO Api.
 """
+
 from collections import namedtuple
 from typing import Optional
 from urllib.parse import urlunparse
@@ -121,7 +122,7 @@ class OpenEOCore:
             providers=[
                 Provider(
                     id=self.settings.OIDC_ORGANISATION,
-                    title="EGI Check-in",
+                    title=self.settings.OIDC_PROVIDER_TITLE,
                     issuer=self.settings.OIDC_URL,
                     scopes=[
                         "openid",
@@ -131,7 +132,7 @@ class OpenEOCore:
                     ],
                     default_clients=[
                         DefaultClient(
-                            id="openeo-platform-default-client",
+                            id=self.settings.OIDC_CLIENT_ID,
                             redirect_urls=[
                                 "https://editor.openeo.cloud/",
                                 "https://editor.openeo.org/",
