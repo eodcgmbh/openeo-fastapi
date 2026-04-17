@@ -31,9 +31,8 @@ COLLECTIONS_ENDPOINTS = [
 
 
 class CollectionRegister(EndpointRegister):
-    """The CollectionRegister to regulate the application logic for the API behaviour.
-    """
-    
+    """The CollectionRegister to regulate the application logic for the API behaviour."""
+
     def __init__(self, settings) -> None:
         """Initialize the CollectionRegister.
 
@@ -73,7 +72,7 @@ class CollectionRegister(EndpointRegister):
     async def get_collection(self, collection_id):
         """
         Returns Metadata for specific datasetsbased on collection_id (str).
-        
+
         Args:
             collection_id (str): The collection id to request from the proxy.
 
@@ -84,8 +83,8 @@ class CollectionRegister(EndpointRegister):
             Collection: The proxied request returned as a Collection.
         """
         not_found = Error(
-                code="NotFound", message=f"Collection {collection_id} not found."
-            )
+            code="NotFound", message=f"Collection {collection_id} not found."
+        )
 
         if (
             not self.settings.STAC_COLLECTIONS_WHITELIST
@@ -96,14 +95,8 @@ class CollectionRegister(EndpointRegister):
 
             if resp:
                 return Collection(**resp)
-            raise HTTPException(
-                status_code=404,
-                detail=not_found
-            )
-        raise HTTPException(
-            status_code=404,
-            detail=not_found
-        )
+            raise HTTPException(status_code=404, detail=not_found)
+        raise HTTPException(status_code=404, detail=not_found)
 
     async def get_collections(self):
         """
@@ -138,7 +131,7 @@ class CollectionRegister(EndpointRegister):
     async def get_collection_items(self, collection_id):
         """
         Returns Basic metadata for all datasets.
-        
+
         Args:
             collection_id (str): The collection id to request from the proxy.
 
@@ -170,7 +163,7 @@ class CollectionRegister(EndpointRegister):
     async def get_collection_item(self, collection_id, item_id):
         """
         Returns Basic metadata for all datasets
-        
+
         Args:
             collection_id (str): The collection id to request from the proxy.
             item_id (str): The item id to request from the proxy.

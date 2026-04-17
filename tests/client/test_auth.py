@@ -2,7 +2,6 @@ from unittest.mock import patch
 
 import pytest
 from fastapi.exceptions import HTTPException
-from pydantic import ValidationError
 
 from openeo_fastapi.client import auth
 
@@ -43,22 +42,22 @@ def test_auth_token():
     token_checks(oidc_token, "oidc", "issuer")
 
     # Check cases of invalid format raise a validation error.
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         auth.AuthToken.from_token(INVALID_TOKEN_EXAMPLE_1)
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         auth.AuthToken.from_token(INVALID_TOKEN_EXAMPLE_2)
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         auth.AuthToken.from_token(INVALID_TOKEN_EXAMPLE_3)
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         auth.AuthToken.from_token(INVALID_TOKEN_EXAMPLE_4)
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         auth.AuthToken.from_token(INVALID_TOKEN_EXAMPLE_5)
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         auth.AuthToken.from_token(INVALID_TOKEN_EXAMPLE_6)
 
 
@@ -131,7 +130,7 @@ def test_issuer_handler_validate_basic_token(
 def test_issuer_handler_validate_broken_token(
     mocked_oidc_config, mocked_oidc_userinfo, mocked_issuer
 ):
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         mocked_issuer.validate_token(token=INVALID_TOKEN_EXAMPLE_1)
 
 

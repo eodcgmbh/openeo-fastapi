@@ -1,11 +1,13 @@
 """Standardisation of common functionality to interact with the ORMs and the database.
 """
+from typing import Any, Union
+
 from pydantic import BaseModel
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
-from typing import Any, Union                                                                                                                                                    
 
 from openeo_fastapi.client.psql.settings import DataBaseSettings
+
 
 # TODO Refactor this module to be a class that can work with different SQL Backends.
 def get_engine():
@@ -32,7 +34,7 @@ class Filter(BaseModel):
     """Filter class to assist with providing a filter by funciton with values across different cases."""
 
     column_name: str
-    value: Any
+    value: Any = None
 
 
 def create(create_object: BaseModel) -> bool:
