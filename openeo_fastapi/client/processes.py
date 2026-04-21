@@ -109,8 +109,8 @@ class ProcessRegister(EndpointRegister):
         process_registry = ProcessRegistry()
 
         predefined_processes_specs = {
-            process_id: getattr(openeo_processes_dask.specs, process_id)
-            for process_id in openeo_processes_dask.specs.__all__
+            process_id: getattr(openeo_processes_dask_slim.specs, process_id)
+            for process_id in openeo_processes_dask_slim.specs.__all__
         }
 
         for process_id, spec in predefined_processes_specs.items():
