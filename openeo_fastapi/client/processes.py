@@ -126,8 +126,6 @@ class ProcessRegister(EndpointRegister):
         Returns:
             list[Process]: A list of Processes.
         """
-        if "predefined" not in self.process_registry.store:
-            return []
         return [
             Process.parse_obj(process.spec)
             for process in self.process_registry["predefined", None].values()
