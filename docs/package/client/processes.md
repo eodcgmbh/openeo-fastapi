@@ -101,7 +101,7 @@ Returns the pre-defined process from the process registry.
 def list_processes() -> Union[ProcessesGetResponse, None]
 ```
 
-Returns Supported predefined processes defined by openeo-processes-dask.
+Returns Supported predefined processes defined by openeo-processes-dask-slim.
 
 **Returns**:
 

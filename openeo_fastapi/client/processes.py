@@ -3,12 +3,13 @@
 Classes:
     - ProcessRegister: Framework for defining and extending the logic for working with Processes and Process Graphs.
 """
+
 import datetime
 import functools
 import uuid
 from typing import Optional, Union
 
-import openeo_processes_dask.specs
+import openeo_processes_dask_slim.specs
 from fastapi import Depends, HTTPException, Response
 from openeo_pg_parser_networkx import Process as pgProcess
 from openeo_pg_parser_networkx import ProcessRegistry
@@ -65,6 +66,7 @@ class UserDefinedProcessGraph(BaseModel):
 
     class Config:
         """Pydantic model class config."""
+
         orm_mode = True
         allow_population_by_field_name = True
         extra = "ignore"
@@ -76,8 +78,7 @@ class UserDefinedProcessGraph(BaseModel):
 
 
 class ProcessRegister(EndpointRegister):
-    """The ProcessRegister to regulate the application logic for the API behaviour.
-    """
+    """The ProcessRegister to regulate the application logic for the API behaviour."""
 
     def __init__(self, links) -> None:
         """Initialize the ProcessRegister.
@@ -132,8 +133,8 @@ class ProcessRegister(EndpointRegister):
 
     def list_processes(self) -> Union[ProcessesGetResponse, None]:
         """
-        Returns Supported predefined processes defined by openeo-processes-dask.
-    
+        Returns Supported predefined processes defined by openeo-processes-dask-slim.
+
         Returns:
             ProcessesGetResponse: A list of available processes.
         """
@@ -170,7 +171,7 @@ class ProcessRegister(EndpointRegister):
     ) -> Union[ProcessGraphWithMetadata, None]:
         """
         Lists all information about a user-defined process, including its process graph.
-        
+
         Args:
             process_graph_id (str): The process graph id.
             user (User): The User returned from the Authenticator.
@@ -202,7 +203,7 @@ class ProcessRegister(EndpointRegister):
     ):
         """
         Stores a provided user-defined process with process graph that can be reused in other processes.
-        
+
         Args:
             process_graph_id (str): The process graph id.
             body (ProcessGraphWithMetadata): The ProcessGraphWithMetadata should be used to create the new BatchJob.
@@ -229,7 +230,10 @@ class ProcessRegister(EndpointRegister):
         except IntegrityError:
             raise HTTPException(
                 status_code=500,
-                detail=Error(code="Internal", message=f"The user defined process graph {udp.id} already exists."),
+                detail=Error(
+                    code="Internal",
+                    message=f"The user defined process graph {udp.id} already exists.",
+                ),
             )
 
         return Response(
@@ -238,13 +242,11 @@ class ProcessRegister(EndpointRegister):
         )
 
     def delete_user_process_graph(
-        self,
-        process_graph_id: str,
-        user: User = Depends(Authenticator.validate)
+        self, process_graph_id: str, user: User = Depends(Authenticator.validate)
     ):
         """
         Deletes the data related to this user-defined process, including its process graph.
-        
+
         Args:
             process_graph_id (str): The process graph id.
             user (User): The User returned from the Authenticator.
@@ -282,7 +284,7 @@ class ProcessRegister(EndpointRegister):
     ) -> ValidationPostResponse:
         """
         Validates the ProcessGraphWithMetadata that is provided by the user.
-        
+
         Args:
             process_graph_id (str): The process graph id.
             body (ProcessGraphWithMetadata): The ProcessGraphWithMetadata should be used to validate the new BatchJob.
