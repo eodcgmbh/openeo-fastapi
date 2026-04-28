@@ -1,6 +1,6 @@
 def get_app_template():
     """
-        Generate the default app file for an openeo api app.
+    Generate the default app file for an openeo api app.
     """
     return """
 from fastapi import FastAPI
@@ -29,9 +29,10 @@ api = OpenEOApi(client=client, app=FastAPI())
 app = api.app
 """
 
+
 def get_models_template():
     """
-        Generate the default models file for an openeo api app.
+    Generate the default models file for an openeo api app.
     """
     return """from openeo_fastapi.client.psql.settings import BASE
 from openeo_fastapi.client.psql.models import *
@@ -39,9 +40,10 @@ from openeo_fastapi.client.psql.models import *
 metadata = BASE.metadata
 """
 
+
 def get_revision_template():
     """
-        Generate the default revision file for the openeo api app.
+    Generate the default revision file for the openeo api app.
     """
     return """import os
 from alembic import command
@@ -58,4 +60,3 @@ alembic_cfg = Config("alembic.ini")
 command.revision(alembic_cfg, autogenerate=True)
 command.upgrade(alembic_cfg, "head")
 """
-            

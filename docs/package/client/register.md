@@ -32,4 +32,3 @@ def __init__()
 ```
 
 Initialize the EndpointRegister.
-
