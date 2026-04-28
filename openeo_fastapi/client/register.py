@@ -5,13 +5,12 @@ Classes:
 """
 from openeo_fastapi.api.types import Endpoint
 
+
 class EndpointRegister:
-    """The ProcessRegister to regulate the application logic for the API behaviour.
-    """
-    
+    """The ProcessRegister to regulate the application logic for the API behaviour."""
+
     def __init__(self):
-        """Initialize the EndpointRegister.
-        """
+        """Initialize the EndpointRegister."""
         self.endpoints = self._initialize_endpoints()
 
     def _initialize_endpoints(self) -> list[Endpoint]:

@@ -9,12 +9,14 @@ from pydantic import AnyUrl, BaseModel, Extra, Field, validator
 
 class STACConformanceClasses(Enum):
     """Available conformance classes with STAC."""
+
     CORE = "https://api.stacspec.org/v1.0.0/core"
     COLLECTIONS = "https://api.stacspec.org/v1.0.0/collections"
 
 
 class DinensionEnum(Enum):
     """Dimension enum."""
+
     spatial = "spatial"
     temporal = "temporal"
     bands = "bands"
@@ -23,11 +25,13 @@ class DinensionEnum(Enum):
 
 class Type5(Enum):
     """Catalog enum."""
+
     Catalog = "Catalog"
 
 
 class Method(Enum):
     """HTTP Methods enum."""
+
     GET = "GET"
     HEAD = "HEAD"
     POST = "POST"
@@ -39,6 +43,7 @@ class Method(Enum):
 
 class Status(Enum):
     """Job Status enum."""
+
     created = "created"
     queued = "queued"
     running = "running"
@@ -49,6 +54,7 @@ class Status(Enum):
 
 class Level(Enum):
     """Log level enum."""
+
     error = "error"
     warning = "warning"
     info = "info"
@@ -57,13 +63,16 @@ class Level(Enum):
 
 class GisDataType(Enum):
     """Data type enum."""
+
     raster = "raster"
     vector = "vector"
     table = "table"
     other = "other"
 
+
 class Role(Enum):
     """Role for collection provider."""
+
     producer = "producer"
     licensor = "licensor"
     processor = "processor"
@@ -86,6 +95,7 @@ class RFC3339Datetime(BaseModel):
 
 class Endpoint(BaseModel):
     """Model to capture the available endpoint and it's accepted models."""
+
     path: str = Field(
         ...,
         description="Path to the endpoint, relative to the URL of this endpoint. In general the paths MUST follow the paths specified in the openAPI specification as closely as possible. Therefore, paths MUST be prepended with a leading slash, but MUST NOT contain a trailing slash. Variables in the paths MUST be placed in curly braces and follow the parameter names in the openAPI specification, e.g. `{job_id}`.",
@@ -98,6 +108,7 @@ class Endpoint(BaseModel):
 
 class Plan(BaseModel):
     """Model to capture the the plan the user has subscribe to."""
+
     name: str = Field(
         ...,
         description="Name of the plan. It MUST be accepted in a *case insensitive* manner throughout the API.",
@@ -121,6 +132,7 @@ class Plan(BaseModel):
 
 class Billing(BaseModel):
     """Model to capture the billing options that are available at the backend."""
+
     currency: str = Field(
         ...,
         description="The currency the back-end is billing in. The currency MUST be either a valid currency code as defined in ISO-4217 or a proprietary currency, e.g. tiles or back-end specific credits. If set to the default value `null`, budget and costs are not supported by the back-end and users can't be charged.",
@@ -153,6 +165,7 @@ class Billing(BaseModel):
 
 class File(BaseModel):
     """Model to capture the stat information of a file stored at the backend."""
+
     path: str = Field(
         ...,
         description="Path of the file, relative to the root directory of the user's server-side workspace.\nMUST NOT start with a slash `/` and MUST NOT be url-encoded.\n\nThe Windows-style path name component separator `\\` is not supported,\nalways use `/` instead.\n\nNote: The pattern only specifies a minimal subset of invalid characters.\nThe back-ends MAY enforce additional restrictions depending on their OS/environment.",
@@ -168,12 +181,14 @@ class File(BaseModel):
 
 class UsageMetric(BaseModel):
     """Model to capture the value and unit of a given metric."""
+
     value: float
     unit: str
 
 
 class Usage(BaseModel):
     """Model to capture the usage of a job."""
+
     class Config:
         extra = Extra.allow
 
@@ -205,6 +220,7 @@ class Usage(BaseModel):
 
 class Link(BaseModel):
     """Model to describe the information for a provided URL."""
+
     rel: str = Field(
         ...,
         description="Relationship between the current document and the linked document. SHOULD be a [registered link relation type](https://www.iana.org/assignments/link-relations/link-relations.xml) whenever feasible.",
@@ -227,6 +243,7 @@ class Link(BaseModel):
 
 class LogEntry(BaseModel):
     """Model to describe the information for a given log line in job logs."""
+
     id: str = Field(
         ...,
         description="An unique identifier for the log message, could simply be an incrementing number.",
@@ -262,6 +279,7 @@ class LogEntry(BaseModel):
 
 class Process(BaseModel):
     """Model to describe a process that is exposed by the api."""
+
     id: Optional[str] = None
     summary: Optional[str] = None
     description: Optional[str] = None
@@ -283,6 +301,7 @@ class Process(BaseModel):
 
 class Error(BaseModel):
     """Model to describe the information of a captured exception by the api."""
+
     id: Optional[str] = Field(
         None,
         description="A back-end MAY add a unique identifier to the error response to be able to log and track errors with further non-disclosable details. A client could communicate this id to a back-end provider to get further information.",
@@ -299,6 +318,7 @@ class Error(BaseModel):
 
 class FileFormat(BaseModel):
     """Model to describe a file format supported by the processing backend."""
+
     title: str
     description: Optional[str] = None
     gis_data_types: list[GisDataType] = Field(
@@ -320,6 +340,7 @@ class FileFormat(BaseModel):
 
 class Storage(BaseModel):
     """Model to describe the storage resources available to a given user."""
+
     free: int = Field(
         ...,
         description="Free storage space in bytes, which is still available to the user. Effectively, this is the disk quota minus the used space by the user, e.g. user-uploaded files and job results.",
@@ -334,6 +355,7 @@ class Storage(BaseModel):
 
 class Version(BaseModel):
     """Model to describe the version of an api that is available."""
+
     url: AnyUrl = Field(
         ...,
         description="*Absolute* URLs to the service.",
@@ -344,9 +366,11 @@ class Version(BaseModel):
         ...,
         description="Version number of the openEO specification this back-end implements.",
     )
-    
+
+
 class StacProvider(BaseModel):
     """Model to describe the provider of a given stac resource."""
+
     name: str = Field(
         ...,
         description="The name of the organization or the individual.",
@@ -385,12 +409,14 @@ class StacProvider(BaseModel):
 
 class Dimension(BaseModel):
     """Model to describe the dimension of some data."""
+
     type: DinensionEnum = Field(..., description="Type of the dimension.")
     description: Optional[str] = None
 
 
 class Spatial(BaseModel):
     """Model to describe the spatial extent of a collection."""
+
     bbox: Optional[list[list[float]]] = Field(
         None,
         description=(
@@ -406,6 +432,7 @@ class Spatial(BaseModel):
 
 class Temporal(BaseModel):
     """Model to describe the temporal range of a collection."""
+
     interval: Optional[list[list[Any]]] = Field(
         None,
         description=(
@@ -421,6 +448,7 @@ class Temporal(BaseModel):
 
 class Extent(BaseModel):
     """Model to describe the complete spatiotemporal extent of a collection."""
+
     spatial: Spatial = Field(
         ...,
         description="The *potential* spatial extents of the features in the collection.",
