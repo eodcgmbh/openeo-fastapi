@@ -289,6 +289,7 @@ def mock_engine(postgresql):
     from alembic import command
     from alembic.config import Config
 
+    import openeo_fastapi.client.psql.engine as engine_module
     from openeo_fastapi.client.psql.engine import get_engine
 
     os.chdir(Path(ALEMBIC_DIR))
@@ -305,6 +306,7 @@ def mock_engine(postgresql):
     command.revision(alembic_cfg, f"openeo-fastapi-{__version__}", autogenerate=True)
     command.upgrade(alembic_cfg, "head")
 
+    engine_module._engine = None
     engine = get_engine()
 
     return engine
