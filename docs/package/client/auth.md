@@ -80,7 +80,7 @@ Validate the authorisation header and create a new user. This method can be over
 **Arguments**:
 
 - `authorization` _str_ - The authorisation header content from the request headers.
-  
+
 
 **Returns**:
 
@@ -140,14 +140,13 @@ Try to validate the token against the give OIDC provider.
 **Arguments**:
 
 - `token` _str_ - The OpenEO token to be parsed and validated against the oidc provider.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
   The JSON as dictionary from _validate_oidc_token.
-

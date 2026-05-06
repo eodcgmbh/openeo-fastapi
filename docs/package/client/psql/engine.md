@@ -63,7 +63,7 @@ Get the relevant entry for a given model using the provided primary key value.
 
 - `get_model` _BaseModel_ - The model that to get from the database.
 - `primary_key` _Any_ - The primary key of the model instance to get.
-  
+
 
 **Returns**:
 
@@ -82,7 +82,7 @@ Modify the relevant entries for a given model instance
 **Arguments**:
 
 - `modify_object` _BaseModel_ - An instance of a pydantic model that reflects a change to make in the database.
-  
+
 
 **Returns**:
 
@@ -102,7 +102,7 @@ Delete the values from a pydantic model in the database using its respective obj
 
 - `delete_model` _BaseModel_ - The model that to delete from the database.
 - `primary_key` _Any_ - The primary key of the model instance to delete.
-  
+
 
 **Returns**:
 
@@ -123,9 +123,8 @@ Perform a list operation and return the first found instance.
 
 - `get_model` _BaseModel_ - The model that to get from the database.
 - `filter_with` _Filter_ - Filter of a Key/Value pair to apply to the model.
-  
+
 
 **Returns**:
 
   Union[None, BaseModel]: Return the model if found, else return None.
-

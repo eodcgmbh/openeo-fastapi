@@ -1,5 +1,7 @@
 """Standardisation of common functionality to interact with the ORMs and the database.
 """
+from typing import Any, Union
+
 from pydantic import BaseModel
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker

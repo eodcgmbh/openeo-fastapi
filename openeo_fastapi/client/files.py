@@ -3,8 +3,9 @@
 Classes:
     - FilesRegister: Framework for defining and extending the logic for working with Files.
 """
-from fastapi import Depends, HTTPException
 from typing import Optional
+
+from fastapi import Depends, HTTPException
 
 from openeo_fastapi.api.types import Endpoint, Error
 from openeo_fastapi.client.auth import Authenticator, User

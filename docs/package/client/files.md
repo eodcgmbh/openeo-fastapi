@@ -39,7 +39,7 @@ List the  files in the user workspace.
 
 - `limit` _int_ - The limit to apply to the length of the list.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
@@ -59,7 +59,7 @@ Download the file from the user's workspace.
 
 - `path` _str_ - The path leading to the file.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
@@ -79,7 +79,7 @@ Upload the file from the user's workspace.
 
 - `path` _str_ - The path leading to the file.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
@@ -99,9 +99,8 @@ Delete the file from the user's workspace.
 
 - `path` _str_ - The path leading to the file.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-

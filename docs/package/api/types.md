@@ -304,4 +304,3 @@ class Extent(BaseModel)
 ```
 
 Model to describe the complete spatiotemporal extent of a collection.
-

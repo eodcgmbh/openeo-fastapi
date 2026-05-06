@@ -6,8 +6,10 @@ from sqlalchemy.orm import declarative_base
 
 BASE = declarative_base()
 
+
 class DataBaseSettings(BaseSettings):
     """Appliction DataBase settings to interact with PSQL."""
+
     POSTGRES_USER: SecretStr
     """The name of the postgres user."""
     POSTGRES_PASSWORD: SecretStr

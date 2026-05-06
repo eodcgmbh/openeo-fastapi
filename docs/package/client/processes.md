@@ -124,7 +124,7 @@ Lists all of a user's user-defined process graphs from the back-end.
 
 - `limit` _int_ - The limit to apply to the length of the list.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Returns**:
 
@@ -146,12 +146,12 @@ Lists all information about a user-defined process, including its process graph.
 
 - `process_graph_id` _str_ - The process graph id.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
@@ -174,12 +174,12 @@ Stores a provided user-defined process with process graph that can be reused in 
 - `process_graph_id` _str_ - The process graph id.
 - `body` _ProcessGraphWithMetadata_ - The ProcessGraphWithMetadata should be used to create the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
@@ -200,12 +200,12 @@ Deletes the data related to this user-defined process, including its process gra
 
 - `process_graph_id` _str_ - The process graph id.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
@@ -229,14 +229,13 @@ Validates the ProcessGraphWithMetadata that is provided by the user.
 - `process_graph_id` _str_ - The process graph id.
 - `body` _ProcessGraphWithMetadata_ - The ProcessGraphWithMetadata should be used to validate the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
 - `ValidationPostResponse` - A response to list an errors that where encountered when .
-

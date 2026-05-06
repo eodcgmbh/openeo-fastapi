@@ -118,7 +118,7 @@ List the user's most recent BatchJobs.
 
 - `limit` _int_ - The limit to apply to the length of the list.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Returns**:
 
@@ -139,7 +139,7 @@ Create a new BatchJob.
 
 - `body` _JobsRequest_ - The Job Request that should be used to create the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Returns**:
 
@@ -163,12 +163,12 @@ Update the specified BatchJob with the contents of the provided JobsRequest.
 - `job_id` _JobId_ - A UUID job id.
 - `body` _JobsRequest_ - The Job Request that should be used to update the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
@@ -188,12 +188,12 @@ Get and return the metadata for the BatchJob.
 
 - `job_id` _JobId_ - A UUID job id.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-  
+
 
 **Returns**:
 
@@ -215,7 +215,7 @@ Delete the BatchJob.
 - `job_id` _JobId_ - A UUID job id.
 - `body` _JobsRequest_ - The Job Request that should be used to create the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
@@ -236,7 +236,7 @@ Estimate the cost for the BatchJob.
 - `job_id` _JobId_ - A UUID job id.
 - `body` _JobsRequest_ - The Job Request that should be used to create the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
@@ -257,7 +257,7 @@ Get the logs for the BatchJob.
 - `job_id` _JobId_ - A UUID job id.
 - `body` _JobsRequest_ - The Job Request that should be used to create the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
@@ -279,7 +279,7 @@ Get the results for the BatchJob.
 - `job_id` _JobId_ - A UUID job id.
 - `body` _JobsRequest_ - The Job Request that should be used to create the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
@@ -300,7 +300,7 @@ Start the processing for the BatchJob.
 - `job_id` _JobId_ - A UUID job id.
 - `body` _JobsRequest_ - The Job Request that should be used to create the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
@@ -321,7 +321,7 @@ Cancel the processing of the BatchJob.
 
 - `job_id` _JobId_ - A UUID job id.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
@@ -343,7 +343,7 @@ Delete the BatchJob from the database.
 - `job_id` _JobId_ - A UUID job id.
 - `body` _JobsRequest_ - The Job Request that should be used to create the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
@@ -364,9 +364,8 @@ Start the processing of a synchronous Job.
 
 - `body` _JobsRequest_ - The Job Request that should be used to create the new BatchJob.
 - `user` _User_ - The User returned from the Authenticator.
-  
+
 
 **Raises**:
 
 - `HTTPException` - Raises an exception with relevant status code and descriptive message of failure.
-

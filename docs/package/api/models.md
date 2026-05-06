@@ -213,4 +213,3 @@ class FileFormatsGetResponse(BaseModel)
 ```
 
 Reponse model for GET (/file_formats).
-
