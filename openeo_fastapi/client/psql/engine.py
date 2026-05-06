@@ -3,9 +3,12 @@
 from pydantic import BaseModel
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
-from typing import Any, Union                                                                                                                                                    
+from typing import Any, Union
 
 from openeo_fastapi.client.psql.settings import DataBaseSettings
+
+_engine = None
+
 
 # TODO Refactor this module to be a class that can work with different SQL Backends.
 def get_engine():
@@ -14,9 +17,13 @@ def get_engine():
     Returns:
         Engine: The engine instance that was created.
     """
+    global _engine
+    if _engine is not None:
+        return _engine
+
     db_settings = DataBaseSettings()
 
-    engine = create_engine(
+    _engine = create_engine(
         url="postgresql://{}:{}@{}:{}/{}".format(
             db_settings.POSTGRES_USER._secret_value,
             db_settings.POSTGRES_PASSWORD._secret_value,
@@ -25,7 +32,7 @@ def get_engine():
             db_settings.POSTGRES_DB._secret_value,
         )
     )
-    return engine
+    return _engine
 
 
 class Filter(BaseModel):
