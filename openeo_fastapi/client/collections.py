@@ -3,12 +3,17 @@
 Classes:
     - CollectionRegister: Framework for defining and extending the logic for working with Collections.
 """
+import logging
+
 import aiohttp
 from fastapi import HTTPException
+from pydantic import ValidationError
 
 from openeo_fastapi.api.models import Collection, Collections
 from openeo_fastapi.api.types import Endpoint, Error
 from openeo_fastapi.client.register import EndpointRegister
+
+logger = logging.getLogger(__name__)
 
 COLLECTIONS_ENDPOINTS = [
     Endpoint(
@@ -111,22 +116,29 @@ class CollectionRegister(EndpointRegister):
         path = "collections"
         resp = await self._proxy_request(path)
 
-        if resp:
-            collections_list = [
-                collection
-                for collection in resp["collections"]
-                if (
-                    not self.settings.STAC_COLLECTIONS_WHITELIST
-                    or collection["id"] in self.settings.STAC_COLLECTIONS_WHITELIST
-                )
-            ]
-
-            return Collections(collections=collections_list, links=resp["links"])
-        else:
+        if not resp:
             raise HTTPException(
                 status_code=404,
                 detail=Error(code="NotFound", message="No Collections found."),
             )
+
+        valid_collections = []
+        for collection in resp["collections"]:
+            if (
+                self.settings.STAC_COLLECTIONS_WHITELIST
+                and collection.get("id") not in self.settings.STAC_COLLECTIONS_WHITELIST
+            ):
+                continue
+            try:
+                valid_collections.append(Collection(**collection))
+            except (ValidationError, Exception) as e:
+                logger.warning(
+                    "Dropping collection %r from response due to validation error: %s",
+                    collection.get("id"),
+                    e,
+                )
+
+        return Collections(collections=valid_collections, links=resp["links"])
 
     async def get_collection_items(self, collection_id):
         """
