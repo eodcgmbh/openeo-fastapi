@@ -204,7 +204,11 @@ class IssuerHandler(BaseModel):
         if rsa_key:
             # Validate the token and verify claims
             payload = jwt.decode(
-                token, rsa_key, algorithms=ALGORITHMS, issuer=self.issuer_uri
+                token,
+                rsa_key,
+                algorithms=ALGORITHMS,
+                issuer=self.issuer_uri,
+                options={"verify_aud": False},
             )
             return payload
 

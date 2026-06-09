@@ -15,7 +15,9 @@ async def test_get_collections(collections_core, collections):
 
         data = await collections_core.get_collections()
 
-        assert data["collections"] == [Collection(**c) for c in collections["collections"]]
+        assert data["collections"] == [
+            Collection(**c) for c in collections["collections"]
+        ]
         m.assert_called_once_with(get_collections_url)
 
 
