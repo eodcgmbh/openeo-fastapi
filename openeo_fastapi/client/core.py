@@ -92,7 +92,7 @@ class OpenEOCore:
         """
         registers = [self.collections, self.files, self.jobs, self.processes]
 
-        endpoints = self.endpoints
+        endpoints = list(self.endpoints)
         for register in registers:
             if register:
                 endpoints.extend(register.endpoints)
