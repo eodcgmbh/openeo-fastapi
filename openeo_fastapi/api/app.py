@@ -2,12 +2,24 @@
 """
 import attr
 from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.responses import JSONResponse, RedirectResponse
 
 from openeo_fastapi.api import models
+from openeo_fastapi.api.types import Error
 from openeo_fastapi.client.auth import Authenticator
 
 HIDDEN_PATHS = ["/openapi.json", "/docs", "/docs/oauth2-redirect", "/redoc"]
+
+
+def to_openeo_error(detail, default_code: str) -> dict:
+    """Normalize an exception detail into an openEO {code, message} error object. default_code is only used when detail is a plain string."""
+    if isinstance(detail, Error):
+        return detail.dict(exclude_none=True)
+    if isinstance(detail, dict) and "code" in detail and "message" in detail:
+        return detail
+    return Error(code=default_code, message=str(detail)).dict(exclude_none=True)
 
 
 @attr.define
@@ -471,12 +483,55 @@ class OpenEOApi:
             "allow_credentials": "true",
             "allow_methods": "*",
         }
-        from fastapi.encoders import jsonable_encoder
+        if exception.headers:
+            exception_headers.update(exception.headers)
+
+        # A plain string detail means Starlette raised this, not app code.
+        starlette_native_codes = {404: "NotFound", 405: "MethodNotAllowed"}
+        default_code = starlette_native_codes.get(exception.status_code, "Internal")
 
         return JSONResponse(
             headers=exception_headers,
             status_code=exception.status_code,
-            content=jsonable_encoder(exception.detail),
+            content=to_openeo_error(exception.detail, default_code),
+        )
+
+    def request_validation_handler(self, request, exception):
+        """Serialize FastAPI request-validation failures (422) as an openEO error."""
+
+        exception_headers = {
+            "allow_origin": "*",
+            "allow_credentials": "true",
+            "allow_methods": "*",
+        }
+        messages = []
+        for error in exception.errors():
+            loc = " -> ".join(str(part) for part in error.get("loc", ()))
+            messages.append(f"{loc}: {error.get('msg', '')}")
+
+        return JSONResponse(
+            headers=exception_headers,
+            status_code=422,
+            content=to_openeo_error(
+                "The request is invalid: " + " | ".join(messages), "InvalidRequest"
+            ),
+        )
+
+    def server_error_handler(self, request, exception):
+        """Serialize unhandled exceptions as an openEO error instead of plain text."""
+
+        exception_headers = {
+            "allow_origin": "*",
+            "allow_credentials": "true",
+            "allow_methods": "*",
+        }
+
+        return JSONResponse(
+            headers=exception_headers,
+            status_code=500,
+            content=to_openeo_error(
+                "Server error: An internal server error occurred.", "Internal"
+            ),
         )
 
     def __attrs_post_init__(self):
@@ -488,3 +543,11 @@ class OpenEOApi:
         self.register_get_capabilities()
         self.app.include_router(router=self.router)
         self.app.add_exception_handler(HTTPException, self.http_exception_handler)
+        # starlette.exceptions.HTTPException is not a subclass of fastapi.HTTPException.
+        self.app.add_exception_handler(
+            StarletteHTTPException, self.http_exception_handler
+        )
+        self.app.add_exception_handler(
+            RequestValidationError, self.request_validation_handler
+        )
+        self.app.add_exception_handler(Exception, self.server_error_handler)

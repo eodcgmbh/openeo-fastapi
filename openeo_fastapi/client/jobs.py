@@ -233,7 +233,10 @@ class JobsRegister(EndpointRegister):
         if not modified:
             raise HTTPException(
                 status_code=500,
-                detail="Server could not update the the job with the new process graph.",
+                detail=Error(
+                    code="Internal",
+                    message="Server could not update the the job with the new process graph.",
+                ),
             )
 
         return Response(
@@ -256,7 +259,10 @@ class JobsRegister(EndpointRegister):
         job = get(get_model=Job, primary_key=job_id)
         if not job:
             raise HTTPException(
-                status_code=404, detail=f"No job found with id: {job_id}"
+                status_code=404,
+                detail=Error(
+                    code="JobNotFound", message=f"No job found with id: {job_id}"
+                ),
             )
 
         return BatchJob(id=job.job_id.__str__(), **job.dict())

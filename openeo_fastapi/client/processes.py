@@ -190,7 +190,10 @@ class ProcessRegister(EndpointRegister):
         if not graph:
             raise HTTPException(
                 status_code=404,
-                detail=f"No user defined process graph found with id: {process_graph_id}",
+                detail=Error(
+                    code="ProcessGraphNotFound",
+                    message=f"No user defined process graph found with id: {process_graph_id}",
+                ),
             )
 
         return ProcessGraphWithMetadata(**graph.dict())
