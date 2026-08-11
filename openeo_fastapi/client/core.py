@@ -108,6 +108,7 @@ class OpenEOCore:
             id=self._id,
             title=self.settings.API_TITLE,
             stac_version=self.settings.STAC_VERSION,
+            type="Catalog"
             api_version=self.settings.OPENEO_VERSION,
             description=self.settings.API_DESCRIPTION,
             backend_version=self.settings.OPENEO_VERSION,
