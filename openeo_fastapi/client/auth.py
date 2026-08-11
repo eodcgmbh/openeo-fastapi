@@ -120,9 +120,6 @@ class AuthToken(BaseModel):
     def from_token(cls, token: str):
         """Takes the openeo format token, splits it into the component parts, and returns an Auth token."""
 
-        if token is None:
-            raise ValueError("Token is required but none was provided.")
-
         if "Bearer " in token:
             token = token.removeprefix("Bearer ")
 
@@ -307,14 +304,6 @@ class IssuerHandler(BaseModel):
             The JSON as dictionary from _validate_oidc_token.
         """
         # TODO Handle validation exceptions
-        if token is None:
-            raise HTTPException(
-                status_code=401,
-                detail=Error(
-                    code="AuthenticationRequired",
-                    message="Authentication is required, but no valid token was provided.",
-                ),
-            )
         parsed_token = AuthToken.from_token(token)
 
         if parsed_token.method.value == AuthMethod.OIDC.value:
