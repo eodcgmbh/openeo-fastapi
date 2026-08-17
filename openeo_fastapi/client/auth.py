@@ -16,6 +16,7 @@ from typing import List
 import requests
 from fastapi import Header, HTTPException
 from jose import jwt
+from jose.exceptions import JWTError
 from pydantic import BaseModel, ValidationError, validator
 
 from openeo_fastapi.api.types import Error
@@ -58,7 +59,7 @@ class Authenticator(ABC):
     # This will be different for different backends, so just put it as ABC for now. We might be able to define this if we want
     # to specify an auth config when initialising the backend.
     @abstractmethod
-    def validate(authorization: str = Header()):
+    def validate(authorization: str = Header(default=None)):
         """Validate the authorisation header and create a new user. This method can be overwritten as needed.
 
         Args:
@@ -67,6 +68,15 @@ class Authenticator(ABC):
         Returns:
             User: The authenticated user.
         """
+        if not authorization:
+            raise HTTPException(
+                status_code=401,
+                detail=Error(
+                    code="TokenInvalid",
+                    message="No authorization header provided.",
+                ),
+            )
+
         settings = AppSettings()
 
         policies = None
@@ -249,7 +259,17 @@ class IssuerHandler(BaseModel):
 
         jwks = jwks_resp.json()["keys"]
 
-        if self._validate_token(token, jwks):
+        try:
+            token_valid = self._validate_token(token, jwks)
+        except JWTError:
+            raise HTTPException(
+                status_code=401,
+                detail=Error(
+                    code="TokenInvalid", message=f"The provided token is not valid."
+                ),
+            )
+
+        if token_valid:
             # We can see if the user can be authenticated.
             userinfo_uri = issuer_oidc_config.json()[OIDC_USERINFO]
 
@@ -275,7 +295,7 @@ class IssuerHandler(BaseModel):
                             return userinfo
 
                 raise HTTPException(
-                    status_code=500,
+                    status_code=401,
                     detail=Error(
                         code="TokenInvalid",
                         message=f"No existing access policy applies to user. Contact backend provider.",
@@ -285,7 +305,7 @@ class IssuerHandler(BaseModel):
             return userinfo
 
         raise HTTPException(
-            status_code=500,
+            status_code=401,
             detail=Error(
                 code="TokenInvalid", message=f"The provided token is not valid."
             ),
@@ -303,14 +323,29 @@ class IssuerHandler(BaseModel):
         Returns:
             The JSON as dictionary from _validate_oidc_token.
         """
-        # TODO Handle validation exceptions
-        parsed_token = AuthToken.from_token(token)
+        if not token:
+            raise HTTPException(
+                status_code=401,
+                detail=Error(
+                    code="TokenInvalid", message="No authorization token provided."
+                ),
+            )
+
+        try:
+            parsed_token = AuthToken.from_token(token)
+        except ValidationError:
+            raise HTTPException(
+                status_code=401,
+                detail=Error(
+                    code="TokenInvalid", message=f"The provided token is not valid."
+                ),
+            )
 
         if parsed_token.method.value == AuthMethod.OIDC.value:
             return self._authenticate_oidc_user(parsed_token.token)
 
         raise HTTPException(
-            status_code=500,
+            status_code=401,
             detail=Error(
                 code="TokenCantBeValidated",
                 message=f"The provided token cannot be validated.",

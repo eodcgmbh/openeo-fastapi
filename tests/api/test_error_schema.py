@@ -64,16 +64,67 @@ def test_wrong_method_returns_openeo_error(core_api):
     assert body["message"]
 
 
-def test_validation_error_returns_openeo_error(core_api):
+def test_validation_error_returns_openeo_error(
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    mocked_validate_token,
+    core_api,
+):
     test_client = TestClient(core_api.app)
 
     response = test_client.post(
-        "/openeo/1.1.0/jobs", json={"process": "not-a-dict"}
+        "/openeo/1.1.0/jobs",
+        json={"process": "not-a-dict"},
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
     )
 
     assert response.status_code == 422
     body = response.json()
     assert body["code"] == "InvalidRequest"
+    assert body["message"]
+
+
+def test_missing_authorization_header_returns_401(core_api):
+    test_client = TestClient(core_api.app)
+
+    response = test_client.get("/openeo/1.1.0/jobs")
+
+    assert response.status_code == 401
+    body = response.json()
+    assert body["code"] == "TokenInvalid"
+    assert body["message"]
+
+
+def test_malformed_authorization_token_returns_401(core_api):
+    test_client = TestClient(core_api.app)
+
+    response = test_client.get(
+        "/openeo/1.1.0/jobs", headers={"Authorization": "Bearer garbage"}
+    )
+
+    assert response.status_code == 401
+    body = response.json()
+    assert body["code"] == "TokenInvalid"
+    assert body["message"]
+
+
+def test_invalid_oidc_token_returns_401(
+    mocked_oidc_config,
+    mocked_oidc_userinfo,
+    mocked_get_oidc_jwks,
+    core_api,
+):
+    test_client = TestClient(core_api.app)
+
+    response = test_client.get(
+        "/openeo/1.1.0/jobs",
+        headers={"Authorization": "Bearer oidc/egi/not-real"},
+    )
+
+    assert response.status_code == 401
+    body = response.json()
+    assert body["code"] == "TokenInvalid"
     assert body["message"]
 
 

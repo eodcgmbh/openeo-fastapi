@@ -124,15 +124,17 @@ def test_issuer_handler_validate_basic_token(
     mocked_validate_token,
     mocked_issuer,
 ):
-    with pytest.raises(HTTPException):
+    with pytest.raises(HTTPException) as exc_info:
         mocked_issuer.validate_token(token=BASIC_TOKEN_EXAMPLE)
+    assert exc_info.value.status_code == 401
 
 
 def test_issuer_handler_validate_broken_token(
     mocked_oidc_config, mocked_oidc_userinfo, mocked_issuer
 ):
-    with pytest.raises(ValidationError):
+    with pytest.raises(HTTPException) as exc_info:
         mocked_issuer.validate_token(token=INVALID_TOKEN_EXAMPLE_1)
+    assert exc_info.value.status_code == 401
 
 
 def test_validate_token(mocked_oidc_token, mocked_oidc_jwks):
