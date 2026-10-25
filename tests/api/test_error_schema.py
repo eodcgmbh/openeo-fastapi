@@ -16,7 +16,7 @@ def test_to_openeo_error_wraps_string_detail():
 
 def test_to_openeo_error_preserves_error_object():
     error = Error(code="CustomCode", message="A message")
-    assert to_openeo_error(error, "SomeDefault") == error.dict(exclude_none=True)
+    assert to_openeo_error(error, "SomeDefault") == error.model_dump(exclude_none=True)
 
 
 def test_to_openeo_error_preserves_code_message_dict():

@@ -69,7 +69,7 @@ class CollectionRegister(EndpointRegister):
             The response dictionary from the request.
         """
         async with aiohttp.ClientSession() as client:
-            async with client.get(self.settings.STAC_API_URL + path) as response:
+            async with client.get(f"{self.settings.STAC_API_URL}{path}") as response:
                 resp = await response.json()
                 if response.status == 200:
                     return resp

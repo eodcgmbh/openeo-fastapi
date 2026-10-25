@@ -16,10 +16,10 @@ HIDDEN_PATHS = ["/openapi.json", "/docs", "/docs/oauth2-redirect", "/redoc"]
 def to_openeo_error(detail, default_code: str) -> dict:
     """Normalize an exception detail into an openEO {code, message} error object. default_code is only used when detail is a plain string."""
     if isinstance(detail, Error):
-        return detail.dict(exclude_none=True)
+        return detail.model_dump(exclude_none=True)
     if isinstance(detail, dict) and "code" in detail and "message" in detail:
         return detail
-    return Error(code=default_code, message=str(detail)).dict(exclude_none=True)
+    return Error(code=default_code, message=str(detail)).model_dump(exclude_none=True)
 
 
 @attr.define

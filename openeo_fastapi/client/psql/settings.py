@@ -1,7 +1,8 @@
 """Defining the settings to be used at the application layer of the API for database interaction."""
 from pathlib import Path
 
-from pydantic import BaseSettings, SecretStr
+from pydantic import SecretStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.orm import declarative_base
 
 BASE = declarative_base()
@@ -9,6 +10,8 @@ BASE = declarative_base()
 
 class DataBaseSettings(BaseSettings):
     """Appliction DataBase settings to interact with PSQL."""
+
+    model_config = SettingsConfigDict(extra="ignore")
 
     POSTGRES_USER: SecretStr
     """The name of the postgres user."""

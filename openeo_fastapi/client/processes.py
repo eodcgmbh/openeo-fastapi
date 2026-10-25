@@ -13,7 +13,7 @@ import openeo_processes_dask_slim.specs
 from fastapi import Depends, HTTPException, Response
 from openeo_pg_parser_networkx import Process as pgProcess
 from openeo_pg_parser_networkx import ProcessRegistry
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.exc import IntegrityError
 
 from openeo_fastapi.api.models import (
@@ -64,12 +64,11 @@ class UserDefinedProcessGraph(BaseModel):
     parameters: Optional[list] = None
     returns: Optional[dict] = None
 
-    class Config:
-        """Pydantic model class config."""
-
-        orm_mode = True
-        allow_population_by_field_name = True
-        extra = "ignore"
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        extra="ignore",
+    )
 
     @classmethod
     def get_orm(cls):
@@ -127,7 +126,7 @@ class ProcessRegister(EndpointRegister):
             list[Process]: A list of Processes.
         """
         return [
-            Process.parse_obj(process.spec)
+            Process.model_validate(process.spec)
             for process in self.process_registry["predefined", None].values()
         ]
 
@@ -162,7 +161,7 @@ class ProcessRegister(EndpointRegister):
 
         udp_list = _list(list_model=UserDefinedProcessGraph, filter_with=_filter)
 
-        udps = [ProcessGraphWithMetadata(**graph.dict()) for graph in udp_list]
+        udps = [ProcessGraphWithMetadata(**graph.model_dump()) for graph in udp_list]
 
         return ProcessGraphsGetResponse(processes=udps, links=self.links)
 
@@ -196,7 +195,7 @@ class ProcessRegister(EndpointRegister):
                 ),
             )
 
-        return ProcessGraphWithMetadata(**graph.dict())
+        return ProcessGraphWithMetadata(**graph.model_dump())
 
     def put_user_process_graph(
         self,
@@ -313,7 +312,7 @@ class ProcessRegister(EndpointRegister):
                 get_model=UserDefinedProcessGraph,
                 primary_key=[process_id, namespace],
             )
-            return udp.dict()
+            return udp.model_dump()
 
         try:
             OpenEOProcessGraph(pg_data=body.process_graph)
@@ -328,6 +327,6 @@ class ProcessRegister(EndpointRegister):
                 status_code=201,
                 content=ValidationPostResponse(
                     errors=[Error(code="Graph validation failed", message=f"{str(e)}")]
-                ).json(),
+                ).model_dump_json(),
             )
         return ValidationPostResponse(errors=[])

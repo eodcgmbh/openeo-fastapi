@@ -2,7 +2,8 @@
 
 from typing import Any, Optional
 
-from pydantic import BaseSettings, HttpUrl, validator
+from pydantic import HttpUrl, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class AppSettings(BaseSettings):
@@ -18,7 +19,7 @@ class AppSettings(BaseSettings):
     """The API description to be provided to FastAPI."""
     OPENEO_VERSION: str = "1.1.0"
     """The OpenEO Api specification version supported in this deployment of the API."""
-    OPENEO_PREFIX = f"/openeo/{OPENEO_VERSION}"
+    OPENEO_PREFIX: str = f"/openeo/{OPENEO_VERSION}"
     """The OpenEO prefix to be used when creating the endpoint urls."""
     OIDC_PROVIDER_TITLE: Optional[str] = "EGI Check-in"
     """The provider title that gets shown when authenticating in the front-end."""
@@ -28,7 +29,7 @@ class AppSettings(BaseSettings):
     """The policies to be used for authenticated users with the backend, if not set, any usser with a valid token from the issuer is accepted."""
     OIDC_ORGANISATION: str
     """The abbreviation of the OIDC provider's organisation name, e.g. egi."""
-    OIDC_POLICIES: Optional[list[str]]
+    OIDC_POLICIES: Optional[list[str]] = None
     """The OIDC policies to check against when authorizing a user. If not provided, all users with a valid token from the issuer will be admitted.
 
     "&&" Is used to denote the addition of another policy.
@@ -52,23 +53,33 @@ class AppSettings(BaseSettings):
     """The STAC Version that is being supported by this deployments data discovery endpoints."""
     STAC_API_URL: HttpUrl
     """The STAC URL of the catalogue that the application deployment will proxy to."""
-    STAC_COLLECTIONS_WHITELIST: Optional[list[str]]
+    STAC_COLLECTIONS_WHITELIST: Optional[list[str]] = None
     """The collection ids to filter by when proxying to the Stac catalogue."""
 
-    @validator("STAC_API_URL")
-    def ensure_endswith_slash(cls, v: str) -> str:
+    model_config = SettingsConfigDict(extra="ignore")
+
+    @field_validator("STAC_API_URL", mode="before")
+    @classmethod
+    def ensure_endswith_slash(cls, v: Any) -> Any:
         """Ensure the STAC_API_URL ends with a trailing slash."""
-        if v.endswith("/"):
-            return v
-        return v.__add__("/")
+        url = str(v)
+        if url.endswith("/"):
+            return url
+        return url + "/"
 
-    @validator("OIDC_POLICIES", pre=True)
-    def split_oidc_policies_str_to_list(cls, v: list) -> str:
-        """Ensure the OIDC_POLICIES are split and formatted correctly."""
-
+    @field_validator("STAC_COLLECTIONS_WHITELIST", mode="before")
+    @classmethod
+    def split_stac_whitelist(cls, v: Any) -> Any:
+        """Ensure STAC_COLLECTIONS_WHITELIST from comma-separated env var is converted to list."""
         if isinstance(v, str):
-            # We shouldn't have a string here. But in some cases where the settings where taken from code and not an env variable
-            # the config function parse_env_var will not execute. Reclean the value here if that is the case.
+            return [str(x).strip() for x in v.split(",") if x.strip() != ""]
+        return v
+
+    @field_validator("OIDC_POLICIES", mode="before")
+    @classmethod
+    def split_oidc_policies_str_to_list(cls, v: Any) -> Any:
+        """Ensure the OIDC_POLICIES are split and formatted correctly."""
+        if isinstance(v, str):
             v = [str(x) for x in v.split("&&") if x != ""]
 
         if not v:
@@ -77,7 +88,6 @@ class AppSettings(BaseSettings):
         cleaned_policies = []
         for policy in v:
             try:
-                # TODO Could add a class to handle each oidc policy and return that list instead of just checking value unpacking.
                 no_spaces = policy.replace(" ", "")
                 key, value = no_spaces.split(",")
             except ValueError:
@@ -87,15 +97,3 @@ class AppSettings(BaseSettings):
 
             cleaned_policies.append(no_spaces)
         return cleaned_policies
-
-    class Config:
-        """Pydantic model class config."""
-
-        @classmethod
-        def parse_env_var(cls, field_name: str, raw_val: str) -> Any:
-            """Parse any variables and handle and csv lists into python list type."""
-            if field_name == "STAC_COLLECTIONS_WHITELIST":
-                return [str(x) for x in raw_val.split(",")]
-            elif field_name == "OIDC_POLICIES":
-                return [str(x) for x in raw_val.split("&&") if x != ""]
-            return cls.json_loads(raw_val)

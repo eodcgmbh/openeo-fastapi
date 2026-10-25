@@ -51,6 +51,7 @@ def test_create_job(
     job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
 
     response = post_request(test_app, f"{app_settings.OPENEO_PREFIX}/jobs", job_post)
+    print("DEBUG 422:", response.json())
 
     assert response.status_code == 201
     assert "access-control-expose-headers" in response.headers.keys()
@@ -74,6 +75,7 @@ def test_update_job(
     job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
 
     response = post_request(test_app, f"{app_settings.OPENEO_PREFIX}/jobs", job_post)
+    print("DEBUG 422:", response.json())
 
     job_id = response.headers["openeo-identifier"]
 
@@ -111,6 +113,7 @@ def test_get_job(
     job_post["process"]["id"] = uuid.uuid4().hex[:16].upper()
 
     response = post_request(test_app, f"{app_settings.OPENEO_PREFIX}/jobs", job_post)
+    print("DEBUG 422:", response.json())
 
     job_id = response.headers["openeo-identifier"]
 

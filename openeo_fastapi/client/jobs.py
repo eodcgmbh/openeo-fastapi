@@ -10,7 +10,7 @@ from typing import Any, Optional
 
 from fastapi import Depends, Response
 from fastapi.exceptions import HTTPException
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.exc import IntegrityError
 
 from openeo_fastapi.api.models import (
@@ -82,12 +82,11 @@ class Job(BaseModel):
     description: Optional[str]
     synchronous: bool = False
 
-    class Config:
-        """Pydantic model class config."""
-
-        orm_mode = True
-        arbitrary_types_allowed = True
-        extra = Extra.ignore
+    model_config = ConfigDict(
+        from_attributes=True,
+        arbitrary_types_allowed=True,
+        extra="ignore",
+    )
 
     @classmethod
     def get_orm(cls):
@@ -99,11 +98,11 @@ class Job(BaseModel):
 
         if type(patch) not in [Job, JobsRequest]:
             raise TypeError("Job only updates from a Job or JobRequest model.")
-        for k, v in patch.dict().items():
+        for k, v in patch.model_dump().items():
             if v:
-                if k in self.__fields__.keys():
-                    if not (self.dict()[k] == v):
-                        self.__setattr__(k, patch.dict()[k])
+                if k in self.model_fields.keys():
+                    if not (self.model_dump()[k] == v):
+                        self.__setattr__(k, patch.model_dump()[k])
         return self
 
 
@@ -149,7 +148,7 @@ class JobsRegister(EndpointRegister):
         job_list = _list(list_model=Job, filter_with=_filter)
 
         # TODO BatchJob and Job describe the same thing, these want to be harmonized.
-        jobs = [BatchJob(**job.dict()) for job in job_list if not job.synchronous]
+        jobs = [BatchJob(**job.model_dump()) for job in job_list if not job.synchronous]
 
         return JobsGetResponse(jobs=jobs, links=[])
 
@@ -265,7 +264,7 @@ class JobsRegister(EndpointRegister):
                 ),
             )
 
-        return BatchJob(id=job.job_id.__str__(), **job.dict())
+        return BatchJob(id=job.job_id.__str__(), **job.model_dump())
 
     def delete_job(
         self, job_id: uuid.UUID, user: User = Depends(Authenticator.validate)

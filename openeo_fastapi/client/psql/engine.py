@@ -47,7 +47,7 @@ def create(create_object: BaseModel) -> bool:
     """Add the values from a pydantic model to the database using its respective object relational mapping."""
     db = sessionmaker(get_engine())
 
-    orm = create_object.get_orm()(**create_object.dict())
+    orm = create_object.get_orm()(**create_object.model_dump())
 
     with db.begin() as session:
         session.add(orm)
@@ -74,7 +74,7 @@ def get(get_model: BaseModel, primary_key: Any) -> Union[None, BaseModel]:
 
         if not found:
             return None
-        obj = get_model.from_orm(found)
+        obj = get_model.model_validate(found)
     return obj
 
 
@@ -99,7 +99,7 @@ def _list(list_model: BaseModel, filter_with: Filter) -> list[BaseModel]:
                 **{filter_with.column_name: filter_with.value}
             )
         objs = session.scalars(query_statement)
-        found = [list_model.from_orm(obj) for obj in objs]
+        found = [list_model.model_validate(obj) for obj in objs]
     return found
 
 
@@ -115,7 +115,7 @@ def modify(modify_object: BaseModel) -> bool:
     db = sessionmaker(get_engine())
 
     with db.begin() as session:
-        session.merge(modify_object.get_orm()(**modify_object.dict()))
+        session.merge(modify_object.get_orm()(**modify_object.model_dump()))
     return True
 
 
