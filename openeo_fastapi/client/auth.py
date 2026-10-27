@@ -17,7 +17,7 @@ import requests
 from fastapi import Header, HTTPException
 from jose import jwt
 from jose.exceptions import JWTError
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from openeo_fastapi.api.types import Error
 from openeo_fastapi.client.psql.engine import Filter, create, get_first_or_default
