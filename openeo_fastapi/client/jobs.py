@@ -81,7 +81,12 @@ class Job(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     synchronous: bool = False
-    model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True, extra="ignore")
+    # replaces orm_mode = True
+    model_config = ConfigDict(
+        from_attributes=True,
+        arbitrary_types_allowed=True,
+        extra="ignore",
+    )
 
     @classmethod
     def get_orm(cls):
