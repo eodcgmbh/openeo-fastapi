@@ -2,7 +2,8 @@
 
 from typing import Any, Optional
 
-from pydantic import BaseSettings, HttpUrl, validator
+from pydantic import HttpUrl, field_validator
+from pydantic_settings import BaseSettings
 
 
 class AppSettings(BaseSettings):
@@ -18,7 +19,7 @@ class AppSettings(BaseSettings):
     """The API description to be provided to FastAPI."""
     OPENEO_VERSION: str = "1.1.0"
     """The OpenEO Api specification version supported in this deployment of the API."""
-    OPENEO_PREFIX = f"/openeo/{OPENEO_VERSION}"
+    OPENEO_PREFIX: str = f"/openeo/{OPENEO_VERSION}"
     """The OpenEO prefix to be used when creating the endpoint urls."""
     OIDC_PROVIDER_TITLE: Optional[str] = "EGI Check-in"
     """The provider title that gets shown when authenticating in the front-end."""
@@ -28,7 +29,7 @@ class AppSettings(BaseSettings):
     """The policies to be used for authenticated users with the backend, if not set, any usser with a valid token from the issuer is accepted."""
     OIDC_ORGANISATION: str
     """The abbreviation of the OIDC provider's organisation name, e.g. egi."""
-    OIDC_POLICIES: Optional[list[str]]
+    OIDC_POLICIES: Optional[list[str]] = None
     """The OIDC policies to check against when authorizing a user. If not provided, all users with a valid token from the issuer will be admitted.
 
     "&&" Is used to denote the addition of another policy.
@@ -52,17 +53,21 @@ class AppSettings(BaseSettings):
     """The STAC Version that is being supported by this deployments data discovery endpoints."""
     STAC_API_URL: HttpUrl
     """The STAC URL of the catalogue that the application deployment will proxy to."""
-    STAC_COLLECTIONS_WHITELIST: Optional[list[str]]
+    STAC_COLLECTIONS_WHITELIST: Optional[list[str]] = None
     """The collection ids to filter by when proxying to the Stac catalogue."""
 
-    @validator("STAC_API_URL")
-    def ensure_endswith_slash(cls, v: str) -> str:
+    @field_validator("STAC_API_URL")
+    @classmethod
+    def ensure_endswith_slash(cls, v: HttpUrl) -> str:
         """Ensure the STAC_API_URL ends with a trailing slash."""
-        if v.endswith("/"):
-            return v
-        return v.__add__("/")
+        url = str(v)
 
-    @validator("OIDC_POLICIES", pre=True)
+        if url.endswith("/"):
+            return url
+        return url.__add__("/")
+
+    @field_validator("OIDC_POLICIES", mode="before")
+    @classmethod
     def split_oidc_policies_str_to_list(cls, v: list) -> str:
         """Ensure the OIDC_POLICIES are split and formatted correctly."""
 
@@ -88,6 +93,8 @@ class AppSettings(BaseSettings):
             cleaned_policies.append(no_spaces)
         return cleaned_policies
 
+    # TODO[pydantic]: We couldn't refactor this class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config:
         """Pydantic model class config."""
 
