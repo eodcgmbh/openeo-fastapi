@@ -63,13 +63,7 @@ class UserDefinedProcessGraph(BaseModel):
     description: Optional[str] = None
     parameters: Optional[list] = None
     returns: Optional[dict] = None
-
-    class Config:
-        """Pydantic model class config."""
-
-        orm_mode = True
-        allow_population_by_field_name = True
-        extra = "ignore"
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, extra="ignore")
 
     @classmethod
     def get_orm(cls):

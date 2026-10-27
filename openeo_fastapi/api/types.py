@@ -194,9 +194,7 @@ class UsageMetric(BaseModel):
 
 class Usage(BaseModel):
     """Model to capture the usage of a job."""
-
-    class Config:
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")
 
     cpu: Optional[UsageMetric] = Field(
         None,

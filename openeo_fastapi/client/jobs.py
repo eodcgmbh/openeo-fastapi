@@ -81,13 +81,7 @@ class Job(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     synchronous: bool = False
-
-    class Config:
-        """Pydantic model class config."""
-
-        orm_mode = True
-        arbitrary_types_allowed = True
-        extra = Extra.ignore
+    model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True, extra="ignore")
 
     @classmethod
     def get_orm(cls):
