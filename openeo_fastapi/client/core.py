@@ -3,6 +3,7 @@
 Classes:
     - OpenEOCore: Framework for defining the application logic that will passed onto the OpenEO Api.
 """
+
 from collections import namedtuple
 from typing import Optional
 from urllib.parse import urlunparse
@@ -47,6 +48,10 @@ APPLICATION_ENDPOINTS = [
         path="/credentials/oidc",
         methods=["GET"],
     ),
+    Endpoint(
+        path="/file_formats",
+        methods=["GET"],
+    ),
 ]
 
 
@@ -87,7 +92,7 @@ class OpenEOCore:
         """
         registers = [self.collections, self.files, self.jobs, self.processes]
 
-        endpoints = self.endpoints
+        endpoints = list(self.endpoints)
         for register in registers:
             if register:
                 endpoints.extend(register.endpoints)
@@ -103,6 +108,7 @@ class OpenEOCore:
             id=self._id,
             title=self.settings.API_TITLE,
             stac_version=self.settings.STAC_VERSION,
+            type="Catalog",
             api_version=self.settings.OPENEO_VERSION,
             description=self.settings.API_DESCRIPTION,
             backend_version=self.settings.OPENEO_VERSION,
@@ -121,7 +127,7 @@ class OpenEOCore:
             providers=[
                 Provider(
                     id=self.settings.OIDC_ORGANISATION,
-                    title="EGI Check-in",
+                    title=self.settings.OIDC_PROVIDER_TITLE,
                     issuer=self.settings.OIDC_URL,
                     scopes=[
                         "openid",
@@ -131,7 +137,7 @@ class OpenEOCore:
                     ],
                     default_clients=[
                         DefaultClient(
-                            id="openeo-platform-default-client",
+                            id=self.settings.OIDC_CLIENT_ID,
                             redirect_urls=[
                                 "https://editor.openeo.cloud/",
                                 "https://editor.openeo.org/",

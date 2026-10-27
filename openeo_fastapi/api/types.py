@@ -21,6 +21,7 @@ class DinensionEnum(Enum):
     temporal = "temporal"
     bands = "bands"
     other = "other"
+    number = "number"
 
 
 class Type5(Enum):
@@ -194,7 +195,8 @@ class UsageMetric(BaseModel):
 class Usage(BaseModel):
     """Model to capture the usage of a job."""
 
-    model_config = ConfigDict(extra="allow")
+    class Config:
+        extra = Extra.allow
 
     cpu: Optional[UsageMetric] = Field(
         None,

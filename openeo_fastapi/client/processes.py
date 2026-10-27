@@ -3,12 +3,13 @@
 Classes:
     - ProcessRegister: Framework for defining and extending the logic for working with Processes and Process Graphs.
 """
+
 import datetime
 import functools
 import uuid
 from typing import Optional, Union
 
-import openeo_processes_dask.specs
+import openeo_processes_dask_slim.specs
 from fastapi import Depends, HTTPException, Response
 from openeo_pg_parser_networkx import Process as pgProcess
 from openeo_pg_parser_networkx import ProcessRegistry
@@ -63,12 +64,12 @@ class UserDefinedProcessGraph(BaseModel):
     parameters: Optional[list] = None
     returns: Optional[dict] = None
 
-    # replaces orm_mode = True
-    model_config = ConfigDict(
-        from_attributes=True,
-        populate_by_name=True,
-        extra="ignore",
-    )
+    class Config:
+        """Pydantic model class config."""
+
+        orm_mode = True
+        allow_population_by_field_name = True
+        extra = "ignore"
 
     @classmethod
     def get_orm(cls):
@@ -108,8 +109,8 @@ class ProcessRegister(EndpointRegister):
         process_registry = ProcessRegistry()
 
         predefined_processes_specs = {
-            process_id: getattr(openeo_processes_dask.specs, process_id)
-            for process_id in openeo_processes_dask.specs.__all__
+            process_id: getattr(openeo_processes_dask_slim.specs, process_id)
+            for process_id in openeo_processes_dask_slim.specs.__all__
         }
 
         for process_id, spec in predefined_processes_specs.items():
@@ -132,7 +133,7 @@ class ProcessRegister(EndpointRegister):
 
     def list_processes(self) -> Union[ProcessesGetResponse, None]:
         """
-        Returns Supported predefined processes defined by openeo-processes-dask.
+        Returns Supported predefined processes defined by openeo-processes-dask-slim.
 
         Returns:
             ProcessesGetResponse: A list of available processes.
@@ -189,7 +190,10 @@ class ProcessRegister(EndpointRegister):
         if not graph:
             raise HTTPException(
                 status_code=404,
-                detail=f"No user defined process graph found with id: {process_graph_id}",
+                detail=Error(
+                    code="ProcessGraphNotFound",
+                    message=f"No user defined process graph found with id: {process_graph_id}",
+                ),
             )
 
         return ProcessGraphWithMetadata(**graph.dict())
