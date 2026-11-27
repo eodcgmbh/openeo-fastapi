@@ -1,6 +1,6 @@
 """Defining the settings to be used at the application layer of the API."""
 
-from typing import Annotated, Optional
+from typing import Annotated, Any, Optional
 
 from pydantic import HttpUrl, field_validator
 from pydantic_settings import BaseSettings, NoDecode
