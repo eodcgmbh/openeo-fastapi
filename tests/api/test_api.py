@@ -1,8 +1,10 @@
 import uuid
 from typing import Optional
 
+import pytest
 from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.testclient import TestClient
+from pydantic import ValidationError
 
 from openeo_fastapi.api.app import OpenEOApi
 from openeo_fastapi.api.models import FilesGetResponse
@@ -18,6 +20,7 @@ from openeo_fastapi.api.types import (
 from openeo_fastapi.client.auth import Authenticator, User
 from openeo_fastapi.client.core import OpenEOCore
 from openeo_fastapi.client.files import FILE_ENDPOINTS, FilesRegister
+from openeo_fastapi.client.settings import AppSettings
 
 
 def test_api_core(core_api):
@@ -79,6 +82,66 @@ def test_get_credentials_oidc(core_api, app_settings):
 
     assert response.status_code == 200
     assert len(response.json()["providers"]) == 1
+    assert response.json()["providers"][0]["scopes"] == app_settings.OIDC_SCOPES
+
+
+def test_oidc_scopes_from_env(monkeypatch):
+    """Test OIDC_SCOPES is parsed from a comma-separated environment variable."""
+
+    monkeypatch.setenv("OIDC_SCOPES", "openid, email, offline_access")
+
+    configured = AppSettings()
+
+    assert configured.OIDC_SCOPES == ["openid", "email", "offline_access"]
+
+
+def test_oidc_scopes_require_openid():
+    """Test OIDC_SCOPES refuses a list without the mandatory openid scope."""
+
+    with pytest.raises(ValidationError):
+        AppSettings(OIDC_SCOPES=["email"])
+
+
+def test_get_credentials_oidc_uses_configured_scopes(monkeypatch):
+    """Test the configured OIDC scopes are returned by /credentials/oidc."""
+
+    monkeypatch.setenv("OIDC_SCOPES", "openid,email,offline_access")
+
+    formats = [
+        FileFormat(
+            title="json",
+            gis_data_types=[GisDataType("vector")],
+            parameters={},
+        )
+    ]
+
+    configured = AppSettings()
+
+    client = OpenEOCore(
+        settings=configured,
+        input_formats=formats,
+        output_formats=formats,
+        links=[],
+        billing=Billing(
+            currency="credits",
+            default_plan="a-cloud",
+            plans=[Plan(name="user", description="Subscription plan.", paid=True)],
+        ),
+    )
+
+    assert client.settings is configured
+
+    api = OpenEOApi(client=client, app=FastAPI())
+    response = TestClient(api.app).get(
+        f"{client.settings.OPENEO_PREFIX}/credentials/oidc"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["providers"][0]["scopes"] == [
+        "openid",
+        "email",
+        "offline_access",
+    ]
 
 
 def test_get_health(core_api, app_settings):

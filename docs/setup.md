@@ -77,6 +77,7 @@ These variables need to be set in the environment of the deployment. Those marke
 | OPENEO_PREFIX  | The OpenEO prefix to be used when creating the endpoint urls. Defaults to the value of the openeo_version | True |
 | OIDC_URL  | The URL of the OIDC provider used to authenticate tokens against. | True |
 | OIDC_ORGANISATION  | The abbreviation of the OIDC provider's organisation name. | True |
+| OIDC_SCOPES  | Comma-separated OIDC scopes advertised to clients in the /credentials/oidc response. Must include `openid`. Defaults to `openid,email,eduperson_entitlement,eduperson_scoped_affiliation`. | False |
 | OIDC_POLICIES  | The OIDC policies user to check to authorize a user. | False |
 | STAC_VERSION  | The STAC Version that is being supported by this deployments data discovery endpoints. Defaults to "1.0.0". | False |
 | STAC_API_URL  | The STAC URL of the catalogue that the application deployment will proxy to. | True |
