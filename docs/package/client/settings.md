@@ -129,7 +129,7 @@ The collection ids to filter by when proxying to the Stac catalogue.
 #### ensure\_endswith\_slash
 
 ```python
-@validator("STAC_API_URL")
+@field_validator("STAC_API_URL")
 def ensure_endswith_slash(cls, v: str) -> str
 ```
 
@@ -140,7 +140,7 @@ Ensure the STAC_API_URL ends with a trailing slash.
 #### split\_oidc\_policies\_str\_to\_list
 
 ```python
-@validator("OIDC_POLICIES", pre=True)
+@field_validator("OIDC_POLICIES", mode="before")
 def split_oidc_policies_str_to_list(cls, v: str) -> str
 ```
 

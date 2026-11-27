@@ -4,7 +4,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Optional, Union
 
-from pydantic import AnyUrl, BaseModel, Extra, Field, validator
+from pydantic import AnyUrl, BaseModel, ConfigDict, Field, RootModel, field_validator
 
 
 class STACConformanceClasses(Enum):
@@ -80,14 +80,15 @@ class Role(Enum):
     host = "host"
 
 
-class RFC3339Datetime(BaseModel):
+class RFC3339Datetime(RootModel):
     """Model to consistently represent datetimes as strings compliant to RFC3339Datetime."""
 
-    __root__: str = Field(
-        description="", regex=r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z"
+    root: str = Field(
+        description="",
+        pattern=r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z",
     )
 
-    @validator("__root__", pre=True)
+    @field_validator("root", mode="before")
     def ensure_non_fractional_and_timezone(cls, v):
         if isinstance(v, datetime.datetime):
             return v.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -113,12 +114,12 @@ class Plan(BaseModel):
     name: str = Field(
         ...,
         description="Name of the plan. It MUST be accepted in a *case insensitive* manner throughout the API.",
-        example="free",
+        examples=["free"],
     )
     description: str = Field(
         ...,
         description="A description that gives a rough overview over the plan.\n\n[CommonMark 0.29](http://commonmark.org/) syntax MAY be used for rich text representation.",
-        example="Free plan for testing.",
+        examples=["Free plan for testing."],
     )
     paid: bool = Field(
         ...,
@@ -127,7 +128,7 @@ class Plan(BaseModel):
     url: Optional[AnyUrl] = Field(
         None,
         description="URL to a web page with more details about the plan.",
-        example="http://cool-cloud-corp.com/plans/free-plan",
+        examples=["http://cool-cloud-corp.com/plans/free-plan"],
     )
 
 
@@ -137,29 +138,31 @@ class Billing(BaseModel):
     currency: str = Field(
         ...,
         description="The currency the back-end is billing in. The currency MUST be either a valid currency code as defined in ISO-4217 or a proprietary currency, e.g. tiles or back-end specific credits. If set to the default value `null`, budget and costs are not supported by the back-end and users can't be charged.",
-        example="USD",
+        examples=["USD"],
     )
     default_plan: Optional[str] = Field(
         None,
         description="Name of the default plan to use when the user doesn't specify a plan or has no default plan has been assigned for the user.",
-        example="free",
+        examples=["free"],
     )
     plans: Optional[list[Plan]] = Field(
         None,
         description="Array of plans",
-        example=[
-            {
-                "name": "free",
-                "description": "Free plan. Calculates one tile per second and a maximum amount of 100 tiles per hour.",
-                "url": "http://cool-cloud-corp.com/plans/free-plan",
-                "paid": False,
-            },
-            {
-                "name": "premium",
-                "description": "Premium plan. Calculates unlimited tiles and each calculated tile costs 0.003 USD.",
-                "url": "http://cool-cloud-corp.com/plans/premium-plan",
-                "paid": True,
-            },
+        examples=[
+            [
+                {
+                    "name": "free",
+                    "description": "Free plan. Calculates one tile per second and a maximum amount of 100 tiles per hour.",
+                    "url": "http://cool-cloud-corp.com/plans/free-plan",
+                    "paid": False,
+                },
+                {
+                    "name": "premium",
+                    "description": "Premium plan. Calculates unlimited tiles and each calculated tile costs 0.003 USD.",
+                    "url": "http://cool-cloud-corp.com/plans/premium-plan",
+                    "paid": True,
+                },
+            ]
         ],
     )
 
@@ -170,13 +173,15 @@ class File(BaseModel):
     path: str = Field(
         ...,
         description="Path of the file, relative to the root directory of the user's server-side workspace.\nMUST NOT start with a slash `/` and MUST NOT be url-encoded.\n\nThe Windows-style path name component separator `\\` is not supported,\nalways use `/` instead.\n\nNote: The pattern only specifies a minimal subset of invalid characters.\nThe back-ends MAY enforce additional restrictions depending on their OS/environment.",
-        example="folder/file.txt",
+        examples=["folder/file.txt"],
     )
-    size: Optional[int] = Field(None, description="File size in bytes.", example=1024)
+    size: Optional[int] = Field(
+        None, description="File size in bytes.", examples=[1024]
+    )
     modified: Optional[RFC3339Datetime] = Field(
         None,
         description="Date and time the file has lastly been modified, formatted as a [RFC 3339](https://www.rfc-editor.org/rfc/RFC3339Datetime.html) date-time.",
-        example="2018-01-03T10:55:29Z",
+        examples=["2018-01-03T10:55:29Z"],
     )
 
 
@@ -189,9 +194,7 @@ class UsageMetric(BaseModel):
 
 class Usage(BaseModel):
     """Model to capture the usage of a job."""
-
-    class Config:
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")
 
     cpu: Optional[UsageMetric] = Field(
         None,
@@ -225,20 +228,22 @@ class Link(BaseModel):
     rel: str = Field(
         ...,
         description="Relationship between the current document and the linked document. SHOULD be a [registered link relation type](https://www.iana.org/assignments/link-relations/link-relations.xml) whenever feasible.",
-        example="related",
+        examples=["related"],
     )
     href: Union[AnyUrl, Path] = Field(
         ...,
         description="The value MUST be a valid URL.",
-        example="https://example.openeo.org",
+        examples=["https://example.openeo.org"],
     )
     type: Optional[str] = Field(
         None,
         description="The value MUST be a string that hints at the format used to represent data at the provided URI, preferably a media (MIME) type.",
-        example="text/html",
+        examples=["text/html"],
     )
     title: Optional[str] = Field(
-        None, description="Used as a human-readable label for a link.", example="openEO"
+        None,
+        description="Used as a human-readable label for a link.",
+        examples=["openEO"],
     )
 
 
@@ -248,18 +253,20 @@ class LogEntry(BaseModel):
     id: str = Field(
         ...,
         description="An unique identifier for the log message, could simply be an incrementing number.",
-        example="1",
+        examples=["1"],
     )
-    code: Optional[str]
+    code: Optional[str] = None
     level: Level = Field(
         ...,
         description="The severity level of the log entry.\n\nThe order of the levels is as follows (from high to low severity): `error`, `warning`, `info`, `debug`.\n\nThe level `error` usually stops processing the data.",
-        example="error",
+        examples=["error"],
     )
     message: str = Field(
         ...,
         description="A message explaining the log entry.",
-        example="Can't load the UDF file from the URL `https://example.com/invalid/file.txt`. Server responded with error 404.",
+        examples=[
+            "Can't load the UDF file from the URL `https://example.com/invalid/file.txt`. Server responded with error 404."
+        ],
     )
     time: Optional[RFC3339Datetime] = Field(
         None,
@@ -274,8 +281,8 @@ class LogEntry(BaseModel):
         None,
         description="Describes where the log entry originates from.\n\nThe first element of the array is the process that has triggered the log entry, the second element is the parent of the process that has triggered the log entry, etc. This pattern is followed until the root of the process graph.",
     )
-    usage: Optional[Usage]
-    links: Optional[list[Link]]
+    usage: Optional[Usage] = None
+    links: Optional[list[Link]] = None
 
 
 class Process(BaseModel):
@@ -306,13 +313,13 @@ class Error(BaseModel):
     id: Optional[str] = Field(
         None,
         description="A back-end MAY add a unique identifier to the error response to be able to log and track errors with further non-disclosable details. A client could communicate this id to a back-end provider to get further information.",
-        example="550e8400-e29b-11d4-a716-446655440000",
+        examples=["550e8400-e29b-11d4-a716-446655440000"],
     )
     code: str
     message: str = Field(
         ...,
         description="A message explaining what the client may need to change or what difficulties the server is facing.",
-        example="Parameter 'sample' is missing.",
+        examples=["Parameter 'sample' is missing."],
     )
     links: Optional[list[Link]] = None
 
@@ -345,12 +352,12 @@ class Storage(BaseModel):
     free: int = Field(
         ...,
         description="Free storage space in bytes, which is still available to the user. Effectively, this is the disk quota minus the used space by the user, e.g. user-uploaded files and job results.",
-        example=536870912,
+        examples=[536870912],
     )
     quota: int = Field(
         ...,
         description="Maximum storage space (disk quota) in bytes available to the user.",
-        example=1073741824,
+        examples=[1073741824],
     )
 
 
@@ -360,7 +367,7 @@ class Version(BaseModel):
     url: AnyUrl = Field(
         ...,
         description="*Absolute* URLs to the service.",
-        example="https://example.com/api/v1.0",
+        examples=["https://example.com/api/v1.0"],
     )
     production: Optional[bool] = None
     api_version: str = Field(
@@ -375,7 +382,7 @@ class StacProvider(BaseModel):
     name: str = Field(
         ...,
         description="The name of the organization or the individual.",
-        example="Cool EO Cloud Corp",
+        examples=["Cool EO Cloud Corp"],
     )
     description: Optional[str] = Field(
         None,
@@ -384,7 +391,7 @@ class StacProvider(BaseModel):
             "processors and producers, hosting details for hosts or basic contact information."
             "CommonMark 0.29 syntax MAY be used for rich text representation."
         ),
-        example="No further processing applied.",
+        examples=["No further processing applied."],
     )
     roles: Optional[list[Role]] = Field(
         None,
@@ -397,14 +404,14 @@ class StacProvider(BaseModel):
             "host is the actual provider offering the data on their storage. There SHOULD be no more than"
             "one host, specified as last element of the list."
         ),
-        example=["producer", "licensor", "host"],
+        examples=[["producer", "licensor", "host"]],
     )
     url: Optional[AnyUrl] = Field(
         None,
         description=(
             "Homepage on which the provider describes the dataset and publishes contact information."
         ),
-        example="http://cool-eo-cloud-corp.com",
+        examples=["http://cool-eo-cloud-corp.com"],
     )
 
 
@@ -427,7 +434,7 @@ class Spatial(BaseModel):
             "clusters of data.\nClients only interested in the overall spatial extent will "
             "only need to access the first item in each array."
         ),
-        min_items=1,
+        min_length=1,
     )
 
 
@@ -443,7 +450,7 @@ class Temporal(BaseModel):
             "identify clusters of data. Clients only interested in the overall extent will"
             "only need to access the first item in each array."
         ),
-        min_items=1,
+        min_length=1,
     )
 
 
