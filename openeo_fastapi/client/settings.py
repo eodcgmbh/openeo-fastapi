@@ -1,9 +1,9 @@
 """Defining the settings to be used at the application layer of the API."""
 
-from typing import Any, Optional
+from typing import Annotated, Optional
 
 from pydantic import HttpUrl, field_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, NoDecode
 
 
 class AppSettings(BaseSettings):
@@ -29,7 +29,7 @@ class AppSettings(BaseSettings):
     """The policies to be used for authenticated users with the backend, if not set, any usser with a valid token from the issuer is accepted."""
     OIDC_ORGANISATION: str
     """The abbreviation of the OIDC provider's organisation name, e.g. egi."""
-    OIDC_SCOPES: list[str] = [
+    OIDC_SCOPES: Annotated[list[str], NoDecode] = [
         "openid",
         "email",
         "eduperson_entitlement",
@@ -41,7 +41,7 @@ class AppSettings(BaseSettings):
     client are configured for, e.g. "openid,email,offline_access" for a
     Keycloak setup that does not use EGI entitlement claims.
     """
-    OIDC_POLICIES: Optional[list[str]]
+    OIDC_POLICIES: Annotated[Optional[list[str]], NoDecode] = None
     """The OIDC policies to check against when authorizing a user. If not provided, all users with a valid token from the issuer will be admitted.
 
     "&&" Is used to denote the addition of another policy.
@@ -65,7 +65,7 @@ class AppSettings(BaseSettings):
     """The STAC Version that is being supported by this deployments data discovery endpoints."""
     STAC_API_URL: HttpUrl
     """The STAC URL of the catalogue that the application deployment will proxy to."""
-    STAC_COLLECTIONS_WHITELIST: Optional[list[str]] = None
+    STAC_COLLECTIONS_WHITELIST: Annotated[Optional[list[str]], NoDecode] = None
     """The collection ids to filter by when proxying to the Stac catalogue."""
 
     @field_validator("STAC_API_URL")
@@ -78,7 +78,16 @@ class AppSettings(BaseSettings):
             return url
         return url.__add__("/")
 
+    @field_validator("STAC_COLLECTIONS_WHITELIST", mode="before")
+    @classmethod
+    def split_stac_collections_whitelist(cls, v):
+        """Parse a comma-separated whitelist into a list."""
+        if isinstance(v, str):
+            v = [x.strip() for x in v.split(",") if x.strip()]
+        return v or None
+
     @field_validator("OIDC_SCOPES", mode="before")
+    @classmethod
     def ensure_openid_scope(cls, v: list) -> list:
         """Parse CSV scopes and ensure the mandatory openid scope is requested."""
         if isinstance(v, str):
@@ -89,6 +98,7 @@ class AppSettings(BaseSettings):
         return v
 
     @field_validator("OIDC_POLICIES", mode="before")
+    @classmethod
     def split_oidc_policies_str_to_list(cls, v: list) -> str:
         """Ensure the OIDC_POLICIES are split and formatted correctly."""
 
