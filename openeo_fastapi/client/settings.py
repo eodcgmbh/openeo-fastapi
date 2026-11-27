@@ -78,7 +78,7 @@ class AppSettings(BaseSettings):
             return url
         return url.__add__("/")
 
-    @validator("OIDC_SCOPES", pre=True)
+    @field_validator("OIDC_SCOPES", mode="before")
     def ensure_openid_scope(cls, v: list) -> list:
         """Parse CSV scopes and ensure the mandatory openid scope is requested."""
         if isinstance(v, str):
@@ -88,7 +88,7 @@ class AppSettings(BaseSettings):
             raise ValueError("OIDC_SCOPES must include the 'openid' scope.")
         return v
 
-    @validator("OIDC_POLICIES", pre=True)
+    @field_validator("OIDC_POLICIES", mode="before")
     def split_oidc_policies_str_to_list(cls, v: list) -> str:
         """Ensure the OIDC_POLICIES are split and formatted correctly."""
 
