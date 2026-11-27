@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>openeo_fastapi.api.models - OpenEO FastApi</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "openeo_fastapi.api.models";
+        var mkdocs_page_input_path = "package/api/models.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> OpenEO FastApi
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../setup/">Getting Started</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/registers/">Manipulating endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/auth/">Add your own auth</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/orms/">Extend the object relational Models</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" >openeo_fastapi.api</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../app/">openeo_fastapi.api.app</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">openeo_fastapi.api.models</a>
+    <ul class="current">
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../types/">openeo_fastapi.api.types</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >openeo_fastapi.client</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/auth/">openeo_fastapi.client.auth</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/collections/">openeo_fastapi.client.collections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/core/">openeo_fastapi.client.core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/files/">openeo_fastapi.client.files</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/jobs/">openeo_fastapi.client.jobs</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/processes/">openeo_fastapi.client.processes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/register/">openeo_fastapi.client.register</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../client/settings/">openeo_fastapi.client.settings</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >openeo_fastapi.client.psql</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../client/psql/engine/">openeo_fastapi.client.psql.engine</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../client/psql/models/">openeo_fastapi.client.psql.models</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../client/psql/settings/">openeo_fastapi.client.psql.settings</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cli/">openeo_fastapi.cli</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">OpenEO FastApi</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">openeo_fastapi.api</li>
+      <li class="breadcrumb-item active">openeo_fastapi.api.models</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/eodcgmbh/openeo-fastapi/edit/master/docs/package/api/models.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#openeo_fastapi.api.models">openeo_fastapi.api.models</a></li>
+<li><a href="#openeo_fastapi.api.models.Capabilities">Capabilities</a></li>
+<li><a href="#openeo_fastapi.api.models.MeGetResponse">MeGetResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.ConformanceGetResponse">ConformanceGetResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.WellKnownOpeneoGetResponse">WellKnownOpeneoGetResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.UdfRuntimesGetResponse">UdfRuntimesGetResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.Collection">Collection</a></li>
+<li><a href="#openeo_fastapi.api.models.Collections">Collections</a></li>
+<li><a href="#openeo_fastapi.api.models.ProcessesGetResponse">ProcessesGetResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.ProcessGraphWithMetadata">ProcessGraphWithMetadata</a></li>
+<li><a href="#openeo_fastapi.api.models.ProcessGraphsGetResponse">ProcessGraphsGetResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.ValidationPostResponse">ValidationPostResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.BatchJob">BatchJob</a></li>
+<li><a href="#openeo_fastapi.api.models.JobsGetResponse">JobsGetResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.JobsGetLogsResponse">JobsGetLogsResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.JobsGetEstimateGetResponse">JobsGetEstimateGetResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.JobsRequest">JobsRequest</a></li>
+<li><a href="#openeo_fastapi.api.models.FilesGetResponse">FilesGetResponse</a></li>
+<li><a href="#openeo_fastapi.api.models.FileFormatsGetResponse">FileFormatsGetResponse</a></li>
+</ul>
+<p><a id="openeo_fastapi.api.models"></a></p>
+<h1 id="openeo_fastapiapimodels">openeo_fastapi.api.models</h1>
+<p>Pydantic Models describing different api request and response bodies.</p>
+<p><a id="openeo_fastapi.api.models.Capabilities"></a></p>
+<h2 id="capabilities-objects">Capabilities Objects</h2>
+<pre><code class="language-python">class Capabilities(BaseModel)
+</code></pre>
+<p>Response model for GET (/).</p>
+<p><a id="openeo_fastapi.api.models.MeGetResponse"></a></p>
+<h2 id="megetresponse-objects">MeGetResponse Objects</h2>
+<pre><code class="language-python">class MeGetResponse(BaseModel)
+</code></pre>
+<p>Response model for GET (/me).</p>
+<p><a id="openeo_fastapi.api.models.ConformanceGetResponse"></a></p>
+<h2 id="conformancegetresponse-objects">ConformanceGetResponse Objects</h2>
+<pre><code class="language-python">class ConformanceGetResponse(BaseModel)
+</code></pre>
+<p>Response model for GET (/conformance).</p>
+<p><a id="openeo_fastapi.api.models.WellKnownOpeneoGetResponse"></a></p>
+<h2 id="wellknownopeneogetresponse-objects">WellKnownOpeneoGetResponse Objects</h2>
+<pre><code class="language-python">class WellKnownOpeneoGetResponse(BaseModel)
+</code></pre>
+<p>Response model for GET (/.well-known/openeo).</p>
+<p><a id="openeo_fastapi.api.models.UdfRuntimesGetResponse"></a></p>
+<h2 id="udfruntimesgetresponse-objects">UdfRuntimesGetResponse Objects</h2>
+<pre><code class="language-python">class UdfRuntimesGetResponse(BaseModel)
+</code></pre>
+<p>Response model for GET (/udf_runtimes).</p>
+<p><a id="openeo_fastapi.api.models.Collection"></a></p>
+<h2 id="collection-objects">Collection Objects</h2>
+<pre><code class="language-python">class Collection(BaseModel)
+</code></pre>
+<p>Response model for GET (/collection/{collection_id})</p>
+<p><a id="openeo_fastapi.api.models.Collections"></a></p>
+<h2 id="collections-objects">Collections Objects</h2>
+<pre><code class="language-python">class Collections(TypedDict)
+</code></pre>
+<p>Response model for GET (/collections).</p>
+<p><a id="openeo_fastapi.api.models.ProcessesGetResponse"></a></p>
+<h2 id="processesgetresponse-objects">ProcessesGetResponse Objects</h2>
+<pre><code class="language-python">class ProcessesGetResponse(BaseModel)
+</code></pre>
+<p>Response model for GET (/processes).</p>
+<p><a id="openeo_fastapi.api.models.ProcessGraphWithMetadata"></a></p>
+<h2 id="processgraphwithmetadata-objects">ProcessGraphWithMetadata Objects</h2>
+<pre><code class="language-python">class ProcessGraphWithMetadata(Process)
+</code></pre>
+<p>Reponse model for
+            GET (/process_graphs/{process_graph_id})</p>
+<p>Request model for
+        PUT (/process_graphs/{process_graph_id})
+        POST (/validation)</p>
+<p><a id="openeo_fastapi.api.models.ProcessGraphsGetResponse"></a></p>
+<h2 id="processgraphsgetresponse-objects">ProcessGraphsGetResponse Objects</h2>
+<pre><code class="language-python">class ProcessGraphsGetResponse(BaseModel)
+</code></pre>
+<p>Response model for GET (/process_graphs).</p>
+<p><a id="openeo_fastapi.api.models.ValidationPostResponse"></a></p>
+<h2 id="validationpostresponse-objects">ValidationPostResponse Objects</h2>
+<pre><code class="language-python">class ValidationPostResponse(BaseModel)
+</code></pre>
+<p>Response model for POST (/validation).</p>
+<p><a id="openeo_fastapi.api.models.BatchJob"></a></p>
+<h2 id="batchjob-objects">BatchJob Objects</h2>
+<pre><code class="language-python">class BatchJob(BaseModel)
+</code></pre>
+<p>Reponse model for GET (/jobs/{job_id}).</p>
+<p><a id="openeo_fastapi.api.models.JobsGetResponse"></a></p>
+<h2 id="jobsgetresponse-objects">JobsGetResponse Objects</h2>
+<pre><code class="language-python">class JobsGetResponse(BaseModel)
+</code></pre>
+<p>Reponse model for GET (/jobs).</p>
+<p><a id="openeo_fastapi.api.models.JobsGetLogsResponse"></a></p>
+<h2 id="jobsgetlogsresponse-objects">JobsGetLogsResponse Objects</h2>
+<pre><code class="language-python">class JobsGetLogsResponse(BaseModel)
+</code></pre>
+<p>Reponse model for GET (/jobs/{job_id}/logs).</p>
+<p><a id="openeo_fastapi.api.models.JobsGetEstimateGetResponse"></a></p>
+<h2 id="jobsgetestimategetresponse-objects">JobsGetEstimateGetResponse Objects</h2>
+<pre><code class="language-python">class JobsGetEstimateGetResponse(BaseModel)
+</code></pre>
+<p>Reponse model for GET (/jobs/{job_id}/estimate).</p>
+<p><a id="openeo_fastapi.api.models.JobsRequest"></a></p>
+<h2 id="jobsrequest-objects">JobsRequest Objects</h2>
+<pre><code class="language-python">class JobsRequest(BaseModel)
+</code></pre>
+<p>Request model for
+POST (/jobs)
+PATCH (/jobs/{job_id})
+POST (/result)</p>
+<p><a id="openeo_fastapi.api.models.FilesGetResponse"></a></p>
+<h2 id="filesgetresponse-objects">FilesGetResponse Objects</h2>
+<pre><code class="language-python">class FilesGetResponse(BaseModel)
+</code></pre>
+<p>Reponse model for GET (/files).</p>
+<p><a id="openeo_fastapi.api.models.FileFormatsGetResponse"></a></p>
+<h2 id="fileformatsgetresponse-objects">FileFormatsGetResponse Objects</h2>
+<pre><code class="language-python">class FileFormatsGetResponse(BaseModel)
+</code></pre>
+<p>Reponse model for GET (/file_formats).</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../app/" class="btn btn-neutral float-left" title="openeo_fastapi.api.app"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../types/" class="btn btn-neutral float-right" title="openeo_fastapi.api.types">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eodcgmbh/openeo-fastapi" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../app/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../types/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

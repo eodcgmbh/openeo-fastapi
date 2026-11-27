@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>openeo_fastapi.client.jobs - OpenEO FastApi</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "openeo_fastapi.client.jobs";
+        var mkdocs_page_input_path = "package/client/jobs.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> OpenEO FastApi
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../setup/">Getting Started</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">User Guide</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/registers/">Manipulating endpoints</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/auth/">Add your own auth</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../guide/orms/">Extend the object relational Models</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >openeo_fastapi.api</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/app/">openeo_fastapi.api.app</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/models/">openeo_fastapi.api.models</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../api/types/">openeo_fastapi.api.types</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >openeo_fastapi.client</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../auth/">openeo_fastapi.client.auth</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../collections/">openeo_fastapi.client.collections</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../core/">openeo_fastapi.client.core</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../files/">openeo_fastapi.client.files</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">openeo_fastapi.client.jobs</a>
+    <ul class="current">
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../processes/">openeo_fastapi.client.processes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../register/">openeo_fastapi.client.register</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../settings/">openeo_fastapi.client.settings</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" >openeo_fastapi.client.psql</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/engine/">openeo_fastapi.client.psql.engine</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/models/">openeo_fastapi.client.psql.models</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../psql/settings/">openeo_fastapi.client.psql.settings</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cli/">openeo_fastapi.cli</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">OpenEO FastApi</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+          <li class="breadcrumb-item">openeo_fastapi.client</li>
+      <li class="breadcrumb-item active">openeo_fastapi.client.jobs</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/eodcgmbh/openeo-fastapi/edit/master/docs/package/client/jobs.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+<li><a href="#openeo_fastapi.client.jobs">openeo_fastapi.client.jobs</a></li>
+<li><a href="#openeo_fastapi.client.jobs.Job">Job</a><ul>
+<li><a href="#openeo_fastapi.client.jobs.Job.job_id">job_id</a></li>
+<li><a href="#openeo_fastapi.client.jobs.Job.Config">Config</a></li>
+<li><a href="#openeo_fastapi.client.jobs.Job.get_orm">get_orm</a></li>
+<li><a href="#openeo_fastapi.client.jobs.Job.patch">patch</a></li>
+</ul>
+</li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister">JobsRegister</a><ul>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.__init__">__init__</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.list_jobs">list_jobs</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.create_job">create_job</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.update_job">update_job</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.get_job">get_job</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.delete_job">delete_job</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.estimate">estimate</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.logs">logs</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.get_results">get_results</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.start_job">start_job</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.cancel_job">cancel_job</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.delete_job">delete_job</a></li>
+<li><a href="#openeo_fastapi.client.jobs.JobsRegister.process_sync_job">process_sync_job</a></li>
+</ul>
+</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs"></a></p>
+<h1 id="openeo_fastapiclientjobs">openeo_fastapi.client.jobs</h1>
+<p>Class and model to define the framework and partial application logic for interacting with Jobs.</p>
+<p>Classes:
+    - JobsRegister: Framework for defining and extending the logic for working with BatchJobs.
+    - Job: The pydantic model used as an in memory representation of an OpenEO Job.</p>
+<p><a id="openeo_fastapi.client.jobs.Job"></a></p>
+<h2 id="job-objects">Job Objects</h2>
+<pre><code class="language-python">class Job(BaseModel)
+</code></pre>
+<p>Pydantic model representing an OpenEO Job.</p>
+<p><a id="openeo_fastapi.client.jobs.Job.job_id"></a></p>
+<h4 id="job_id">job_id</h4>
+<p><a id="openeo_fastapi.client.jobs.Job.Config"></a></p>
+<h2 id="config-objects">Config Objects</h2>
+<pre><code class="language-python">class Config()
+</code></pre>
+<p>Pydantic model class config.</p>
+<p><a id="openeo_fastapi.client.jobs.Job.get_orm"></a></p>
+<h4 id="get_orm">get_orm</h4>
+<pre><code class="language-python">@classmethod
+def get_orm(cls)
+</code></pre>
+<p>Get the ORM model for this pydantic model.</p>
+<p><a id="openeo_fastapi.client.jobs.Job.patch"></a></p>
+<h4 id="patch">patch</h4>
+<pre><code class="language-python">def patch(patch: Any)
+</code></pre>
+<p>Update pydantic model with changed fields from a new model instance.</p>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister"></a></p>
+<h2 id="jobsregister-objects">JobsRegister Objects</h2>
+<pre><code class="language-python">class JobsRegister(EndpointRegister)
+</code></pre>
+<p>The JobRegister to regulate the application logic for the API behaviour.</p>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.__init__"></a></p>
+<h4 id="__init__">__init__</h4>
+<pre><code class="language-python">def __init__(settings, links) -&gt; None
+</code></pre>
+<p>Initialize the JobRegister.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>settings</code> <em>AppSettings</em> - The AppSettings that the application will use.</li>
+<li><code>links</code> <em>Links</em> - The Links to be used in some function responses.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.list_jobs"></a></p>
+<h4 id="list_jobs">list_jobs</h4>
+<pre><code class="language-python">def list_jobs(limit: Optional[int] = 10,
+              user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>List the user's most recent BatchJobs.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>limit</code> <em>int</em> - The limit to apply to the length of the list.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>JobsGetResponse</code> - A list of the user's BatchJobs.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.create_job"></a></p>
+<h4 id="create_job">create_job</h4>
+<pre><code class="language-python">def create_job(body: JobsRequest,
+               user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Create a new BatchJob.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>body</code> <em>JobsRequest</em> - The Job Request that should be used to create the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>Response</code> - A general FastApi response to signify the changes where made as expected. Specific response
+  headers need to be set in this response to ensure certain behaviours when being used by OpenEO client modules.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.update_job"></a></p>
+<h4 id="update_job">update_job</h4>
+<pre><code class="language-python">def update_job(job_id: uuid.UUID,
+               body: JobsRequest,
+               user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Update the specified BatchJob with the contents of the provided JobsRequest.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>job_id</code> <em>JobId</em> - A UUID job id.</li>
+<li><code>body</code> <em>JobsRequest</em> - The Job Request that should be used to update the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>Response</code> - A general FastApi response to signify the changes where made as expected.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.get_job"></a></p>
+<h4 id="get_job">get_job</h4>
+<pre><code class="language-python">def get_job(job_id: uuid.UUID, user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Get and return the metadata for the BatchJob.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>job_id</code> <em>JobId</em> - A UUID job id.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul>
+<li><code>BatchJob</code> - The metadata for the requested BatchJob.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.delete_job"></a></p>
+<h4 id="delete_job">delete_job</h4>
+<pre><code class="language-python">def delete_job(job_id: uuid.UUID,
+               user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Delete the BatchJob.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>job_id</code> <em>JobId</em> - A UUID job id.</li>
+<li><code>body</code> <em>JobsRequest</em> - The Job Request that should be used to create the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.estimate"></a></p>
+<h4 id="estimate">estimate</h4>
+<pre><code class="language-python">def estimate(job_id: uuid.UUID, user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Estimate the cost for the BatchJob.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>job_id</code> <em>JobId</em> - A UUID job id.</li>
+<li><code>body</code> <em>JobsRequest</em> - The Job Request that should be used to create the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.logs"></a></p>
+<h4 id="logs">logs</h4>
+<pre><code class="language-python">def logs(job_id: uuid.UUID, user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Get the logs for the BatchJob.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>job_id</code> <em>JobId</em> - A UUID job id.</li>
+<li><code>body</code> <em>JobsRequest</em> - The Job Request that should be used to create the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.get_results"></a></p>
+<h4 id="get_results">get_results</h4>
+<pre><code class="language-python">def get_results(job_id: uuid.UUID,
+                user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Get the results for the BatchJob.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>job_id</code> <em>JobId</em> - A UUID job id.</li>
+<li><code>body</code> <em>JobsRequest</em> - The Job Request that should be used to create the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.start_job"></a></p>
+<h4 id="start_job">start_job</h4>
+<pre><code class="language-python">def start_job(job_id: uuid.UUID, user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Start the processing for the BatchJob.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>job_id</code> <em>JobId</em> - A UUID job id.</li>
+<li><code>body</code> <em>JobsRequest</em> - The Job Request that should be used to create the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.cancel_job"></a></p>
+<h4 id="cancel_job">cancel_job</h4>
+<pre><code class="language-python">def cancel_job(job_id: uuid.UUID,
+               user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Cancel the processing of the BatchJob.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>job_id</code> <em>JobId</em> - A UUID job id.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.delete_job"></a></p>
+<h4 id="delete_job_1">delete_job</h4>
+<pre><code class="language-python">def delete_job(job_id: uuid.UUID,
+               user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Delete the BatchJob from the database.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>job_id</code> <em>JobId</em> - A UUID job id.</li>
+<li><code>body</code> <em>JobsRequest</em> - The Job Request that should be used to create the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+<p><a id="openeo_fastapi.client.jobs.JobsRegister.process_sync_job"></a></p>
+<h4 id="process_sync_job">process_sync_job</h4>
+<pre><code class="language-python">def process_sync_job(body: JobsRequest = JobsRequest(),
+                     user: User = Depends(Authenticator.validate))
+</code></pre>
+<p>Start the processing of a synchronous Job.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>body</code> <em>JobsRequest</em> - The Job Request that should be used to create the new BatchJob.</li>
+<li><code>user</code> <em>User</em> - The User returned from the Authenticator.</li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul>
+<li><code>HTTPException</code> - Raises an exception with relevant status code and descriptive message of failure.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../files/" class="btn btn-neutral float-left" title="openeo_fastapi.client.files"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../processes/" class="btn btn-neutral float-right" title="openeo_fastapi.client.processes">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/eodcgmbh/openeo-fastapi" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../files/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../processes/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
