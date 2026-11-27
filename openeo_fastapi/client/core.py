@@ -77,7 +77,7 @@ class OpenEOCore:
 
     def __attrs_post_init__(self):
         """Post init hook to set the client registers, if none where provided by the user set to the defaults!"""
-        self.settings = AppSettings()
+        self.settings = self.settings or AppSettings()
 
         self.collections = self.collections or CollectionRegister(self.settings)
         self.files = self.files or FilesRegister(self.settings, self.links)
@@ -129,12 +129,7 @@ class OpenEOCore:
                     id=self.settings.OIDC_ORGANISATION,
                     title=self.settings.OIDC_PROVIDER_TITLE,
                     issuer=self.settings.OIDC_URL,
-                    scopes=[
-                        "openid",
-                        "email",
-                        "eduperson_entitlement",
-                        "eduperson_scoped_affiliation",
-                    ],
+                    scopes=self.settings.OIDC_SCOPES,
                     default_clients=[
                         DefaultClient(
                             id=self.settings.OIDC_CLIENT_ID,
