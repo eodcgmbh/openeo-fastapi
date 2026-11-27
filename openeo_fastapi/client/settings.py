@@ -28,6 +28,18 @@ class AppSettings(BaseSettings):
     """The policies to be used for authenticated users with the backend, if not set, any usser with a valid token from the issuer is accepted."""
     OIDC_ORGANISATION: str
     """The abbreviation of the OIDC provider's organisation name, e.g. egi."""
+    OIDC_SCOPES: list[str] = [
+        "openid",
+        "email",
+        "eduperson_entitlement",
+        "eduperson_scoped_affiliation",
+    ]
+    """The OIDC scopes advertised to clients in the /credentials/oidc response.
+
+    Deployments can override these to match the scopes their OIDC provider and
+    client are configured for, e.g. "openid,email,offline_access" for a
+    Keycloak setup that does not use EGI entitlement claims.
+    """
     OIDC_POLICIES: Optional[list[str]]
     """The OIDC policies to check against when authorizing a user. If not provided, all users with a valid token from the issuer will be admitted.
 
@@ -61,6 +73,16 @@ class AppSettings(BaseSettings):
         if v.endswith("/"):
             return v
         return v.__add__("/")
+
+    @validator("OIDC_SCOPES", pre=True)
+    def ensure_openid_scope(cls, v: list) -> list:
+        """Parse CSV scopes and ensure the mandatory openid scope is requested."""
+        if isinstance(v, str):
+            v = [str(x).strip() for x in v.split(",") if x.strip()]
+
+        if not v or "openid" not in v:
+            raise ValueError("OIDC_SCOPES must include the 'openid' scope.")
+        return v
 
     @validator("OIDC_POLICIES", pre=True)
     def split_oidc_policies_str_to_list(cls, v: list) -> str:
@@ -96,6 +118,8 @@ class AppSettings(BaseSettings):
             """Parse any variables and handle and csv lists into python list type."""
             if field_name == "STAC_COLLECTIONS_WHITELIST":
                 return [str(x) for x in raw_val.split(",")]
+            elif field_name == "OIDC_SCOPES":
+                return [str(x).strip() for x in raw_val.split(",") if x.strip()]
             elif field_name == "OIDC_POLICIES":
                 return [str(x) for x in raw_val.split("&&") if x != ""]
             return cls.json_loads(raw_val)
